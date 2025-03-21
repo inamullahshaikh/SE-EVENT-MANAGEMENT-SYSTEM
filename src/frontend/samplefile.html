@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Payment</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Navbar */
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 15px 20px;
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+      }
+
+      .navbar-brand {
+        font-size: 22px;
+        font-weight: bold;
+      }
+
+      .navbar-nav .nav-link {
+        color: white !important;
+        font-size: 16px;
+        margin: 0 10px;
+        cursor: pointer;
+      }
+
+      .navbar-nav .nav-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+    <script>
+      // Function to load event details and payment methods
+        async function loadEventData() {
+            const bookedEvent = JSON.parse(localStorage.getItem("bookedEvent"));
+            const username = bookedEvent?.username;
+            const myButton = document.getElementById("applyLoyaltyBtn"); // Assuming the button has an ID "myButton"
+            if (bookedEvent) {
+            const { eventId, tickets, pricePerTicket } = bookedEvent;
+
+            try {
+                const eventResponse = await fetch(`http://localhost:3003/get/${eventId}`);
+                const event = await eventResponse.json();
+
+                document.getElementById("eventName").innerText = event.name;
+                document.getElementById("ticketCount").innerText = tickets;
+                document.getElementById("ticketPrice").innerText = pricePerTicket;
+
+                const totalPrice = tickets * pricePerTicket;
+                document.getElementById("totalPrice").innerText = totalPrice;
+
+                const platformFee = totalPrice * 0.15;
+                document.getElementById("platformFee").innerText = platformFee;
+
+                const totalBill = totalPrice + platformFee;
+                document.getElementById("finalTotal").innerText = totalBill;
+
+                const paymentResponse = await fetch(`http://localhost:3007/get-by-attendee/${username}`);
+
+                const payments = await paymentResponse.json();
+
+                const paymentDropdown = document.getElementById("paymentMethod");
+                paymentDropdown.innerHTML = ""; // Clear existing options
+
+                if (payments.length > 0) {
+                    payments.forEach((payment) => {
+                    const option = document.createElement("option");
+                    option.value = payment.cardNumber;
+                    option.innerText = `${payment.cardType} ending in ${payment.cardNumber.slice(-4)}`;
+                    paymentDropdown.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement("option");
+                    option.value = "";
+                    option.innerText = "No payment methods found";
+                    paymentDropdown.appendChild(option);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                alert("Error fetching data.");
+            }
+            } else {
+            alert("No booked event found.");
+            
+        }
+                        myButton.addEventListener("click", function() {
+                    totalBill -= document.getElementById("loyaltyPointsToUse");
+                });
+        }
+
+        loadEventData();
+      
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">EventSync - Payment Portal</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto"></ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h2>Event Payment</h2>
+
+      <!-- Event Details Card -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Event Details</h5>
+          <p>
+            <strong>Event Name: </strong><span id="eventName">Loading...</span>
+          </p>
+          <p>
+            <strong>Tickets Purchased: </strong><span id="ticketCount">0</span>
+          </p>
+          <p>
+            <strong>Price per Ticket (PKR): </strong
+            ><span id="ticketPrice">0</span>
+          </p>
+          <div class="total-info">
+            <p>
+              <strong>Total Price: </strong><span id="totalPrice">0</span> PKR
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bill Calculation Card -->
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Bill Calculation</h5>
+          <p>
+            <strong>Platform Fee (15%): </strong
+            ><span id="platformFee">0</span> PKR
+          </p>
+          <p>
+            <strong>Total Bill (with Fee): </strong
+            ><span id="finalTotal">0</span> PKR
+          </p>
+          <p>
+            <strong>Loyalty Points (Available): </strong
+            ><span id="loyaltyPoints">0</span>
+          </p>
+          <div>
+            <label for="loyaltyPointsToUse">Use Loyalty Points: </label>
+            <input
+              type="number"
+              id="loyaltyPointsToUse"
+              class="form-control"
+              placeholder="Enter points to use"
+            />
+            <button id="applyLoyaltyBtn" class="btn btn-warning mt-3">
+              Apply Loyalty Points
+            </button>
+          </div>
+          <p>
+            <strong>Final Bill After Loyalty Points: </strong
+            ><span id="finalBillAfterLoyalty">0</span> PKR
+          </p>
+        </div>
+      </div>
+  </body>
+</html>

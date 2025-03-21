@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Dashboard | EventSync</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    />
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
+        --dark-bg: #1f1f1f;
+        --sidebar-width: 250px;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #f8f9fa;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Navbar */
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 15px 20px;
+      }
+
+      .navbar-brand {
+        font-size: 22px;
+        font-weight: bold;
+      }
+
+      .navbar-nav .nav-link {
+        color: white !important;
+        font-size: 16px;
+        margin: 0 10px;
+        cursor: pointer;
+      }
+
+      .navbar-nav .nav-link:hover {
+        text-decoration: underline;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: var(--dark-bg);
+        position: fixed;
+        top: 0;
+        left: -250px;
+        padding: 20px;
+        color: white;
+        transition: 0.3s;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        transition: 0.3s;
+        cursor: pointer;
+      }
+
+      .sidebar a:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar-toggle {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+        z-index: 1100;
+        transition: left 0.3s;
+      }
+
+      .sidebar.active + .sidebar-toggle {
+        left: 270px;
+      }
+
+      /* Main Content */
+      .main-content {
+        padding: 40px;
+        transition: 0.3s;
+      }
+
+      .content-section {
+        display: none;
+      }
+
+      /* Profile Popup */
+      .profile-container {
+        position: relative;
+        display: inline-block;
+      }
+
+      .profile-card {
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+      }
+
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: #6a11cb;
+      }
+
+      .profile-details h3 {
+        font-size: 22px;
+      }
+
+      .profile-card:hover {
+        transform: scale(1.05);
+        transition: 0.3s ease-in-out;
+      }
+      .event-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 20px;
+        transition: transform 0.3s ease, background-color 0.3s ease,
+          box-shadow 0.3s ease;
+        border-radius: 8px;
+        margin: 20px;
+        width: 300px; /* Fixed width for event cards */
+        height: 350px; /* Fixed height for event cards */
+        overflow: hidden;
+        display: inline-block; /* Ensure cards align properly */
+      }
+
+      .event-card:hover {
+        transform: scale(1.05);
+        background-color: #f0f0f0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .event-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .event-card .card-body {
+        padding: 15px;
+      }
+
+      .event-card h5 {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+
+      .event-card p {
+        font-size: 14px;
+        color: #555;
+      }
+
+      /* Book Now Button */
+      .event-card .btn-book {
+        display: none;
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #2575fc;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 10;
+      }
+
+      .event-card:hover .btn-book {
+        display: block;
+      }
+
+      /* Ticket Select */
+      .ticket-select {
+        display: none;
+        margin-top: 10px;
+      }
+
+      .event-card:hover .ticket-select {
+        display: block;
+      }
+
+      .ticket-select select {
+        padding: 5px;
+        font-size: 14px;
+        border-radius: 5px;
+      }
+
+      .ticket-select button {
+        background-color: #6a11cb;
+        color: white;
+        padding: 5px 15px;
+        border: none;
+        border-radius: 5px;
+      }
+
+      .ticket-select button:hover {
+        background-color: #5b0dc8;
+      }
+
+      .event-card:hover .ticket-select button {
+        display: block;
+        margin-top: 10px;
+      }
+
+      /* Adjust Layout for Responsiveness */
+      @media screen and (max-width: 768px) {
+        .navbar {
+          padding: 10px 15px;
+        }
+
+        .navbar-brand {
+          font-size: 18px;
+        }
+
+        .navbar-nav .nav-link {
+          font-size: 14px;
+        }
+
+        .sidebar {
+          width: 200px;
+        }
+
+        .main-content {
+          padding: 20px;
+        }
+
+        .event-card {
+          width: 100%;
+          margin: 10px 0;
+        }
+
+        .ticket-select select {
+          width: 100%;
+        }
+
+        .ticket-select button {
+          width: 100%;
+        }
+      }
+      #redirectingMessage {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        font-size: 18px;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .loading-message .dots {
+        animation: dotAnimation 1s infinite step-start;
+      }
+
+      .loading-message .dots:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .loading-message .dots:nth-child(2) {
+        animation-delay: 0.3s;
+      }
+
+      .loading-message .dots:nth-child(3) {
+        animation-delay: 0.6s;
+      }
+
+      @keyframes dotAnimation {
+        50% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ✅ Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">EventSync</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('profileOverlay')"
+                >Account Info</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('upcomingEvents')"
+                >Upcoming Events</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('manageBookings')"
+                >Manage Bookings</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('bookEvent')"
+                >Book an Event</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('paymentMethods')"
+                >Manage Payments</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link logout-btn" onclick="logout()">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ✅ Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div>
+        <h4>Menu</h4>
+        <a onclick="showSection('profileOverlay')"
+          ><i class="bi bi-person"></i> Account Info</a
+        >
+        <a onclick="showSection('upcomingEvents')"
+          ><i class="bi bi-calendar-event"></i> Upcoming Events</a
+        >
+        <a onclick="showSection('manageBookings')"
+          ><i class="bi bi-list-check"></i> Manage Bookings</a
+        >
+        <a onclick="showSection('bookEvent')"
+          ><i class="bi bi-calendar-check"></i> Book an Event</a
+        >
+      </div>
+      <div class="sidebar-footer">
+        <a onclick="showSection('paymentMethods')"
+          ><i class="bi bi-credit-card"></i> Manage Payments</a
+        >
+        <a class="logout-btn" onclick="logout()"
+          ><i class="bi bi-box-arrow-right"></i> Logout</a
+        >
+      </div>
+    </div>
+
+    <!-- ✅ Sidebar Toggle Button -->
+    <div class="sidebar-toggle" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </div>
+
+    <!-- ✅ Main Content -->
+    <div class="main-content">
+      <!-- Account Info -->
+      <div class="container mt-4">
+        <div class="card profile-card shadow-lg border-0">
+          <div class="card-body d-flex align-items-center">
+            <!-- Profile Image -->
+            <div class="profile-avatar">
+              <i class="bi bi-person-circle"></i>
+            </div>
+
+            <!-- Profile Details -->
+            <div class="profile-details ms-4">
+              <h3 id="profileName" class="fw-bold mb-1">Loading...</h3>
+              <p class="text-muted mb-2">
+                <i class="bi bi-person-fill"></i>
+                <span id="profileUsername">@username</span>
+              </p>
+              <p class="text-muted mb-2">
+                <i class="bi bi-envelope-fill"></i>
+                <span id="profileEmail">example@example.com</span>
+              </p>
+              <p class="text-muted mb-2">
+                <i class="bi bi-telephone-fill"></i>
+                <span id="profilePhone">N/A</span>
+              </p>
+              <p class="text-muted mb-0">
+                <i class="bi bi-star-fill text-warning"></i>
+                <strong>Loyalty Points:</strong>
+                <span id="profilePoints" class="badge bg-warning text-dark fs-6"
+                  >0</span
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Events -->
+      <div id="upcomingEvents" class="content-section">
+        <h3>Upcoming Events</h3>
+      </div>
+
+      <!-- Manage Bookings -->
+      <div id="manageBookings" class="content-section">
+        <h3>Manage Bookings</h3>
+        <p>Here you can manage your booked events.</p>
+      </div>
+
+      <div id="bookEvent" class="content-section">
+        <h3>Book an Event</h3>
+        <!-- This is where event cards should be loaded -->
+        <div class="row" id="eventCards"></div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div id="paymentMethods" class="content-section">
+        <h3>Manage Payment Methods</h3>
+        <div id="paymentCards"></div>
+        <button class="btn btn-success mt-3">+ Add Payment Method</button>
+      </div>
+    </div>
+
+    <script>
+      const username = localStorage.getItem("username");
+      const email = localStorage.getItem("email");
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("active");
+      }
+
+      function logout() {
+        localStorage.setItem("loggedin", 0);
+        window.location.href = "index.html";
+      }
+      function showSection(sectionId) {
+        document.querySelectorAll(".content-section").forEach((section) => {
+          section.style.display = "none";
+        });
+
+        document.querySelector(".profile-card").style.display = "none"; // Hide profile card
+        document.getElementById("sidebar").classList.remove("active");
+
+        document.getElementById(sectionId).style.display = "block";
+      }
+
+      // Ensure profile card is visible when Account Info is selected
+      document.querySelectorAll(".nav-link, .sidebar a").forEach((link) => {
+        link.addEventListener("click", function () {
+          if (this.getAttribute("onclick").includes("profileOverlay")) {
+            document.querySelector(".profile-card").style.display = "flex";
+          }
+        });
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        fetchUserData();
+      });
+
+      function fetchUserData() {
+        const username = localStorage.getItem("username") || "testUser";
+
+        fetch(`http://localhost:3001/getbyusername/${username}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to fetch user data");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            document.getElementById("profileName").textContent = data.name;
+            document.getElementById(
+              "profileUsername"
+            ).textContent = `@${data.username}`;
+            document.getElementById("profileEmail").textContent = data.email;
+            document.getElementById("profilePhone").textContent =
+              data.phone || "N/A";
+            document.getElementById("profilePoints").textContent =
+              data.loyaltyPoints;
+          })
+          .catch((error) => console.error(error.message));
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        fetchEvents();
+      });
+
+      function fetchEvents() {
+        fetch("http://localhost:3003/get")
+          .then((response) => response.json())
+          .then((data) => {
+            const eventCardsContainer = document.getElementById("eventCards");
+            data.forEach((event) => {
+              const card = document.createElement("div");
+              card.classList.add("col-md-4");
+
+              card.innerHTML = `
+                <div class="event-card">
+                <div class="card-body">
+                  <h5 class="card-title"><strong>🎉 ${event.name} </strong></h5>
+                  <p><strong>📍 Venue:</strong> ${event.venue}</p>
+                  <p><strong>📅 Date:</strong> ${new Date(
+                    event.date
+                  ).toLocaleDateString()}</p>
+                  <p><strong>🎟️ Tickets Available:</strong> ${
+                    event.numberOfTickets
+                  }</p>
+                  <p><strong>💵 Price per Ticket:</strong> $${
+                    event.pricePerTicket
+                  }</p>
+                </div>
+                <div class="ticket-select">
+                  <select id="ticketSelect-${event._id}">
+                  ${Array.from(
+                    { length: event.numberOfTickets },
+                    (_, i) => `<option value="${i + 1}">${i + 1}</option>`
+                  ).join("")}
+                  </select>
+                </div>
+                  <button class="btn-book" onclick="bookEvent('${event._id}', ${
+                event.pricePerTicket
+              })">Book Now</button>
+                </div>
+
+              `;
+              eventCardsContainer.appendChild(card);
+            });
+          })
+          .catch((error) => console.error("Error fetching events:", error));
+      }
+
+      // Handle event booking
+      function bookEvent(eventId, pricePerTicket) {
+        const tickets = document.getElementById(
+          `ticketSelect-${eventId}`
+        ).value;
+
+        // Store the booked event details in localStorage
+        localStorage.setItem(
+          "bookedEvent",
+          JSON.stringify({ eventId, tickets, pricePerTicket, username })
+        );
+
+        // Show the redirecting message
+        const messageContainer = document.createElement("div");
+        messageContainer.id = "redirectingMessage";
+        messageContainer.innerHTML = `
+    <div class="loading-message">
+      Redirecting to payment gateway
+      <span class="dots">.</span>
+      <span class="dots">.</span>
+      <span class="dots">.</span>
+    </div>
+  `;
+        document.body.appendChild(messageContainer);
+
+        // Add transition for the loading message
+        setTimeout(() => {
+          document.querySelector(".loading-message").innerHTML =
+            "Please wait ...";
+        }, 1000);
+
+        // After 2 seconds, redirect to payment.html
+        setTimeout(() => {
+          window.location.href = "payment.html";
+        }, 2000);
+      }
+    </script>
+  </body>
+</html>

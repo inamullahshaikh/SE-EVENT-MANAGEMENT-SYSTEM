@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .hero {
+        background: linear-gradient(to bottom, #6a11cb, #2575fc);
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .hero img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+      }
+
+      .member img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">EventSync</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-primary text-white" href="login.html"
+                >Login</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="hero">
+      <img src="images/logo.png" alt="Logo" />
+      <h1>Welcome to EventSync</h1>
+      <p>Discover the best solutions with us</p>
+    </div>
+
+    <section id="about" class="container text-center py-5">
+      <h2>About Us</h2>
+      <div class="row mt-4">
+        <div class="col-md-4 member">
+          <img src="images/inam.png" alt="Member 1" />
+          <h4>Inam Ullah Shaikh</h4>
+          <p>Founder & CEO</p>
+        </div>
+        <div class="col-md-4 member">
+          <img src="images/emaan.png" alt="Member 2" />
+          <h4>Emman Fatima</h4>
+          <p>CTO</p>
+        </div>
+        <div class="col-md-4 member">
+          <img src="images/aden.png" alt="Member 3" />
+          <h4>Aden Syal</h4>
+          <p>Lead Designer</p>
+        </div>
+      </div>
+    </section>
+    <section
+      id="contact"
+      class="container py-5"
+      style="background: linear-gradient()"
+    >
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow-lg border-0 p-4">
+            <h2 class="text-center mb-4">Contact Us</h2>
+            <form>
+              <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Your Question</label>
+                <textarea
+                  class="form-control"
+                  rows="4"
+                  placeholder="Type your question here..."
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+      <p class="mb-0">&copy; 2025 EventSync. All Rights Reserved.</p>
+    </footer>
+  </body>
+</html>

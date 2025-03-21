@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Organizer Dashboard | EventSync</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    />
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
+        --dark-bg: #1f1f1f;
+        --light-bg: #f8f9fa;
+        --sidebar-width: 250px;
+        --alert-success-bg: #28a745;
+        --alert-error-bg: #dc3545;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--light-bg);
+        margin: 0;
+        padding: 0;
+      }
+
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 15px 20px;
+      }
+
+      .navbar-brand {
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .navbar-nav .nav-link {
+        color: white !important;
+        font-size: 16px;
+        margin: 0 10px;
+        cursor: pointer;
+      }
+
+      .navbar-nav .nav-link:hover {
+        text-decoration: underline;
+      }
+
+      .sidebar {
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: var(--dark-bg);
+        position: fixed;
+        top: 0;
+        left: -250px;
+        padding: 20px;
+        color: white;
+        transition: 0.3s;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 12px 15px;
+        font-size: 16px;
+        margin-bottom: 12px;
+        border-radius: 5px;
+        transition: 0.3s;
+        cursor: pointer;
+      }
+
+      .sidebar a:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+      }
+
+      .sidebar-toggle {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+        z-index: 1100;
+        transition: left 0.3s;
+      }
+
+      .sidebar.active + .sidebar-toggle {
+        left: 270px;
+      }
+
+      .main-content {
+        padding: 40px;
+        margin-left: var(--sidebar-width);
+        transition: 0.3s;
+      }
+      .btn-primary {
+        background-color: #007bff; /* Add a blue color */
+        color: white; /* Ensure the text is white */
+        border: none; /* Remove border */
+        padding: 10px 20px; /* Add padding */
+        font-size: 16px; /* Adjust font size */
+        border-radius: 5px; /* Add rounded corners */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3; /* Darker shade of blue on hover */
+        cursor: pointer;
+        transform: translateY(-10px); /* Slight lift on hover */
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Change cursor to pointer on hover */
+      }
+
+      .btn-primary:focus {
+        outline: none; /* Remove the outline when focused */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a glow effect when focused */
+      }
+
+      .content-section {
+        display: none;
+      }
+
+      .alert {
+        font-size: 16px;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-weight: bold;
+      }
+
+      .alert-success {
+        background-color: var(--alert-success-bg);
+        color: white;
+      }
+
+      .alert-danger {
+        background-color: var(--alert-error-bg);
+        color: white;
+      }
+
+      .content-section h3 {
+        font-size: 28px;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        font-weight: 500;
+        font-size: 16px;
+      }
+
+      .form-control {
+        border-radius: 8px;
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+      #createEvent .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      /* On hover, apply the popout effect */
+
+      /* On hover, apply the popout effect */
+      #createEvent .card:hover {
+        transform: translateY(-10px); /* Slight lift on hover */
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Add shadow for emphasis */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">EventSync - Organizer</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('createEvent')">
+                <i class="bi bi-calendar-plus"></i> Create Event
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('updateEvent')">
+                <i class="bi bi-pencil-square"></i> Update Event
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link logout-btn" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div>
+        <h4>Organizer Panel</h4>
+        <a onclick="showSection('createEvent')">
+          <i class="bi bi-calendar-plus"></i> Create Event
+        </a>
+        <a onclick="showSection('updateEvent')">
+          <i class="bi bi-pencil-square"></i> Update Event
+        </a>
+        <a onclick="showSection('deleteEvent')">
+          <i class="bi bi-trash"></i> Delete Event
+        </a>
+        <a onclick="showSection('removeAttendee')">
+          <i class="bi bi-person-x"></i> Remove Attendee
+        </a>
+        <a onclick="showSection('generateAnalysis')">
+          <i class="bi bi-bar-chart"></i> Generate Analysis
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a class="logout-btn" onclick="logout()">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Sidebar Toggle Button -->
+    <div class="sidebar-toggle" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Create Event Section -->
+      <div class="container mt-5" id="createEvent">
+        <div class="row">
+          <div class="col-md-6 offset-md-1">
+            <div class="card shadow-lg">
+              <div class="card-body">
+                <h3 class="card-title text-center mb-4">Create Event</h3>
+                <form id="createEventForm">
+                  <div class="mb-3">
+                    <label for="eventName" class="form-label">Event Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="eventName"
+                      placeholder="Enter event name"
+                      required
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="eventVenue" class="form-label">Venue</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="eventVenue"
+                      placeholder="Enter event venue"
+                      required
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="eventDate" class="form-label">Event Date</label>
+                    <input
+                      type="datetime-local"
+                      class="form-control"
+                      id="eventDate"
+                      required
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="numTickets" class="form-label"
+                      >Number of Tickets</label
+                    >
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="numTickets"
+                      placeholder="Enter number of tickets"
+                      required
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="pricePerTicket" class="form-label"
+                      >Price per Ticket</label
+                    >
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="pricePerTicket"
+                      placeholder="Enter price per ticket"
+                      required
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <button
+                      type="submit"
+                      class="btn btn-primary w-100"
+                      id="butt"
+                    >
+                      Create Event
+                    </button>
+                  </div>
+                </form>
+                <div id="createEventMessage" class="mt-3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="updateEvent" class="content-section">
+        <h3>Update Event</h3>
+        <button class="btn btn-primary">Update Event</button>
+      </div>
+
+      <div id="deleteEvent" class="content-section">
+        <h3>Delete Event</h3>
+        <button class="btn btn-danger">Delete Event</button>
+      </div>
+
+      <div id="removeAttendee" class="content-section">
+        <h3>Remove Attendee</h3>
+        <button class="btn btn-danger">Remove Attendee</button>
+      </div>
+
+      <div id="generateAnalysis" class="content-section">
+        <h3>Generate Event Analysis</h3>
+        <button class="btn btn-primary" onclick="generateAnalysis()">
+          Generate Analysis
+        </button>
+        <div id="analysisResults" class="mt-3"></div>
+      </div>
+    </div>
+
+    <script>
+      const username = localStorage.getItem("username");
+      const email = localStorage.getItem("email");
+      console.log(username, email);
+      if (!username || !email) {
+        window.href = "index.html";
+      }
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("active");
+      }
+
+      function logout() {
+        localStorage.setItem("loggedin", 0);
+        window.location.href = "index.html";
+      }
+
+      function showSection(sectionId) {
+        document.querySelectorAll(".content-section").forEach((section) => {
+          section.style.display = "none";
+        });
+        document.getElementById("createEvent").style.display = "none";
+        document.getElementById("sidebar").classList.remove("active");
+        document.getElementById(sectionId).style.display = "block";
+      }
+
+      function generateAnalysis() {
+        document.getElementById("analysisResults").innerHTML =
+          "<p>Event Analysis Generated!</p>";
+      }
+      // Handle the form submission to create an event
+      document
+        .getElementById("createEventForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent the form from submitting the traditional way
+
+          // Get the form data
+          const eventName = document.getElementById("eventName").value;
+          const eventVenue = document.getElementById("eventVenue").value;
+          const eventDate = document.getElementById("eventDate").value;
+          const numTickets = document.getElementById("numTickets").value;
+          const pricePerTicket =
+            document.getElementById("pricePerTicket").value;
+          const eventOrg = username;
+
+          // Create the event object
+          const eventData = {
+            name: eventName,
+            venue: eventVenue,
+            date: new Date(eventDate),
+            numberOfTickets: numTickets,
+            pricePerTicket: pricePerTicket,
+            eventOrg: eventOrg,
+          };
+
+          // Send the POST request to create the event
+          fetch("http://localhost:3003/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(eventData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.message) {
+                // Success
+                document.getElementById(
+                  "createEventMessage"
+                ).innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                // Optionally, you can reset the form here
+                document.getElementById("createEventForm").reset();
+              } else if (data.error) {
+                // Error
+                document.getElementById(
+                  "createEventMessage"
+                ).innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+              }
+            })
+            .catch((error) => {
+              // Handle error
+              document.getElementById(
+                "createEventMessage"
+              ).innerHTML = `<div class="alert alert-danger">Something went wrong! Please try again later.</div>`;
+            });
+        });
+    </script>
+  </body>
+</html>

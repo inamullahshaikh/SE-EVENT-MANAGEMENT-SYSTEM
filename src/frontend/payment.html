@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Payment</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Navbar */
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 15px 20px;
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+      }
+
+      .navbar-brand {
+        font-size: 22px;
+        font-weight: bold;
+      }
+
+      .navbar-nav .nav-link {
+        color: white !important;
+        font-size: 16px;
+        margin: 0 10px;
+        cursor: pointer;
+      }
+
+      .navbar-nav .nav-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+    <script>
+        let tp = 0;
+        async function loadEventData() {
+  const bookedEvent = JSON.parse(localStorage.getItem("bookedEvent"));
+  if (!bookedEvent) {
+    alert("No booked event found.");
+    return;
+  }
+
+  const username = bookedEvent.username;
+  const myButton = document.getElementById("applyLoyaltyBtn");
+  const loyaltyPointsSpan = document.getElementById("loyaltyPoints");
+  const totalPriceSpan = document.getElementById("totalPrice");
+  const totalBillSpan = document.getElementById("finalTotal");
+  const finalBillSpan = document.getElementById("finalBillAfterLoyalty");
+
+  const { eventId, tickets, pricePerTicket } = bookedEvent;
+
+  try {
+    // Fetch event data
+    const eventResponse = await fetch(`http://localhost:3003/get/${eventId}`);
+    if (!eventResponse.ok) {
+      throw new Error("Error fetching event data");
+    }
+    const event = await eventResponse.json();
+
+    if (event) {
+      const eventNameElem = document.getElementById("eventName");
+      const ticketCountElem = document.getElementById("ticketCount");
+      const ticketPriceElem = document.getElementById("ticketPrice");
+
+      if (eventNameElem) eventNameElem.innerText = event.name;
+      if (ticketCountElem) ticketCountElem.innerText = tickets;
+      if (ticketPriceElem) ticketPriceElem.innerText = pricePerTicket;
+
+      const totalPrice = tickets * pricePerTicket;
+      if (totalPriceSpan) totalPriceSpan.innerText = totalPrice;
+
+      const platformFee = totalPrice * 0.15;
+      if (document.getElementById("platformFee")) {
+        document.getElementById("platformFee").innerText = platformFee;
+      }
+
+      const totalBill = totalPrice + platformFee;
+      if (totalBillSpan) totalBillSpan.innerText = totalBill;
+
+      // Fetch user loyalty points
+      const userResponse = await fetch(`http://localhost:3001/getbyusername/${username}`);
+      if (!userResponse.ok) {
+        throw new Error("Error fetching user loyalty points");
+      }
+      const userObj = await userResponse.json();
+      const loyaltyPoints = userObj.loyaltyPoints;
+
+      if (loyaltyPointsSpan) loyaltyPointsSpan.innerText = loyaltyPoints;
+
+      // Fetch payment methods
+      const paymentResponse = await fetch(`http://localhost:3007/get-by-attendee/${username}`);
+      if (!paymentResponse.ok) {
+        throw new Error("Error fetching payment methods");
+      }
+      const payments = await paymentResponse.json();
+
+      const paymentDropdown = document.getElementById("paymentMethod");
+      if (paymentDropdown) {
+        paymentDropdown.innerHTML = ""; // Clear existing options
+        if (payments.length > 0) {
+          payments.forEach((payment) => {
+            const option = document.createElement("option");
+            option.value = payment.cardNumber;
+            option.innerText = `${payment.cardType} ending in ${payment.cardNumber.slice(-4)}`;
+            paymentDropdown.appendChild(option);
+          });
+        } else {
+          const option = document.createElement("option");
+          option.value = "";
+          option.innerText = "No payment methods found";
+          paymentDropdown.appendChild(option);
+        }
+      }
+
+      // Event listener for applying loyalty points
+      if (myButton) {
+        myButton.addEventListener("click", function () {
+          const loyaltyPointsToUse = parseInt(document.getElementById("loyaltyPointsToUse").value);
+          const availablePoints = parseInt(loyaltyPointsSpan.innerText);
+
+          if (isNaN(loyaltyPointsToUse) || loyaltyPointsToUse < 0) {
+            alert("Please enter a valid number of loyalty points.");
+            return;
+          }
+          console.log(loyaltyPointsToUse,availablePoints);
+          if (loyaltyPointsToUse > availablePoints) {
+            alert("Insufficient loyalty points.");
+            return;
+          }
+
+          // Calculate the final bill after loyalty points
+          const totalBill = parseFloat(totalBillSpan.innerText);
+          const finalBill = totalBill - loyaltyPointsToUse;
+          tp = finalBill;
+          if (finalBillSpan) finalBillSpan.innerText = finalBill.toFixed(2);
+        });
+      }
+    } else {
+      alert("Event details not found.");
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    alert("Error fetching event data or payment methods.");
+  }
+}
+
+
+      window.onload = loadEventData;
+
+      // Function to validate card number using the Luhn algorithm
+      function validateCardNumber(cardNumber) {
+        if(cardNumber.length<16)
+          return false;
+        return true;
+      }
+
+      // Function to check if a string is in MM/YY format
+      function isValidDate(dateString) {
+        const regex = /^(0[1-9]|1[0-2])\/\d{2}$/; // MM/YY format
+        return regex.test(dateString);
+      }
+
+      // Function to check if the expiry date is in the future
+      function isExpiryDateValid(expiryDate) {
+        const today = new Date();
+        const [month, year] = expiryDate.split("/");
+        const expiry = new Date(`20${year}`, month - 1); // MM/YY -> Date object
+
+        return expiry > today;
+      }
+
+      // Function to validate CVC (3-digit number)
+      function isValidCVC(cvc) {
+        return /^\d{3}$/.test(cvc); // Check if it's a 3-digit number
+      }
+
+      // Handling form submission// Handling form submission
+      function addPaymentMethod() {
+
+            event.preventDefault(); // Prevent form submission for validation
+
+            const card = document.getElementById("cardNumber").value;
+            const Name = document.getElementById("cardHolderName").value;
+            const Issue = document.getElementById("dateOfIssue").value;
+            const Expiry = document.getElementById("dateOfExpiry").value;
+            const cvs = document.getElementById("cvc").value;
+
+            // Check if all required fields are filled
+            if (!card || !Name || !Issue || !Expiry || !cvs) {
+              alert("Please fill in all fields.");
+              return;
+            }
+
+            // Validate card number
+            if (!validateCardNumber(card)) {
+              alert("Invalid card number.");
+              return;
+            }
+
+            // Validate date format (MM/YY)
+            if (!isValidDate(Issue) || !isValidDate(Expiry)) {
+              alert("Invalid date format. Please use MM/YY.");
+              return;
+            }
+
+            // Check if expiry date is valid (future date)
+            if (!isExpiryDateValid(Expiry)) {
+              alert("Card has expired.");
+              return;
+            }
+
+            // Validate CVC
+            if (!isValidCVC(cvs)) {
+              alert("Invalid CVC. It should be a 3-digit number.");
+              return;
+            }
+
+            // If all validations pass, you can proceed to submit the form (e.g., making an API request)
+            alert("Payment method is valid! Proceeding with API request...");
+            const cardNumber = document.getElementById("cardNumber").value;
+            const cardHolderName =
+              document.getElementById("cardHolderName").value;
+            const dateOfIssue = document.getElementById("dateOfIssue").value;
+            const dateOfExpiry = document.getElementById("dateOfExpiry").value;
+            const cvc = document.getElementById("cvc").value;
+            const username = JSON.parse(
+              localStorage.getItem("bookedEvent")
+            ).username;
+
+            const newPayment = {
+              cardNumber,
+              cardHolderName,
+              dateOfIssue,
+              dateOfExpiry,
+              cvc,
+              attendee: username,
+            };
+
+            fetch("http://localhost:3007/create", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(newPayment),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.message === "Payment created successfully") {
+                  alert("Payment method added successfully.");
+                  loadEventDetails(); // Reload the page to show updated payment methods
+                } else {
+                  alert(data.message);
+                }
+              })
+              .catch((error) => {
+                console.error("Error adding payment method:", error);
+                alert("Error adding payment method.");
+              });
+          
+      }
+      async function RegisterBooking() {
+  const bookedEvent = JSON.parse(localStorage.getItem("bookedEvent"));
+  if (!bookedEvent) {
+    alert("No booked event found.");
+    return;
+  }
+
+  const username = bookedEvent.username;
+  const { eventId, tickets, pricePerTicket } = bookedEvent;
+
+  const totalPayment = document.getElementById("finalBillAfterLoyalty");
+  console.log(tp);
+
+  try {
+    const bookingData = {
+      username,
+      eventId,
+      ticketsPurchased: tickets,
+      tp,
+    };
+    console.log(bookingData);
+    // Call the backend API to create a booking
+    const response = await fetch("http://localhost:3004/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bookingData),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert("Booking successful. Confirmation email sent.");
+      console.log("Booking details:", result.booking);
+      localStorage.removeItem("bookedEvent");
+      window.location.href = "attendee-dashboard.html"; // Redirect to the home page
+    } else {
+      alert(result.message || "Error occurred during booking.");
+    }
+  } catch (error) {
+    console.error("Error registering booking:", error);
+    alert("Error occurred while registering the booking.");
+  }
+}
+
+      // Call the function on page load
+      
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">EventSync - Payment Portal</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto"></ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h2>Event Payment</h2>
+
+      <!-- Event Details Card -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Event Details</h5>
+          <p>
+            <strong>Event Name: </strong><span id="eventName">Loading...</span>
+          </p>
+          <p>
+            <strong>Tickets Purchased: </strong><span id="ticketCount">0</span>
+          </p>
+          <p>
+            <strong>Price per Ticket (PKR): </strong
+            ><span id="ticketPrice">0</span>
+          </p>
+          <div class="total-info">
+            <p>
+              <strong>Total Price: </strong><span id="totalPrice">0</span> PKR
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bill Calculation Card -->
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Bill Calculation</h5>
+          <p>
+            <strong>Platform Fee (15%): </strong
+            ><span id="platformFee">0</span> PKR
+          </p>
+          <p>
+            <strong>Total Bill (with Fee): </strong
+            ><span id="finalTotal">0</span> PKR
+          </p>
+          <p>
+            <strong>Loyalty Points (Available): </strong
+            ><span id="loyaltyPoints">0</span>
+          </p>
+          <div>
+            <label for="loyaltyPointsToUse">Use Loyalty Points: </label>
+            <input
+              type="number"
+              id="loyaltyPointsToUse"
+              class="form-control"
+              placeholder="Enter points to use"
+            />
+            <button id="applyLoyaltyBtn" class="btn btn-warning mt-3">
+              Apply Loyalty Points
+            </button>
+          </div>
+          <p>
+            <strong>Final Bill After Loyalty Points: </strong
+            ><span id="finalBillAfterLoyalty">0</span> PKR
+          </p>
+        </div>
+      </div>
+
+      <!-- Payment Method Card -->
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Payment Method</h5>
+          <select id="paymentMethod" class="form-select">
+            <option value="">Select Payment Method</option>
+          </select>
+          <div class="mt-3">
+            <button
+              id="addPaymentMethodBtn"
+              class="btn btn-info"
+              data-bs-toggle="modal"
+              data-bs-target="#addPaymentModal"
+            >
+              + Add Payment Method
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal for Adding Payment Method -->
+      <div
+        class="modal fade"
+        id="addPaymentModal"
+        tabindex="-1"
+        aria-labelledby="addPaymentModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog"id=>
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addPaymentModalLabel">
+                Add New Payment Method
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form id="paymentForm">
+                <div class="mb-3">
+                  <label for="cardNumber" class="form-label">Card Number</label>
+                  <input
+                    type="text"
+                    id="cardNumber"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="cardHolderName" class="form-label"
+                    >Card Holder Name</label
+                  >
+                  <input
+                    type="text"
+                    id="cardHolderName"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="dateOfIssue" class="form-label"
+                    >Date of Issue (MM/YY)</label
+                  >
+                  <input
+                    type="text"
+                    id="dateOfIssue"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="dateOfExpiry" class="form-label"
+                    >Date of Expiry (MM/YY)</label
+                  >
+                  <input
+                    type="text"
+                    id="dateOfExpiry"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="cvc" class="form-label">CVC</label>
+                  <input type="text" id="cvc" class="form-control" required />
+                </div>
+                <button
+                  type="submitpayment"
+                  class="btn btn-primary"
+                  onclick="addPaymentMethod()"
+                >
+                  Add Payment Method
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Proceed to Payment Button -->
+      <div class="d-flex justify-content-end mt-4">
+        <button class="btn btn-primary" onclick="RegisterBooking()">Proceed to Payment</button>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

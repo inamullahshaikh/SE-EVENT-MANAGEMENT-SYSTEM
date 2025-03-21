@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <style>
+      body {
+        background: linear-gradient(to bottom, #6a11cb, #2575fc);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: "Poppins", sans-serif;
+      }
+      .card {
+        width: 360px;
+        padding: 2rem;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+      }
+      .card:hover {
+        transform: scale(1.02);
+      }
+      .form-control {
+        border-radius: 8px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+      .btn-primary {
+        background-color: #2575fc;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(37, 117, 252, 0.5);
+        transition: all 0.3s ease;
+      }
+      .btn-primary:hover {
+        background-color: #1a5cc8;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(37, 117, 252, 0.7);
+      }
+      .links a {
+        text-decoration: none;
+        font-weight: 500;
+        color: #2575fc;
+        transition: color 0.3s ease;
+      }
+      .links a:hover {
+        color: #1a5cc8;
+      }
+      footer {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        position: absolute;
+        bottom: 10px;
+        color: #ffffff;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card text-center shadow-lg">
+      <h2 class="mb-4">Login</h2>
+      <form id="loginForm">
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="identifier"
+            placeholder="Email or Username"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            placeholder="Password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+      </form>
+      <div class="links mt-3">
+        <a href="signup.html">Sign Up</a> |
+        <a href="forgotten-password.html">Forgot Password?</a>
+      </div>
+    </div>
+
+    <footer>&copy; 2025 EventSync. All rights reserved.</footer>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent default form submission
+
+          let identifier = document.getElementById("identifier").value.trim();
+          let password = document.getElementById("password").value;
+          let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          let option = emailRegex.test(identifier) ? 1 : 2;
+
+          // 🔹 Hardcoded Admin Login
+          if (
+            identifier === "admin" ||
+            identifier === "inamullahshaikh01@gmail.com"
+          ) {
+            if (password === "adminpass") {
+              console.log("✅ Admin Login Successful!");
+              alert("Admin login successful!");
+
+              localStorage.setItem("username", "admin");
+              localStorage.setItem("email", "admin@example.com");
+              localStorage.setItem("loggedin", 1);
+              localStorage.setItem("type", 3);
+
+              window.location.href = "admin-dashboard.html"; // Redirect to admin panel
+              return;
+            }
+          }
+
+          let url =
+            option === 1
+              ? `http://localhost:3000/getbyemail/${identifier}`
+              : `http://localhost:3000/getbyusername/${identifier}`;
+
+          console.log(
+            `🔹 Fetching user data using ${
+              option === 1 ? "email" : "username"
+            }: ${identifier}`
+          );
+
+          try {
+            let userResponse = await fetch(url);
+            let userData = await userResponse.json(); // Parse JSON first
+
+            if (!userResponse.ok)
+              throw new Error(userData.message || "User not found");
+
+            let user = userData;
+            let type = user.type;
+            console.log(`✅ User Found: ${JSON.stringify(user)}`);
+            console.log(`🔹 User Type: ${type}`);
+
+            let loginUrl =
+              type === 1
+                ? "http://localhost:3006/login" // Attendee Login API
+                : "http://localhost:3001/login"; // Organizer Login API
+
+            console.log(`🔹 Logging in via: ${loginUrl}`);
+
+            let loginResponse = await fetch(loginUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: option === 1 ? identifier : undefined,
+                username: option === 2 ? identifier : undefined,
+                password: password,
+              }),
+            });
+
+            let loginData = await loginResponse.json(); // Parse JSON first
+
+            if (!loginResponse.ok)
+              throw new Error(loginData.message || "Invalid credentials");
+
+            console.log(`✅ Login Successful: ${JSON.stringify(loginData)}`);
+            alert("Login successful!");
+
+            // ✅ Store user session
+            localStorage.setItem("username", user.username);
+            localStorage.setItem("email", user.email);
+            localStorage.setItem("loggedin", 1);
+            localStorage.setItem("type", type);
+
+            // ✅ Redirect based on user type
+            if (type === 2) {
+              window.location.href = "attendee-dashboard.html";
+            } else if (type === 1) {
+              window.location.href = "evorg-dashboard.html";
+            }
+          } catch (error) {
+            console.error("❌ Login Error:", error.message);
+            alert(error.message); // Show the actual error message
+          }
+        });
+    </script>
+
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

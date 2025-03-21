@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | EventSync</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    />
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
+        --dark-bg: #1f1f1f;
+        --sidebar-width: 250px;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #f8f9fa;
+      }
+      /* Container for the buttons */
+      .button-container {
+        display: flex;
+        gap: 10px;
+      }
+
+      /* Base styles for the buttons */
+      button {
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: inline-block;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Approve button styles */
+      .btn-approve {
+        background-color: #28a745; /* Green */
+        color: white;
+      }
+
+      .btn-approve:hover {
+        transform: scale(1.1); /* Slightly grow on hover */
+        box-shadow: 0 6px 12px rgba(40, 167, 69, 0.2);
+      }
+
+      /* Delete button styles */
+      .btn-delete {
+        background-color: #dc3545; /* Red */
+        color: white;
+      }
+
+      .btn-delete:hover {
+        transform: scale(1.1); /* Slightly grow on hover */
+        box-shadow: 0 6px 12px rgba(220, 53, 69, 0.2);
+      }
+
+      /* Add a smooth transition effect when hovering over the card */
+      .card {
+        transition: transform 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px); /* Slightly lift the card on hover */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 15px 20px;
+      }
+
+      .navbar-brand {
+        font-size: 22px;
+        font-weight: bold;
+      }
+
+      .navbar-nav .nav-link {
+        color: white !important;
+        font-size: 16px;
+        margin: 0 10px;
+        cursor: pointer;
+      }
+
+      .navbar-nav .nav-link:hover {
+        text-decoration: underline;
+      }
+
+      .sidebar {
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: var(--dark-bg);
+        position: fixed;
+        top: 0;
+        left: -250px;
+        padding: 20px;
+        color: white;
+        transition: 0.3s;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        transition: 0.3s;
+        cursor: pointer;
+      }
+
+      .sidebar a:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar-toggle {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+        z-index: 1100;
+        transition: left 0.3s;
+      }
+
+      .sidebar.active + .sidebar-toggle {
+        left: 270px;
+      }
+
+      .main-content {
+        padding: 40px;
+        transition: 0.3s;
+      }
+
+      .content-section {
+        display: none;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ✅ Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a id="wow" class="navbar-brand" href="#">EventSync - Admin</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('manageRequests')"
+                >Manage Organizer Requests</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('generateAnalysis')"
+                >Generate Event Analysis</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('removeOrganizer')"
+                >Remove Event Organizer</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link logout-btn" onclick="logout()">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ✅ Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div>
+        <h4>Admin Panel</h4>
+        <a onclick="showSection('manageRequests')"
+          ><i class="bi bi-person-plus"></i> Manage Requests</a
+        >
+        <a onclick="showSection('generateAnalysis')"
+          ><i class="bi bi-graph-up"></i> Event Analysis</a
+        >
+        <a onclick="showSection('removeOrganizer')"
+          ><i class="bi bi-person-dash"></i> Remove Organizer</a
+        >
+      </div>
+      <div class="sidebar-footer">
+        <a class="logout-btn" onclick="logout()"
+          ><i class="bi bi-box-arrow-right"></i> Logout</a
+        >
+      </div>
+    </div>
+
+    <!-- ✅ Sidebar Toggle Button -->
+    <div class="sidebar-toggle" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </div>
+
+    <!-- ✅ Main Content -->
+    <div class="main-content">
+      <!-- Manage Event Organizer Requests -->
+      <div id="manageRequests" class="content-section">
+        <h3>Manage Event Organizer Requests</h3>
+        <div id="requestsList"></div>
+      </div>
+
+      <!-- Generate Event Analysis -->
+      <div id="generateAnalysis" class="content-section">
+        <h3>Generate Event Analysis</h3>
+        <button class="btn btn-primary" onclick="generateAnalysis()">
+          Generate Analysis
+        </button>
+        <div id="analysisResults" class="mt-3"></div>
+      </div>
+
+      <!-- Remove Event Organizer -->
+      <div id="removeOrganizer" class="content-section">
+        <h3>Remove Event Organizer</h3>
+        <form id="removeOrganizerForm">
+          <div class="mb-3">
+            <label class="form-label">Organizer Username</label>
+            <input
+              type="text"
+              class="form-control"
+              id="organizerUsername"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-danger">Remove</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("active");
+        document.getElementById("wow").style.display = "none";
+      }
+
+      function logout() {
+        localStorage.setItem("loggedin", 0);
+        window.location.href = "index.html";
+      }
+
+      function showSection(sectionId) {
+        document.querySelectorAll(".content-section").forEach((section) => {
+          section.style.display = "none";
+        });
+
+        document.getElementById("sidebar").classList.remove("active");
+        document.getElementById("wow").style.display = "block";
+
+        document.getElementById(sectionId).style.display = "block";
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        fetchOrganizerRequests();
+      });
+
+      function fetchOrganizerRequests() {
+        fetch("http://localhost:3006/api/pending-requests")
+          .then((response) => response.json())
+          .then((data) => {
+            let requestsHTML = "";
+            data.forEach((req) => {
+              requestsHTML += `
+          <div class="card p-3 mb-2">
+            <p><strong>Name:</strong> ${req.name}</p>
+            <p><strong>Email:</strong> ${req.email}</p>
+            <p><strong>Username:</strong> ${req.username}</p>
+            <p><strong>Phone:</strong> ${req.phone}</p>
+            <p><strong>Status:</strong> ${req.status}</p>
+            <div class="button-container">
+              <button class="btn-approve" onclick="approveOrganizer('${req.username}')">Approve</button>
+              <button class="btn-delete" onclick="deleteOrganizer('${req.username}')">Delete</button>
+            </div>
+          </div>`;
+            });
+            document.getElementById("requestsList").innerHTML = requestsHTML;
+          })
+          .catch(() => console.error("Failed to fetch requests"));
+      }
+
+      function approveOrganizer(username) {
+        fetch(`http://localhost:3006/accept/${username}`, {
+          method: "PUT",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert("Organizer Approved!");
+            fetchOrganizerRequests(); // Refresh the requests list
+          })
+          .catch(() => alert("Failed to approve organizer"));
+      }
+
+      function deleteOrganizer(username) {
+        fetch(`http://localhost:3006/delete/${username}`, {
+          method: "DELETE",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert("Organizer Deleted!");
+            fetchOrganizerRequests(); // Refresh the requests list
+          })
+          .catch(() => alert("Failed to delete organizer"));
+      }
+
+      function generateAnalysis() {
+        document.getElementById("analysisResults").innerHTML =
+          "<p>Analysis Generated!</p>";
+      }
+    </script>
+  </body>
+</html>

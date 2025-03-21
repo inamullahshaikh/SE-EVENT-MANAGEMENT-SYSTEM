@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <style>
+      .wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+
+      body {
+        background: linear-gradient(to bottom, #6a11cb, #2575fc);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+      }
+
+      .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 100vh;
+      }
+
+      .card {
+        width: 400px;
+        padding: 2rem;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+      }
+
+      footer {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        color: #ffffff;
+        font-size: 14px;
+        background: transparent;
+      }
+      .card:hover {
+        transform: scale(1.02);
+      }
+      .form-control {
+        border-radius: 8px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+      .btn-primary {
+        background-color: #2575fc;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(37, 117, 252, 0.5);
+        transition: all 0.3s ease;
+      }
+      .btn-primary:hover {
+        background-color: #1a5cc8;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(37, 117, 252, 0.7);
+      }
+      .links a {
+        text-decoration: none;
+        font-weight: 500;
+        color: #2575fc;
+        transition: color 0.3s ease;
+      }
+      .links a:hover {
+        color: #1a5cc8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card text-center shadow-lg">
+      <h2 class="mb-4">Sign Up</h2>
+      <form id="signupForm">
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            placeholder="Full Name"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            placeholder="Email"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            placeholder="Username"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            placeholder="Password"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="phoneNumber"
+            placeholder="Phone Number"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+      </form>
+      <div class="links mt-3">
+        <a href="login.html">Already have an account? Login</a>
+      </div>
+      <div class="links mt-3">
+        <a href="signup.html">Sign up as Attendee</a>
+      </div>
+    </div>
+    <footer>&copy; 2025 YourWebsite. All rights reserved.</footer>
+
+    <script>
+      document
+        .getElementById("signupForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const name = document.getElementById("name").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const username = document.getElementById("username").value.trim();
+          const password = document.getElementById("password").value;
+          const phone = document.getElementById("phoneNumber").value.trim();
+
+          // 🔹 Prevent restricted username and email
+          if (username.toLowerCase() === "admin") {
+            alert("❌ Username 'admin' is not allowed.");
+            return;
+          }
+
+          if (email.toLowerCase() === "inamullahshaikh01@gmail.com") {
+            alert("❌ This email is not allowed.");
+            return;
+          }
+
+          try {
+            const response = await fetch("http://localhost:3006/register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name,
+                email,
+                username,
+                password,
+                phone,
+              }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              alert("✅ Registration successful! You can now log in.");
+              window.location.href = "login.html";
+            } else {
+              alert(`❌ ${data.error}`);
+            }
+          } catch (error) {
+            alert("❌ Error connecting to server.");
+          }
+        });
+    </script>
+
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
