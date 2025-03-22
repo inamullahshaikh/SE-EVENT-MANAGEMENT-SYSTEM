@@ -102,13 +102,14 @@
         <div class="col-md-6">
           <div class="card shadow-lg border-0 p-4">
             <h2 class="text-center mb-4">Contact Us</h2>
-            <form>
+            <form id="contactForm">
               <div class="mb-3">
                 <label class="form-label">Name</label>
                 <input
                   type="text"
                   class="form-control"
                   placeholder="Enter your name"
+                  id="name"
                   required
                 />
               </div>
@@ -118,6 +119,7 @@
                   type="email"
                   class="form-control"
                   placeholder="Enter your email"
+                  id="email"
                   required
                 />
               </div>
@@ -127,6 +129,7 @@
                   class="form-control"
                   rows="4"
                   placeholder="Type your question here..."
+                  id="question"
                   required
                 ></textarea>
               </div>
@@ -144,4 +147,45 @@
       <p class="mb-0">&copy; 2025 EventSync. All Rights Reserved.</p>
     </footer>
   </body>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    // Function to handle form submission
+    document
+      .getElementById("contactForm")
+      .addEventListener("submit", async (event) => {
+        event.preventDefault(); // Prevent the default form submission
+
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const question = document.getElementById("question").value;
+
+        if (!name || !email || !question) {
+          alert("Please fill in all the fields.");
+          return;
+        }
+
+        try {
+          const response = await fetch("http://localhost:3008/createquestion", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name,
+              email,
+              question,
+            }),
+          });
+
+          if (response.ok) {
+            alert("Your question has been submitted successfully!");
+            // Optionally clear the form after submission
+            document.getElementById("contactForm").reset();
+          }
+        } catch (error) {
+          console.error("Error submitting question:", error);
+          alert(
+            "There was an error submitting your question. Please try again later."
+          );
+        }
+      });
+  </script>
 </html>

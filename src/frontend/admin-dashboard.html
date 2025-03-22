@@ -62,12 +62,22 @@
 
       /* Add a smooth transition effect when hovering over the card */
       .card {
-        transition: transform 0.3s ease;
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
 
       .card:hover {
-        transform: translateY(-5px); /* Slightly lift the card on hover */
+        transform: translateY(-5px);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .card .answer-box {
+        display: none;
+        margin-top: 10px;
+      }
+
+      .card.expanded .answer-box {
+        display: block;
       }
 
       .navbar {
@@ -186,6 +196,7 @@
                 >Remove Event Organizer</a
               >
             </li>
+            <li class="nav-item"></li>
             <li class="nav-item">
               <a class="nav-link logout-btn" onclick="logout()">Logout</a>
             </li>
@@ -207,6 +218,9 @@
         <a onclick="showSection('removeOrganizer')"
           ><i class="bi bi-person-dash"></i> Remove Organizer</a
         >
+        <a onclick="showSection('manageQueries')">
+          <i class="bi bi-question-circle"></i> Manage Queries
+        </a>
       </div>
       <div class="sidebar-footer">
         <a class="logout-btn" onclick="logout()"
@@ -253,6 +267,12 @@
           <button type="submit" class="btn btn-danger">Remove</button>
         </form>
       </div>
+
+      <!-- Manage Queries -->
+      <div id="manageQueries" class="content-section">
+        <h3>Unanswered Queries</h3>
+        <div id="queriesList"></div>
+      </div>
     </div>
 
     <script>
@@ -279,6 +299,7 @@
 
       document.addEventListener("DOMContentLoaded", function () {
         fetchOrganizerRequests();
+        fetchUnansweredQueries();
       });
 
       function fetchOrganizerRequests() {
@@ -288,50 +309,108 @@
             let requestsHTML = "";
             data.forEach((req) => {
               requestsHTML += `
-          <div class="card p-3 mb-2">
-            <p><strong>Name:</strong> ${req.name}</p>
-            <p><strong>Email:</strong> ${req.email}</p>
-            <p><strong>Username:</strong> ${req.username}</p>
-            <p><strong>Phone:</strong> ${req.phone}</p>
-            <p><strong>Status:</strong> ${req.status}</p>
-            <div class="button-container">
-              <button class="btn-approve" onclick="approveOrganizer('${req.username}')">Approve</button>
-              <button class="btn-delete" onclick="deleteOrganizer('${req.username}')">Delete</button>
-            </div>
-          </div>`;
+                <div class="card p-3 mb-2">
+                  <p><strong>Name:</strong> ${req.name}</p>
+                  <p><strong>Email:</strong> ${req.email}</p>
+                  <p><strong>Username:</strong> ${req.username}</p>
+                  <p><strong>Phone:</strong> ${req.phone}</p>
+                  <p><strong>Status:</strong> ${req.status}</p>
+                  <div class="button-container">
+                    <button class="btn-approve" onclick="approveOrganizer('${req.username}')">Approve</button>
+                    <button class="btn-delete" onclick="deleteOrganizer('${req.username}')">Delete</button>
+                  </div>
+                </div>`;
             });
             document.getElementById("requestsList").innerHTML = requestsHTML;
           })
           .catch(() => console.error("Failed to fetch requests"));
       }
 
-      function approveOrganizer(username) {
-        fetch(`http://localhost:3006/accept/${username}`, {
-          method: "PUT",
-        })
+      function fetchUnansweredQueries() {
+        fetch(`http://localhost:3008/getallunansweredqueries`)
           .then((response) => response.json())
           .then((data) => {
-            alert("Organizer Approved!");
-            fetchOrganizerRequests(); // Refresh the requests list
+            let queriesHTML = "";
+            data.forEach((query) => {
+              const queryId = query._id.toString(); // Ensure it's a string
+              console.log(queryId);
+              queriesHTML += `
+          <div class="card p-3 mb-2" id="query-card-${query._id}" onmouseover="expandCard(this)" onmouseleave="collapseCard(this)">
+    <p><strong>Name:</strong> ${query.name}</p>
+    <p><strong>Email:</strong> ${query.email}</p>
+    <p><strong>Query:</strong> ${query.question}</p>
+    <textarea class="form-control" id="answer-${query._id}" placeholder="Write your answer..."></textarea>
+    <button class="btn btn-primary mt-2" onclick="submitAnswer('${query._id}')">Submit</button>
+  </div>`;
+            });
+            document.getElementById("queriesList").innerHTML = queriesHTML;
           })
-          .catch(() => alert("Failed to approve organizer"));
+          .catch(() => console.error("Failed to fetch unanswered queries"));
+      }
+      function submitAnswer(queryId) {
+        const answer = document.getElementById(`answer-${queryId}`).value;
+
+        if (!answer.trim()) {
+          alert("Please enter an answer before submitting.");
+          return;
+        }
+
+        fetch("http://localhost:3008/answerquestion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ queryId, answer }),
+        })
+          .then((response) => {
+            console.log("Raw Response:", response);
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Response Data:", data);
+
+            if (data.error) {
+              alert(`Error: ${data.error}`);
+            } else {
+              alert("Answer submitted successfully!");
+              //showSection("manageQueries");
+              window.location.reload(); // ✅ Reload only after a successful response
+            }
+          })
+          .catch((error) => {
+            console.error("Fetch Error:", error);
+            alert("Failed to submit the answer. Please try again.");
+          });
+      }
+
+      function expandCard(card) {
+        card.classList.add("expanded");
+      }
+
+      function collapseCard(card) {
+        card.classList.remove("expanded");
+      }
+      function approveOrganizer(username) {
+        fetch(`http://localhost:3006/api/approve-request/${username}`, {
+          method: "POST",
+        })
+          .then(() => fetchOrganizerRequests())
+          .catch(() => console.error("Failed to approve organizer"));
       }
 
       function deleteOrganizer(username) {
-        fetch(`http://localhost:3006/delete/${username}`, {
+        fetch(`http://localhost:3006/api/delete-request/${username}`, {
           method: "DELETE",
         })
-          .then((response) => response.json())
-          .then((data) => {
-            alert("Organizer Deleted!");
-            fetchOrganizerRequests(); // Refresh the requests list
-          })
-          .catch(() => alert("Failed to delete organizer"));
+          .then(() => fetchOrganizerRequests())
+          .catch(() => console.error("Failed to delete organizer"));
       }
 
       function generateAnalysis() {
-        document.getElementById("analysisResults").innerHTML =
-          "<p>Analysis Generated!</p>";
+        // Function to generate event analysis
       }
     </script>
   </body>

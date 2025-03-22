@@ -80,7 +80,7 @@ app.post("/register", async (req, res) => {
           </ul>
           <p>Explore upcoming events and book your favorite ones today!</p>
           <a href="http://localhost:5500" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Explore Events</a>
-          <p>Best regards,<br><b>Event Management Team</b></p>
+          <p>Best regards,<br><b>EventSync Team</b></p>
         </div>
       `,
     });
