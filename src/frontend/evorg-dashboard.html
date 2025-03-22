@@ -117,7 +117,20 @@
         border-radius: 5px; /* Add rounded corners */
         transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
-
+    
+        .event-section {
+            margin-top: 20px;
+        }
+        .attendee-section {
+            margin-top: 20px;
+        }
+        .search-bar {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
       .btn-primary:hover {
         background-color: #0056b3; /* Darker shade of blue on hover */
         cursor: pointer;
@@ -128,10 +141,6 @@
       .btn-primary:focus {
         outline: none; /* Remove the outline when focused */
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a glow effect when focused */
-      }
-
-      .content-section {
-        display: none;
       }
 
       .alert {
@@ -158,6 +167,99 @@
         font-weight: 600;
         margin-bottom: 20px;
       }
+      .content-section, .container.mt-5 {
+    display: none;
+}.attendee-card {
+    position: relative;
+    background-color: #1772c7;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px;
+    width: 300px; /* Set a fixed width */
+    display: inline-block;
+    text-align: center; /* Center content */
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden; /* Prevent blur effect from going outside */
+}
+
+.attendee-card:hover {
+    transform: scale(1.05);
+    background-color: #08067d;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    filter: blur(0.06px) brightness(0.9);
+}
+
+/* Apply blur effect only to the background */
+.attendee-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    filter: blur(5px); /* Blur the background */
+    z-index: 0;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.attendee-card:hover::before {
+    opacity: 1; /* Make blur effect visible on hover */
+}
+
+/* Keep the content (text and button) sharp */
+.attendee-card .card-body {
+    position: relative;
+    z-index: 2; /* Ensure text and button stay sharp */
+}
+
+.attendee-card h5 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: rgb(4, 13, 117); /* Ensure visibility */
+}
+
+.attendee-card p {
+    font-size: 14px;
+    color: #090909; /* Light text for better visibility */
+}
+
+/* Centered Delete Button */
+.btn-delete {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center button */
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 3; /* Ensure button stays on top */
+    
+}
+
+.attendee-card:hover .btn-delete {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+   
+}
+
+.btn-delete:hover {
+    background: #c82333;
+    transform: translate(-50%, -50%) scale(1.2);
+  
+}
+
 
       .form-label {
         font-weight: 500;
@@ -173,9 +275,6 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
 
-      /* On hover, apply the popout effect */
-
-      /* On hover, apply the popout effect */
       #createEvent .card:hover {
         transform: translateY(-10px); /* Slight lift on hover */
         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Add shadow for emphasis */
@@ -197,24 +296,29 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" onclick="showSection('createEvent')">
-                <i class="bi bi-calendar-plus"></i> Create Event
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" onclick="showSection('updateEvent')">
-                <i class="bi bi-pencil-square"></i> Update Event
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link logout-btn" onclick="logout()">
-                <i class="bi bi-box-arrow-right"></i> Logout
-              </a>
-            </li>
+              <li class="nav-item">
+                  <a class="nav-link" onclick="showSection('createEvent')">
+                      <i class="bi bi-calendar-plus"></i> Create Event
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" onclick="showSection('updateEvent')">
+                      <i class="bi bi-pencil-square"></i> Update Event
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" onclick="showSection('yourEvents')">
+                      <i class="bi bi-calendar-check"></i> Your Events
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link logout-btn" onclick="logout()">
+                      <i class="bi bi-box-arrow-right"></i> Logout
+                  </a>
+              </li>
           </ul>
-        </div>
       </div>
+    
     </nav>
 
     <!-- Sidebar -->
@@ -235,6 +339,9 @@
         </a>
         <a onclick="showSection('generateAnalysis')">
           <i class="bi bi-bar-chart"></i> Generate Analysis
+        </a>
+        <a class="nav-link" onclick="showSection('yourEvents')">
+            <i class="bi bi-calendar-check"></i> Your Events
         </a>
       </div>
       <div class="sidebar-footer">
@@ -356,6 +463,23 @@
         </button>
         <div id="analysisResults" class="mt-3"></div>
       </div>
+      <div class="container mt-5" id="yourEvents">
+        <h3>Your Events</h3>
+        
+        <!-- Event Dropdown -->
+        <select id="eventSelect" class="form-control mb-3"></select>
+    
+        <h3>Attendees</h3>
+    
+        <!-- Search bar -->
+        <input type="text" id="searchAttendee" class="form-control mb-3" placeholder="Search attendees...">
+    
+        <!-- Attendee List -->
+        <div id="attendeeList" class="row">
+            <p class="text-center">Select an event to view attendees</p>
+        </div>
+    </div>
+
     </div>
 
     <script>
@@ -375,13 +499,21 @@
       }
 
       function showSection(sectionId) {
-        document.querySelectorAll(".content-section").forEach((section) => {
-          section.style.display = "none";
-        });
-        document.getElementById("createEvent").style.display = "none";
-        document.getElementById("sidebar").classList.remove("active");
-        document.getElementById(sectionId).style.display = "block";
-      }
+    // Hide all sections first
+    document.querySelectorAll('.content-section, .container.mt-5').forEach(section => {
+        section.style.display = 'none';
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+    showSection('createEvent'); // Default section on load
+});
+
+    // Show the selected section
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.style.display = 'block';
+    }
+}
+
 
       function generateAnalysis() {
         document.getElementById("analysisResults").innerHTML =
@@ -443,6 +575,107 @@
               ).innerHTML = `<div class="alert alert-danger">Something went wrong! Please try again later.</div>`;
             });
         });
+        document.addEventListener("DOMContentLoaded", async () => {
+    await fetchEvents();
+});
+
+// Fetch events created by the event organizer
+async function fetchEvents() {
+    try {
+        const response = await fetch(`http://localhost:3003/get-by-organizer/${username}`);
+        const events = await response.json();
+
+        const eventSelect = document.getElementById("eventSelect");
+        eventSelect.innerHTML = '<option value="">-- Select Event --</option>';
+        
+        events.forEach(event => {
+            let option = document.createElement("option");
+            option.value = event._id;
+            option.textContent = `${event.name} - ${event.venue} (${new Date(event.date).toLocaleDateString()})`;
+            eventSelect.appendChild(option);
+        });
+
+        // Fetch attendees when an event is selected
+        eventSelect.addEventListener("change", function () {
+            fetchAttendees(this.value);
+        });
+
+    } catch (error) {
+        console.error("Error fetching events:", error);
+    }
+}
+
+async function fetchAttendees(eventId) {
+    if (!eventId) return;
+
+    try {
+        const response = await fetch(`http://localhost:3004/get-attendees-by-event/${eventId}`);
+        const data = await response.json();
+
+        if (!data.attendees.length) {
+            document.getElementById("attendeeList").innerHTML = "<tr><td colspan='5' class='text-center'>No attendees found</td></tr>";
+            return;
+        }
+
+        let attendeeCardsContainer = document.getElementById("attendeeList");
+        attendeeCardsContainer.innerHTML = ""; // Clear previous attendees
+
+        data.attendees.forEach(attendee => {
+            const attendeeCard = document.createElement("div");
+            attendeeCard.classList.add("attendee-card");
+
+            attendeeCard.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><strong>👤 ${attendee.name}</strong></h5>
+                        <p><strong>📧 Email:</strong> ${attendee.email}</p>
+                        <p><strong>📞 Phone:</strong> ${attendee.phone}</p>
+                        <p><strong>🎟️ Tickets Booked:</strong> ${attendee.ticketsPurchased}</p>
+                        <p><strong>🆔 Booking ID:</strong> ${attendee.bookingId}</p>
+                        
+                        <!-- Delete Button (Initially Hidden) -->
+                        <button class="btn-delete" onclick="deleteBooking('${attendee.bookingId}')">Cancel Booking</button>
+                    </div>
+                </div>
+            `;
+            attendeeCardsContainer.appendChild(attendeeCard);
+        });
+
+    } catch (error) {
+        console.error("Error fetching attendees:", error);
+    }
+}
+
+async function deleteBooking(bookingId) {
+    if (!confirm("Are you sure you want to cancel this booking?")) return;
+
+    try {
+        const response = await fetch(`http://localhost:3004/delete/${bookingId}`, {
+            method: "DELETE",
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert("✅ Booking cancelled successfully!");
+            fetchAttendees(document.getElementById("eventSelect").value); // Refresh attendee list
+        } else {
+            alert(`❌ Error: ${result.message}`);
+        }
+    } catch (error) {
+        console.error("Error deleting booking:", error);
+        alert("❌ Failed to cancel booking.");
+    }
+}
+
+// Search filter for attendees
+document.getElementById("searchAttendee").addEventListener("input", function () {
+    const searchValue = this.value.toLowerCase();
+    document.querySelectorAll("#attendeeList .attendee-card").forEach(card => {
+        card.style.display = card.textContent.toLowerCase().includes(searchValue) ? "" : "none";
+    });
+});
+
+
     </script>
   </body>
 </html>

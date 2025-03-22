@@ -139,4 +139,20 @@ app.delete("/delete-by-organizer/:username", async (req, res) => {
   }
 });
 
+// Get events by event organizer
+app.get("/get-by-organizer/:username", async (req, res) => {
+  try {
+    const events = await Event.find({ eventOrg: req.params.username });
+
+
+    if (!events.length) {
+      return res.status(404).send({ message: "No events found for this organizer" });
+    }
+
+    res.status(200).send(events);
+  } catch (error) {
+    console.error(`Error fetching events: ${error.message}`);
+    res.status(500).send({ error: error.message });
+  }
+});
 app.listen(3003, () => console.log("Event service running on port 3003"));

@@ -55,6 +55,7 @@ app.post("/register", async (req, res) => {
       phone,
     });
 
+console.log(`${username}, ${phone} saved successfully!`);
     await attendee.save();
     console.log(`Attendee ${username} saved successfully!`);
 
@@ -227,7 +228,9 @@ app.get("/getbyusername/:username", async (req, res) => {
     console.error(`Error fetching attendee by username: ${error.message}`);
     res.status(500).send({ error: error.message });
   }
+
 });
+
 
 // Get attendee by email
 app.get("/getbyemail/:email", async (req, res) => {
@@ -247,5 +250,6 @@ app.get("/getbyemail/:email", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+
 
 app.listen(3001, () => console.log("✅ Attendee service running on port 3001"));
