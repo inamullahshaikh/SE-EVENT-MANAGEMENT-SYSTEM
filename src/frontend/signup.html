@@ -158,7 +158,7 @@
           const phoneNumber = document
             .getElementById("phoneNumber")
             .value.trim();
-
+          console.log(username, password, phoneNumber);
           // 🔹 Prevent restricted username and email
           if (username.toLowerCase() === "admin") {
             alert("❌ Username 'admin' is not allowed.");

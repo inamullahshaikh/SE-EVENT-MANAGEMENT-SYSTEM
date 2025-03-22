@@ -124,18 +124,20 @@ app.post("/login", async (req, res) => {
 // Update attendee by username and call update in user-service
 app.put("/update/:username", async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { name, email, password, phone, loyaltyPoints } = req.body;
     const { username } = req.params;
+
     console.log(`Update request received for: ${username}`);
 
-    // Fetch the existing attendee
+    // Fetch the existing attendee by username
     const existingAttendee = await Attendee.findOne({ username });
+
     if (!existingAttendee) {
       console.warn(`Update failed: Attendee ${username} not found`);
       return res.status(404).send({ message: "Attendee not found" });
     }
 
-    // Check if email is already taken
+    // Ensure email is unique
     if (email && email !== existingAttendee.email) {
       const emailCheck = await axios
         .get(`http://localhost:3000/getbyemail/${email}`)
@@ -151,24 +153,31 @@ app.put("/update/:username", async (req, res) => {
       ? await bcrypt.hash(password, 10)
       : undefined;
 
+    // Prepare update data
     const updateData = { name, email, phone };
     if (hashedPassword) updateData.password = hashedPassword;
+    if (loyaltyPoints !== undefined) updateData.loyaltyPoints = loyaltyPoints;
 
-    // Update attendee
-    const attendee = await Attendee.findOneAndUpdate({ username }, updateData, {
-      new: true,
-    });
+    // Update attendee by _id instead of username
+    const updatedAttendee = await Attendee.findByIdAndUpdate(
+      existingAttendee._id,
+      updateData,
+      { new: true }
+    );
 
     console.log(`Attendee ${username} updated successfully`);
-
-    // Update in user-service
-    await axios.put(`http://localhost:3000/update/${username}`, {
+    const user = await axios.get(
+      `http://localhost:3000/getbyusername/${username}`
+    );
+    console.log(user.data);
+    await axios.put(`http://localhost:3000/update/${user.data._id}`, {
       username,
       email,
       type: 2,
     });
-
-    res.status(200).send({ message: "Attendee updated", attendee });
+    res
+      .status(200)
+      .send({ message: "Attendee updated", attendee: updatedAttendee });
   } catch (error) {
     console.error(
       `Error in updating attendee ${req.params.username}: ${error.message}`
@@ -212,7 +221,7 @@ app.get("/getbyusername/:username", async (req, res) => {
       console.warn(`Attendee not found for username: ${username}`);
       return res.status(404).send({ message: "Attendee not found" });
     }
-
+    console.log("ATTENDEE FOUND\n" + attendee);
     res.status(200).send(attendee);
   } catch (error) {
     console.error(`Error fetching attendee by username: ${error.message}`);

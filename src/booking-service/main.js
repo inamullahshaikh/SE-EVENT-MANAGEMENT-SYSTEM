@@ -33,7 +33,7 @@ app.post("/create", async (req, res) => {
       `http://localhost:3003/get/${eventId}`
     );
     const event = eventResponse.data;
-    console.log(totalPayment);
+
     if (!event) return res.status(404).send({ message: "Event not found" });
     if (event.numberOfTickets < ticketsPurchased)
       return res.status(400).send({ message: "Not enough tickets available" });
@@ -52,11 +52,24 @@ app.post("/create", async (req, res) => {
       numberOfTickets: event.numberOfTickets - ticketsPurchased,
     });
 
-    // Fetch user email
-    const userResponse = await axios.get(
-      `http://localhost:3000/getbyusername/${username}`
-    );
-    const userEmail = userResponse.data?.email;
+    // ✅ Fetch user email and loyalty points synchronously using await
+    let userEmail = "";
+    let loyaltypoints = 0;
+    let name = "";
+
+    try {
+      const userResponse = await axios.get(
+        `http://localhost:3001/getbyusername/${username}`
+      );
+      const userData = userResponse.data;
+
+      userEmail = userData.email;
+      loyaltypoints = userData.loyaltyPoints;
+      name = userData.name;
+    } catch (error) {
+      console.error("❌ Error fetching user data:", error.message);
+      return res.status(500).send({ error: "Failed to fetch user data" });
+    }
 
     // Send Email Confirmation
     if (userEmail) {
@@ -65,7 +78,7 @@ app.post("/create", async (req, res) => {
         subject: "🎟 Booking Confirmation - Event Ticket",
         message: `
           <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-            <h2 style="color: #28a745;">Hello, ${userResponse.data?.name}!</h2>
+            <h2 style="color: #28a745;">Hello, ${name}!</h2>
             <p>Your booking for the event <b>${event.name}</b> at <b>${event.venue}</b> on <b>${event.date}</b> is confirmed.</p>
             <p><b>Tickets Purchased:</b> ${ticketsPurchased}</p>
             <p><b>Total Payment:</b> PKR ${totalPayment}</p>
@@ -76,12 +89,28 @@ app.post("/create", async (req, res) => {
       });
     }
 
+    console.log(
+      `Existing Attendee Data: ${name} : ${userEmail} : ${loyaltypoints} : ${totalPayment}: ${
+        (totalPayment * 10) / 100
+      }`
+    );
+    console.log(`LOYALTY POINTS BEFORE: ${loyaltypoints}`);
+
+    // ✅ Ensure totalPayment is a number before calculation
+    const updatedPoints = loyaltypoints + Number(totalPayment) * 0.1;
+    console.log(`New loyalty points: ${updatedPoints}`);
+
+    // ✅ Update attendee with new points using axios (consistent with other requests)
+    await axios.put(`http://localhost:3001/update/${username}`, {
+      loyaltyPoints: updatedPoints,
+    });
+
     res.status(200).send({
       message: "Booking created successfully. Confirmation email sent.",
       booking,
     });
   } catch (error) {
-    console.error("Error in /create:", error.message);
+    console.error("❌ Error in /create:", error.message);
     res.status(500).send({ error: error.message });
   }
 });

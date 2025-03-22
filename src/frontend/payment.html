@@ -132,7 +132,9 @@
           // Calculate the final bill after loyalty points
           const totalBill = parseFloat(totalBillSpan.innerText);
           const finalBill = totalBill - loyaltyPointsToUse;
+          console.log(finalBill);
           tp = finalBill;
+          console.log(tp);
           if (finalBillSpan) finalBillSpan.innerText = finalBill.toFixed(2);
         });
       }
@@ -260,6 +262,7 @@
           
       }
       async function RegisterBooking() {
+        console.log("HERE IN FUNC");
   const bookedEvent = JSON.parse(localStorage.getItem("bookedEvent"));
   if (!bookedEvent) {
     alert("No booked event found.");
@@ -270,14 +273,14 @@
   const { eventId, tickets, pricePerTicket } = bookedEvent;
 
   const totalPayment = document.getElementById("finalBillAfterLoyalty");
-  console.log(tp);
+  console.log("finalBillAfterLoyalty"+tp);
 
   try {
     const bookingData = {
       username,
       eventId,
       ticketsPurchased: tickets,
-      tp,
+      totalPayment: tp,
     };
     console.log(bookingData);
     // Call the backend API to create a booking
