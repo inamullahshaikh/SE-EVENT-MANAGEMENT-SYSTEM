@@ -155,7 +155,8 @@
           const email = document.getElementById("email").value.trim();
           const username = document.getElementById("username").value.trim();
           const password = document.getElementById("password").value;
-          const phoneNumber = document
+          
+          const phone = document
             .getElementById("phoneNumber")
             .value.trim();
 
@@ -171,6 +172,7 @@
           }
 
           try {
+            console.log(phone);
             const response = await fetch("http://localhost:3001/register", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -179,7 +181,7 @@
                 email,
                 username,
                 password,
-                phoneNumber,
+                phone,
               }),
             });
 

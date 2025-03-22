@@ -3,21 +3,20 @@ const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
-dotenv.config(); // Load environment variables
+dotenv.config(); // Load environment variables from .env
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Configure Nodemailer Transporter
+// Configure Nodemailer Transporter using environment variables
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "inamullahshaikh01@gmail.com", // Your Gmail
-    pass: "zocz kjsr ooeu ppii", // App Password
+    user: process.env.EMAIL, // Load email from .env
+    pass: process.env.EMAIL_PASSWORD, // Load password from .env
   },
 });
-
 // API to Send Notification
 app.post("/send", async (req, res) => {
   try {

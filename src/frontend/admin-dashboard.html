@@ -394,8 +394,8 @@
         card.classList.remove("expanded");
       }
       function approveOrganizer(username) {
-        fetch(`http://localhost:3006/api/approve-request/${username}`, {
-          method: "POST",
+        fetch(`http://localhost:3006/accept/${username}`, {
+          method: "PUT",
         })
           .then(() => fetchOrganizerRequests())
           .catch(() => console.error("Failed to approve organizer"));
