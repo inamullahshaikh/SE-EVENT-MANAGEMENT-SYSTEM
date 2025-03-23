@@ -113,7 +113,18 @@ app.get("/getbyusername/:username", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
-
+app.get("/getall", async (req, res) => {
+  try {
+    const organizer = await EventOrganizer.find();
+    if (!organizer) {
+      return res.status(404).send({ message: "Organizer not found" });
+    }
+    res.status(200).send(organizer);
+  } catch (error) {
+    console.error("❌ Error fetching organizer:", error.message);
+    res.status(500).send({ error: error.message });
+  }
+});
 // Login
 app.post("/login", async (req, res) => {
   try {
@@ -239,30 +250,37 @@ app.put("/accept/:username", async (req, res) => {
 });
 app.get("/get-attendee-details/:username", async (req, res) => {
   try {
-      const username = req.params.username;
-      
-      // Step 1: Fetch attendee usernames from Booking Service
-      const bookingResponse = await fetch(`http://localhost:3005/get-attendees-by-organizer/${username}`);
-      if (!bookingResponse.ok) throw new Error("Failed to fetch from Booking Service");
+    const username = req.params.username;
 
-      const attendeeUsernames = await bookingResponse.json();
-      if (!attendeeUsernames.length) return res.status(404).json({ message: "No attendees found" });
+    // Step 1: Fetch attendee usernames from Booking Service
+    const bookingResponse = await fetch(
+      `http://localhost:3005/get-attendees-by-organizer/${username}`
+    );
+    if (!bookingResponse.ok)
+      throw new Error("Failed to fetch from Booking Service");
 
-      // Step 2: Fetch attendee details from Attendee Service
-      const attendeeResponse = await fetch(`http://localhost:3004/getAttendeesByUsernames`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ usernames: attendeeUsernames }),
-      });
+    const attendeeUsernames = await bookingResponse.json();
+    if (!attendeeUsernames.length)
+      return res.status(404).json({ message: "No attendees found" });
 
-      if (!attendeeResponse.ok) throw new Error("Failed to fetch from Attendee Service");
+    // Step 2: Fetch attendee details from Attendee Service
+    const attendeeResponse = await fetch(
+      `http://localhost:3004/getAttendeesByUsernames`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usernames: attendeeUsernames }),
+      }
+    );
 
-      const attendees = await attendeeResponse.json();
-      res.json(attendees);
+    if (!attendeeResponse.ok)
+      throw new Error("Failed to fetch from Attendee Service");
 
+    const attendees = await attendeeResponse.json();
+    res.json(attendees);
   } catch (error) {
-      console.error("Error fetching attendees:", error.message);
-      res.status(500).json({ error: error.message });
+    console.error("Error fetching attendees:", error.message);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -275,5 +293,5 @@ app.get("/api/pending-requests", async (req, res) => {
   }
 });
 app.listen(3006, () =>
-  console.log("🚀 Event Organizer service running on port 3002")
+  console.log("🚀 Event Organizer service running on port 3006")
 );

@@ -5,7 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link
+      rel="icon"
+      href="images/favicon.ico"
+      type="image/x-icon"
+      class="circular-favicon"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    />
     <style>
+      .circular-favicon {
+        border-radius: 50%;
+      }
       .wrapper {
         flex: 1;
         display: flex;
@@ -155,10 +169,8 @@
           const email = document.getElementById("email").value.trim();
           const username = document.getElementById("username").value.trim();
           const password = document.getElementById("password").value;
-          
-          const phone = document
-            .getElementById("phoneNumber")
-            .value.trim();
+
+          const phone = document.getElementById("phoneNumber").value.trim();
           console.log(username, password, phoneNumber);
           // 🔹 Prevent restricted username and email
           if (username.toLowerCase() === "admin") {
@@ -184,16 +196,23 @@
                 phone,
               }),
             });
-
-            const data = await response.json();
+            try {
+              data = await response.json();
+            } catch (jsonError) {
+              console.error("Invalid JSON response", jsonError);
+              alert("❌ Unexpected server response.");
+              return;
+            }
 
             if (response.ok) {
               alert("✅ Registration successful! You can now log in.");
               window.location.href = "login.html";
             } else {
+              // 🔹 Ensure data.error exists before using it
               alert(`❌ ${data.error}`);
             }
           } catch (error) {
+            console.error("Network error:", error);
             alert("❌ Error connecting to server.");
           }
         });

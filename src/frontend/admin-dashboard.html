@@ -6,10 +6,71 @@
     <title>Admin Dashboard | EventSync</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link
+      rel="icon"
+      href="images/favicon.ico"
+      type="image/x-icon"
+      class="circular-favicon"
+    />
+
+    <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
     />
     <style>
+      .remove-eventorg-container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+        text-align: center;
+      }
+      .remove-eventorg-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .remove-eventorg-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .remove-eventorg-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      .remove-eventorg-btn {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .remove-eventorg-card:hover .remove-eventorg-btn {
+        opacity: 1;
+      }
+      .remove-eventorg-icon {
+        font-size: 40px;
+        color: #007bff;
+        margin-bottom: 10px;
+      }
+      .circular-favicon {
+        border-radius: 50%;
+      }
       :root {
         --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
         --dark-bg: #1f1f1f;
@@ -252,20 +313,13 @@
       </div>
 
       <!-- Remove Event Organizer -->
-      <div id="removeOrganizer" class="content-section">
+      <div
+        id="removeOrganizer"
+        class="remove-eventorg-container"
+        style="display: none"
+      >
         <h3>Remove Event Organizer</h3>
-        <form id="removeOrganizerForm">
-          <div class="mb-3">
-            <label class="form-label">Organizer Username</label>
-            <input
-              type="text"
-              class="form-control"
-              id="organizerUsername"
-              required
-            />
-          </div>
-          <button type="submit" class="btn btn-danger">Remove</button>
-        </form>
+        <div id="organizerList" class="remove-eventorg-grid"></div>
       </div>
 
       <!-- Manage Queries -->
@@ -290,7 +344,7 @@
         document.querySelectorAll(".content-section").forEach((section) => {
           section.style.display = "none";
         });
-
+        document.getElementById("removeOrganizer").style.display = "none";
         document.getElementById("sidebar").classList.remove("active");
         document.getElementById("wow").style.display = "block";
 
@@ -300,7 +354,56 @@
       document.addEventListener("DOMContentLoaded", function () {
         fetchOrganizerRequests();
         fetchUnansweredQueries();
+        fetchOrganizers();
       });
+      async function fetchOrganizers() {
+        try {
+          const response = await fetch("http://localhost:3006/getall");
+          const organizers = await response.json();
+          const organizerList = document.getElementById("organizerList");
+
+          organizerList.innerHTML = "";
+
+          organizers.forEach((org) => {
+            const card = document.createElement("div");
+            card.classList.add("remove-eventorg-card");
+            card.innerHTML = `
+                              <i class="bi bi-person-circle remove-eventorg-icon"></i>
+                              <h4>${org.name}</h4>
+                              <p><i class="bi bi-envelope"></i> ${org.email}</p>
+                              <p><i class="bi bi-person"></i> Username: ${org.username}</p>
+                              <p><i class="bi bi-telephone"></i> ${org.phone}</p>
+                              <p><i class="bi bi-info-circle"></i> Status: ${org.status}</p>
+      <button class="remove-eventorg-btn" onclick="deleteOrganizer('${org.username}')">
+          <i class="bi bi-trash"></i> Remove
+      </button>                    `;
+            organizerList.appendChild(card);
+          });
+        } catch (error) {
+          console.error("Error fetching organizers:", error);
+        }
+      }
+      async function deleteOrganizer(username) {
+        try {
+          const response = await fetch(
+            `http://localhost:3006/delete/${username}`,
+            {
+              method: "DELETE",
+            }
+          );
+
+          const data = await response.json();
+          if (response.ok) {
+            console.log(`✅ Organizer deleted: ${username}`);
+            alert("organizer deleted successfully");
+            fetchOrganizers(); // Refresh the list after deletion
+          } else {
+            console.error(`❌ Error deleting organizer: ${data.message}`);
+          }
+        } catch (error) {
+          console.error("❌ Delete request failed:", error);
+        }
+      }
 
       function fetchOrganizerRequests() {
         fetch("http://localhost:3006/api/pending-requests")
@@ -309,17 +412,17 @@
             let requestsHTML = "";
             data.forEach((req) => {
               requestsHTML += `
-                <div class="card p-3 mb-2">
-                  <p><strong>Name:</strong> ${req.name}</p>
-                  <p><strong>Email:</strong> ${req.email}</p>
-                  <p><strong>Username:</strong> ${req.username}</p>
-                  <p><strong>Phone:</strong> ${req.phone}</p>
-                  <p><strong>Status:</strong> ${req.status}</p>
-                  <div class="button-container">
-                    <button class="btn-approve" onclick="approveOrganizer('${req.username}')">Approve</button>
-                    <button class="btn-delete" onclick="deleteOrganizer('${req.username}')">Delete</button>
-                  </div>
-                </div>`;
+                      <div class="card p-3 mb-2">
+                        <p><strong>Name:</strong> ${req.name}</p>
+                        <p><strong>Email:</strong> ${req.email}</p>
+                        <p><strong>Username:</strong> ${req.username}</p>
+                        <p><strong>Phone:</strong> ${req.phone}</p>
+                        <p><strong>Status:</strong> ${req.status}</p>
+                        <div class="button-container">
+                          <button class="btn-approve" onclick="approveOrganizer('${req.username}')">Approve</button>
+                          <button class="btn-delete" onclick="deleteOrganizer('${req.username}')">Delete</button>
+                        </div>
+                      </div>`;
             });
             document.getElementById("requestsList").innerHTML = requestsHTML;
           })
@@ -335,13 +438,13 @@
               const queryId = query._id.toString(); // Ensure it's a string
               console.log(queryId);
               queriesHTML += `
-          <div class="card p-3 mb-2" id="query-card-${query._id}" onmouseover="expandCard(this)" onmouseleave="collapseCard(this)">
-    <p><strong>Name:</strong> ${query.name}</p>
-    <p><strong>Email:</strong> ${query.email}</p>
-    <p><strong>Query:</strong> ${query.question}</p>
-    <textarea class="form-control" id="answer-${query._id}" placeholder="Write your answer..."></textarea>
-    <button class="btn btn-primary mt-2" onclick="submitAnswer('${query._id}')">Submit</button>
-  </div>`;
+                <div class="card p-3 mb-2" id="query-card-${query._id}" onmouseover="expandCard(this)" onmouseleave="collapseCard(this)">
+          <p><strong>Name:</strong> ${query.name}</p>
+          <p><strong>Email:</strong> ${query.email}</p>
+          <p><strong>Query:</strong> ${query.question}</p>
+          <textarea class="form-control" id="answer-${query._id}" placeholder="Write your answer..."></textarea>
+          <button class="btn btn-primary mt-2" onclick="submitAnswer('${query._id}')">Submit</button>
+        </div>`;
             });
             document.getElementById("queriesList").innerHTML = queriesHTML;
           })
@@ -400,15 +503,6 @@
           .then(() => fetchOrganizerRequests())
           .catch(() => console.error("Failed to approve organizer"));
       }
-
-      function deleteOrganizer(username) {
-        fetch(`http://localhost:3006/api/delete-request/${username}`, {
-          method: "DELETE",
-        })
-          .then(() => fetchOrganizerRequests())
-          .catch(() => console.error("Failed to delete organizer"));
-      }
-
       function generateAnalysis() {
         // Function to generate event analysis
       }
