@@ -94,60 +94,120 @@
         color: #2575fc;
         transition: color 0.3s ease;
       }
+      .error {
+        color: #dc3545;
+        font-size: 14px;
+        display: block;
+        margin-top: 5px;
+      }
       .links a:hover {
         color: #1a5cc8;
+      }
+      .input-group {
+        position: relative;
+      }
+      .input-feedback {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+      .is-invalid {
+        border-color: #dc3545 !important;
+      }
+      .is-valid {
+        border-color: #198754 !important;
+      }
+      .field-error {
+        color: #dc3545;
+      }
+      .field-success {
+        color: #198754;
+      }
+      .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
+        color: #6c757d;
+      }
+      .form-text {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
       }
     </style>
   </head>
   <body>
     <div class="card text-center shadow-lg">
       <h2 class="mb-4">Sign Up</h2>
-      <form id="signupForm">
+      <form id="signupForm" novalidate>
         <div class="mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="name"
-            placeholder="Full Name"
-            required
-          />
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              placeholder="Full Name"
+              required
+            />
+          </div>
+          <div id="nameError" class="input-feedback field-error"></div>
         </div>
+
         <div class="mb-3">
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            placeholder="Email"
-            required
-          />
+          <div class="input-group">
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div id="emailError" class="input-feedback field-error"></div>
         </div>
+
         <div class="mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="username"
-            placeholder="Username"
-            required
-          />
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              placeholder="Username"
+              required
+            />
+          </div>
+          <div id="usernameError" class="input-feedback field-error"></div>
         </div>
+
         <div class="mb-3">
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            placeholder="Password"
-            required
-          />
+          <div class="input-group">
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              placeholder="Password"
+              required
+            />
+            <span class="password-toggle" id="togglePassword">
+              <i class="bi bi-eye"></i>
+            </span>
+          </div>
+          <div id="passwordError" class="input-feedback field-error"></div>
         </div>
+
         <div class="mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="phoneNumber"
-            placeholder="Phone Number"
-            required
-          />
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              id="phoneNumber"
+              placeholder="Phone Number"
+              required
+            />
+          </div>
+          <div id="phoneError" class="input-feedback field-error"></div>
         </div>
+
         <button type="submit" class="btn btn-primary w-100">Sign Up</button>
       </form>
       <div class="links mt-3">
@@ -160,62 +220,184 @@
     <footer>&copy; 2025 YourWebsite. All rights reserved.</footer>
 
     <script>
-      document
-        .getElementById("signupForm")
-        .addEventListener("submit", async (event) => {
-          event.preventDefault();
+      // Toggle password visibility
+      document.getElementById("togglePassword").addEventListener("click", function() {
+        const passwordInput = document.getElementById("password");
+        const icon = this.querySelector("i");
+        
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          icon.classList.remove("bi-eye");
+          icon.classList.add("bi-eye-slash");
+        } else {
+          passwordInput.type = "password";
+          icon.classList.remove("bi-eye-slash");
+          icon.classList.add("bi-eye");
+        }
+      });
 
-          const name = document.getElementById("name").value.trim();
-          const email = document.getElementById("email").value.trim();
-          const username = document.getElementById("username").value.trim();
-          const password = document.getElementById("password").value;
+      // Real-time validation functions
+      function validateName(name) {
+        const regex = /^[a-zA-Z\s]{3,50}$/;
+        if (!name.trim()) return "Name is required";
+        if (!regex.test(name)) return "Name must be 3-50 characters long and contain only letters and spaces";
+        return "";
+      }
 
-          const phone = document.getElementById("phoneNumber").value.trim();
-          console.log(username, password, phoneNumber);
-          // 🔹 Prevent restricted username and email
-          if (username.toLowerCase() === "admin") {
-            alert("❌ Username 'admin' is not allowed.");
-            return;
-          }
+      function validateEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.trim()) return "Email is required";
+        if (!regex.test(email)) return "Please enter a valid email address";
+        return "";
+      }
 
-          if (email.toLowerCase() === "inamullahshaikh01@gmail.com") {
-            alert("❌ This email is not allowed.");
-            return;
-          }
+      function validateUsername(username) {
+        const regex = /^[a-zA-Z0-9]{3,15}$/;
+        if (!username.trim()) return "Username is required";
+        if (!regex.test(username)) return "Username must be 3-15 characters long and contain only letters and numbers";
+        return "";
+      }
 
-          try {
-            console.log(phone);
-            const response = await fetch("http://localhost:3001/register", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                name,
-                email,
-                username,
-                password,
-                phone,
-              }),
-            });
-            try {
-              data = await response.json();
-            } catch (jsonError) {
-              console.error("Invalid JSON response", jsonError);
-              alert("❌ Unexpected server response.");
-              return;
-            }
+      function validatePassword(password) {
+        const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        if (!password) return "Password is required";
+        if (!regex.test(password)) return "Password must be at least 8 characters with at least one letter and one number";
+        return "";
+      }
 
-            if (response.ok) {
-              alert("✅ Registration successful! You can now log in.");
-              window.location.href = "login.html";
-            } else {
-              // 🔹 Ensure data.error exists before using it
-              alert(`❌ ${data.error}`);
-            }
-          } catch (error) {
-            console.error("Network error:", error);
-            alert("❌ Error connecting to server.");
+      function validatePhone(phone) {
+  const regex = /^03\d{9}$/;
+  if (!phone.trim()) return "Phone number is required";
+  if (!regex.test(phone)) return "Phone number must be 11 digits starting with 03";
+  return "";
+}
+      // Apply validation to fields in real-time
+      const fields = [
+        { id: "name", validator: validateName, errorId: "nameError" },
+        { id: "email", validator: validateEmail, errorId: "emailError" },
+        { id: "username", validator: validateUsername, errorId: "usernameError" },
+        { id: "password", validator: validatePassword, errorId: "passwordError" },
+        { id: "phoneNumber", validator: validatePhone, errorId: "phoneError" }
+      ];
+
+      // Add real-time validation to all fields
+      fields.forEach(field => {
+        const element = document.getElementById(field.id);
+        const errorElement = document.getElementById(field.errorId);
+        
+        element.addEventListener("input", function() {
+          const error = field.validator(this.value);
+          errorElement.textContent = error;
+          
+          if (error) {
+            this.classList.add("is-invalid");
+            this.classList.remove("is-valid");
+          } else {
+            this.classList.remove("is-invalid");
+            this.classList.add("is-valid");
           }
         });
+
+        // Also validate on blur for better UX
+        element.addEventListener("blur", function() {
+          const error = field.validator(this.value);
+          errorElement.textContent = error;
+          
+          if (error) {
+            this.classList.add("is-invalid");
+            this.classList.remove("is-valid");
+          } else {
+            this.classList.remove("is-invalid");
+            this.classList.add("is-valid");
+          }
+        });
+      });
+
+      // Form submission
+      document.getElementById("signupForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        // Get form values
+        const nameValue = document.getElementById("name").value;
+        const emailValue = document.getElementById("email").value;
+        const usernameValue = document.getElementById("username").value;
+        const passwordValue = document.getElementById("password").value;
+        const phoneValue = document.getElementById("phoneNumber").value;
+
+        // Validate all fields
+        let isValid = true;
+        fields.forEach(field => {
+          const value = document.getElementById(field.id).value;
+          const error = field.validator(value);
+          const errorElement = document.getElementById(field.errorId);
+          errorElement.textContent = error;
+          
+          if (error) {
+            document.getElementById(field.id).classList.add("is-invalid");
+            document.getElementById(field.id).classList.remove("is-valid");
+            isValid = false;
+          } else {
+            document.getElementById(field.id).classList.remove("is-invalid");
+            document.getElementById(field.id).classList.add("is-valid");
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        // If all validations pass, send data to server
+        try {
+          const response = await fetch("http://localhost:3001/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: nameValue,
+              email: emailValue,
+              username: usernameValue,
+              password: passwordValue,
+              phone: phoneValue,
+            }),
+          });
+
+          const data = await response.json();
+          
+          if (response.ok) {
+            // Create success notification
+            const notification = document.createElement("div");
+            notification.className = "alert alert-success mt-3";
+            notification.textContent = "✅ Registration successful! Redirecting to login...";
+            document.querySelector(".card").appendChild(notification);
+            
+            // Redirect after a short delay
+            setTimeout(() => {
+              window.location.href = "login.html";
+            }, 2000);
+          } else {
+            // Handle server error response
+            const notification = document.createElement("div");
+            notification.className = "alert alert-danger mt-3";
+            notification.textContent = `❌ ${data.message || "An unknown error occurred"}`;
+            document.querySelector(".card").appendChild(notification);
+            
+            // Remove the notification after 5 seconds
+            setTimeout(() => {
+              notification.remove();
+            }, 5000);
+          }
+        } catch (error) {
+          // Handle connection error
+          const notification = document.createElement("div");
+          notification.className = "alert alert-danger mt-3";
+          notification.textContent = "❌ Error connecting to server. Please try again later.";
+          document.querySelector(".card").appendChild(notification);
+          
+          // Remove the notification after 5 seconds
+          setTimeout(() => {
+            notification.remove();
+          }, 5000);
+        }
+      });
     </script>
 
     <script src="assets/js/bootstrap.bundle.min.js"></script>

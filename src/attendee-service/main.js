@@ -92,7 +92,7 @@ console.log(`${username}, ${phone} saved successfully!`);
       .send({ message: "Attendee registered, email sent", attendee });
   } catch (error) {
     console.error(`Error in registration: ${error.message}`);
-    res.status(500).send({ error: error.message });
+    res.status(500).send({ message: error.message });
   }
 });
 
