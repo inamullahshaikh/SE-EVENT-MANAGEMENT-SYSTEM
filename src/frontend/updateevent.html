@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Event | EventSync</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link
+      rel="icon"
+      href="images/favicon.ico"
+      type="image/x-icon"
+      class="circular-favicon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    />
+    <style>
+      /* Global Styles */
+      :root {
+        --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
+        --dark-bg: #1f1f1f;
+        --light-bg: #f8f9fa;
+        --text-color: #333;
+        --highlight-color: #ffcc00;
+        --font-family: "Poppins", sans-serif;
+        --button-hover: #2575fc;
+        --button-bg: #6a11cb;
+        --input-bg: #f7f7f7;
+        --input-focus-bg: #e5e5e5;
+      }
+
+      body {
+        font-family: var(--font-family);
+        margin: 0;
+        background: var(--light-bg);
+        color: var(--text-color);
+        line-height: 1.7;
+      }
+
+      /* Navbar */
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 20px 40px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand {
+        font-size: 28px;
+        font-weight: 700;
+        color: white;
+      }
+
+      .navbar-nav .nav-link {
+        color: white !important;
+        font-size: 18px;
+        margin: 0 15px;
+        cursor: pointer;
+        transition: color 0.3s;
+      }
+
+      .navbar-nav .nav-link:hover {
+        color: #ffcc00;
+        text-decoration: underline;
+      }
+
+      /* Main Content */
+      .main-content {
+        padding: 50px;
+        transition: 0.3s;
+      }
+
+      .feedback-form {
+        background-color: #fff;
+        border-radius: 15px;
+        padding: 40px 45px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+        transition: all 0.3s ease-in-out;
+      }
+
+      .feedback-form h2 {
+        margin-bottom: 25px;
+        font-size: 30px;
+        color: var(--primary-gradient);
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+
+      .event-info {
+        margin-bottom: 25px;
+        font-size: 18px;
+        color: #555;
+      }
+
+      .event-info p {
+        margin: 12px 0;
+      }
+
+      /* Rating System */
+      .rating {
+        display: flex;
+        justify-content: center;
+        margin: 30px 0;
+        gap: 12px;
+      }
+
+      .star {
+        font-size: 50px;
+        cursor: pointer;
+        color: #bbb;
+        transition: color 0.3s ease;
+      }
+
+      .star:hover {
+        color: var(--highlight-color);
+      }
+
+      .star.selected {
+        color: var(--highlight-color);
+      }
+
+      /* Comment Section */
+      .form-group {
+        margin: 25px 0;
+      }
+
+      label {
+        font-size: 18px;
+        color: var(--primary-gradient);
+        font-weight: 600;
+      }
+
+      textarea {
+        width: 100%;
+        height: 140px;
+        padding: 15px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: var(--input-bg);
+        resize: none;
+        transition: border 0.3s ease, background-color 0.3s ease;
+      }
+
+      textarea:focus {
+        border-color: var(--primary-gradient);
+        background-color: var(--input-focus-bg);
+        outline: none;
+      }
+
+      /* Submit Button */
+      .btn-submit {
+        background-color: var(--button-bg);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 20px;
+        width: 100%;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      .btn-submit:hover {
+        background-color: var(--button-hover);
+        transform: scale(1.05);
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        .feedback-form {
+          padding: 20px;
+        }
+
+        .star {
+          font-size: 45px;
+        }
+
+        .btn-submit {
+          padding: 12px 25px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">EventSync</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Feedback Form -->
+      <div class="feedback-form">
+        <h2>Update Event</h2>
+
+        <div class="event-info">
+          <p><strong>Event Name: </strong><span id="event-name"></span></p>
+          <p><strong>Event Venue: </strong><span id="event-venue"></span></p>
+          <p><strong>Event Date: </strong><span id="event-date"></span></p>
+          <p>
+            <strong>Total Tickets: </strong><span id="event-tickets"></span>
+          </p>
+          <p><strong>Price: </strong><span id="event-price"></span></p>
+        </div>
+
+        <form id="update-event-form">
+          <div class="form-group">
+            <label for="event-name-input">Event Name</label>
+            <input
+              type="text"
+              id="event-name-input"
+              class="form-control"
+              placeholder="Enter event name"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="event-venue-input">Venue</label>
+            <input
+              type="text"
+              id="event-venue-input"
+              class="form-control"
+              placeholder="Enter venue"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="event-date-input">Date</label>
+            <input
+              type="date"
+              id="event-date-input"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <!-- New Fields for Number of Tickets and Price per Ticket -->
+          <div class="form-group">
+            <label for="number-of-tickets">Number of Tickets</label>
+            <input
+              type="number"
+              id="number-of-tickets"
+              class="form-control"
+              placeholder="Enter number of tickets"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="price-per-ticket">Price per Ticket</label>
+            <input
+              type="number"
+              id="price-per-ticket"
+              class="form-control"
+              placeholder="Enter price per ticket"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-submit">Update Event</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const eventID = localStorage.getItem("EventIDtoupdate");
+
+      async function fetchEventDetails() {
+        try {
+          const response = await fetch(`http://localhost:3003/get/${eventID}`);
+          const event = await response.json();
+
+          if (event) {
+            // Populate form fields with existing event data
+            document.getElementById("event-name").innerText = event.name;
+            document.getElementById("event-venue").innerText = event.venue;
+            document.getElementById("event-date").innerText = new Date(
+              event.date
+            ).toLocaleDateString();
+            document.getElementById("event-tickets").innerText =
+              event.numberOfTickets;
+            document.getElementById("event-price").innerText =
+              event.pricePerTicket;
+            // Pre-fill form inputs
+            document.getElementById("event-name-input").value = event.name;
+            document.getElementById("event-venue-input").value = event.venue;
+            document.getElementById("event-date-input").value =
+              event.date.split("T")[0]; // Format date for input
+            document.getElementById("number-of-tickets").value =
+              event.numberOfTickets;
+            document.getElementById("price-per-ticket").value =
+              event.pricePerTicket;
+          }
+        } catch (error) {
+          console.error("Error fetching event details:", error);
+        }
+      }
+
+      // Submit updated event data
+      document
+        .getElementById("update-event-form")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const updatedEvent = {
+            name: document.getElementById("event-name-input").value,
+            venue: document.getElementById("event-venue-input").value,
+            date: document.getElementById("event-date-input").value,
+            numberOfTickets: document.getElementById("number-of-tickets").value,
+            pricePerTicket: document.getElementById("price-per-ticket").value,
+          };
+
+          try {
+            const response = await fetch(
+              `http://localhost:3003/update/${eventID}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedEvent),
+              }
+            );
+
+            const result = await response.json();
+
+            if (response.ok) {
+              alert(result.message);
+              window.location.href = "evorg-dashboard.html"; // Redirect to dashboard or relevant page
+            } else {
+              alert(result.error || "Failed to update event.");
+            }
+          } catch (error) {
+            console.error("Error updating event:", error);
+          }
+        });
+
+      // Fetch event details on page load
+      fetchEventDetails();
+    </script>
+  </body>
+</html>

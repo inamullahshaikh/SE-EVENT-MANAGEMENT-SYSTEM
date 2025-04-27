@@ -1,7 +1,7 @@
 @echo off
 echo Freeing up ports and starting all services...
 setlocal
-set "ports=3000 3001 3002 3003 3004 3005 3006 3007 3008 5500"
+set "ports=3000 3001 3002 3003 3004 3005 3006 3007 3008 3009 5500"
 for %%p in (%ports%) do (
     echo Killing process on port %%p...
     netstat -ano | findstr :%%p >nul
@@ -31,7 +31,9 @@ cd /d "%~dp0\src\payment-service"
 start /B node main.js
 cd /d "%~dp0\src\queries-service"
 start /B node main.js
+cd /d "%~dp0\src\feedback-service"
+start /B node main.js
 cd /d "%~dp0\src\frontend"
-start /B python -m http.server 5500
-start chrome "http://localhost:5500/index.html"
+start /B python -m http.server 5600
+start chrome "http://localhost:5600/index.html"
 pause

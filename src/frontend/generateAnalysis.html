@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Analysis | EventSync</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link
+      rel="icon"
+      href="images/favicon.ico"
+      type="image/x-icon"
+      class="circular-favicon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    />
+    <style>
+      /* Global Styles */
+      :root {
+        --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
+        --dark-bg: #2c2f38;
+        --light-bg: #f4f7fa;
+        --text-color: #333;
+        --highlight-color: #ffcc00;
+        --font-family: "Poppins", sans-serif;
+        --button-bg: #6a11cb;
+        --button-hover: #2575fc;
+        --input-bg: #f1f5f8;
+        --input-focus-bg: #e0e7ff;
+      }
+
+      body {
+        font-family: var(--font-family);
+        margin: 0;
+        background-color: var(--light-bg);
+        color: var(--text-color);
+        line-height: 1.6;
+      }
+
+      /* Navbar */
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 15px 40px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand {
+        font-size: 26px;
+        font-weight: 700;
+        color: white;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      .navbar-nav .nav-link {
+        color: white !important;
+        font-size: 18px;
+        margin: 0 15px;
+        text-transform: capitalize;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .navbar-nav .nav-link:hover {
+        color: var(--highlight-color);
+        text-decoration: underline;
+      }
+
+      /* Main Content */
+      .main-content {
+        padding: 40px 20px;
+        transition: 0.3s ease;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .feedback-form {
+        background-color: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .feedback-form h2 {
+        margin-bottom: 30px;
+        font-size: 28px;
+        color: var(--primary-gradient);
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+
+      .event-info {
+        margin-bottom: 25px;
+        font-size: 16px;
+        color: #555;
+      }
+
+      .event-info p {
+        margin: 15px 0;
+      }
+
+      /* Rating System */
+      .rating {
+        display: flex;
+        justify-content: center;
+        margin: 25px 0;
+        gap: 18px;
+      }
+
+      .star {
+        font-size: 50px;
+        cursor: pointer;
+        color: #ddd;
+        transition: color 0.3s ease;
+      }
+
+      .star:hover {
+        color: var(--highlight-color);
+      }
+
+      .star.selected {
+        color: var(--highlight-color);
+      }
+
+      /* Comment Section */
+      .form-group {
+        margin: 25px 0;
+      }
+
+      label {
+        font-size: 18px;
+        color: var(--primary-gradient);
+        font-weight: 600;
+      }
+
+      textarea {
+        width: 100%;
+        height: 120px;
+        padding: 15px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: var(--input-bg);
+        resize: none;
+        transition: border-color 0.3s ease, background-color 0.3s ease;
+      }
+
+      textarea:focus {
+        border-color: var(--primary-gradient);
+        background-color: var(--input-focus-bg);
+        outline: none;
+      }
+
+      /* Submit Button */
+      .btn-submit {
+        background-color: var(--button-bg);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 18px;
+        width: 100%;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      .btn-submit:hover {
+        background-color: var(--button-hover);
+        transform: scale(1.05);
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        .feedback-form {
+          padding: 20px;
+        }
+
+        .star {
+          font-size: 40px;
+        }
+
+        .btn-submit {
+          padding: 12px 25px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand" href="#">EventSync</a>
+        <div class="d-flex align-items-center">
+          <button
+            class="btn btn-warning d-flex align-items-center gap-2"
+            style="font-weight: 600; font-size: 16px"
+            onclick="history.back()"
+          >
+            <i class="bi bi-arrow-return-left"></i> Go Back
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Placeholder for Dynamic Content -->
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const eventID = localStorage.getItem("EventIDtoanalyse");
+
+        if (!eventID) {
+          alert("No Event ID found.");
+          return;
+        }
+
+        try {
+          // Step 1: Fetch Event
+          const response = await fetch(`http://localhost:3003/get/${eventID}`);
+          if (!response.ok) {
+            throw new Error("Event not found");
+          }
+          const event = await response.json();
+
+          // Step 2: Show Event Details (including average rating placeholder)
+          const eventDetailsHTML = `
+            <div class="feedback-form">
+              <h2>Event Details</h2>
+              <div class="event-info">
+                <p><strong>Event Name:</strong> ${event.name}</p>
+                <p><strong>Venue:</strong> ${event.venue}</p>
+                <p><strong>Date:</strong> ${new Date(
+                  event.date
+                ).toLocaleDateString()}</p>
+                <p><strong>Tickets Available:</strong> ${
+                  event.numberOfTickets
+                }</p>
+                <p><strong>Price Per Ticket:</strong> Rs. ${
+                  event.pricePerTicket
+                }</p>
+                <p><strong>Average Rating:</strong> <span id="average-rating">Loading...</span></p>
+              </div>
+            </div>
+            <div id="organizer-info" class="feedback-form" style="margin-top: 30px;">
+              <h2>Organizer Details</h2>
+              <div class="event-info" id="organizer-details">
+                Loading organizer details...
+              </div>
+            </div>
+            <div id="bookings-info" class="feedback-form" style="margin-top: 30px;">
+              <h2>Bookings Details</h2>
+              <div class="event-info" id="bookings-details">
+                Loading bookings...
+              </div>
+            </div>
+            <div id="feedback-info" class="feedback-form" style="margin-top: 30px;">
+              <h2>Feedback</h2>
+              <div class="event-info" id="feedback-details">
+                Loading feedback...
+              </div>
+            </div>
+          `;
+          document.querySelector(".main-content").innerHTML = eventDetailsHTML;
+
+          // Step 3: Fetch Organizer Data
+          const organizerResponse = await fetch(
+            `http://localhost:3006/getbyusername/${event.eventOrg}`
+          );
+          if (!organizerResponse.ok) {
+            throw new Error("Organizer not found");
+          }
+          const organizer = await organizerResponse.json();
+          const organizerDetailsHTML = `
+            <p><strong>Name:</strong> ${organizer.name}</p>
+            <p><strong>Email:</strong> ${organizer.email}</p>
+            <p><strong>Username:</strong> ${organizer.username}</p>
+            <p><strong>Phone:</strong> ${organizer.phone}</p>
+            <p><strong>Status:</strong> ${organizer.status}</p>
+          `;
+          document.getElementById("organizer-details").innerHTML =
+            organizerDetailsHTML;
+
+          // Step 4: Fetch Bookings Data
+          const bookingsResponse = await fetch(
+            `http://localhost:3004/get-bookings/${eventID}`
+          );
+          if (!bookingsResponse.ok) {
+            document.getElementById(
+              "bookings-details"
+            ).innerHTML = `<p>No bookings found for this event.</p>`;
+          } else {
+            const { bookings } = await bookingsResponse.json();
+            if (bookings.length === 0) {
+              document.getElementById(
+                "bookings-details"
+              ).innerHTML = `<p>No bookings found for this event.</p>`;
+            } else {
+              let bookingsHTML = `<table border="1" style="width:100%;text-align:left;border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th>Username</th>
+                    <th>Tickets Purchased</th>
+                    <th>Total Payment (Rs.)</th>
+                  </tr>
+                </thead>
+                <tbody>
+              `;
+              bookings.forEach((booking) => {
+                bookingsHTML += `
+                  <tr>
+                    <td>${booking.username}</td>
+                    <td>${booking.ticketsPurchased}</td>
+                    <td>${booking.totalPayment}</td>
+                  </tr>
+                `;
+              });
+              bookingsHTML += `</tbody></table>`;
+              document.getElementById("bookings-details").innerHTML =
+                bookingsHTML;
+            }
+          }
+
+          // Step 5: Fetch Feedback Data
+          const feedbackResponse = await fetch(
+            `http://localhost:3009/get-feedback/${eventID}`
+          );
+          if (!feedbackResponse.ok) {
+            document.getElementById(
+              "feedback-details"
+            ).innerHTML = `<p>No feedback found for this event.</p>`;
+          } else {
+            const feedbacks = await feedbackResponse.json();
+            if (feedbacks.length === 0) {
+              document.getElementById(
+                "feedback-details"
+              ).innerHTML = `<p>No feedback found for this event.</p>`;
+            } else {
+              let feedbackHTML = `<table border="1" style="width:100%;text-align:left;border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th>Username</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                  </tr>
+                </thead>
+                <tbody>
+              `;
+              let totalRating = 0;
+              feedbacks.forEach((feedback) => {
+                feedbackHTML += `
+                  <tr>
+                    <td>${feedback.username}</td>
+                    <td>${feedback.rating}</td>
+                    <td>${feedback.comment || "No comment"}</td>
+                  </tr>
+                `;
+                totalRating += feedback.rating;
+              });
+              feedbackHTML += `</tbody></table>`;
+              document.getElementById("feedback-details").innerHTML =
+                feedbackHTML;
+              document.getElementById("average-rating").innerHTML = (
+                totalRating / feedbacks.length
+              ).toFixed(2);
+            }
+          }
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      });
+    </script>
+  </body>
+</html>

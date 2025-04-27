@@ -3,9 +3,11 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
 const cors = require("cors");
+const crypto = require("crypto");
 const app = express();
 app.use(express.json());
 app.use(cors());
+
 mongoose.connect("mongodb://127.0.0.1:27017/event-management_db", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -18,10 +20,113 @@ const attendeeSchema = new mongoose.Schema({
   password: String,
   phone: String,
   loyaltyPoints: { type: Number, default: 0 },
+  resetCode: String,
+  resetCodeExpiry: Date,
 });
 
 const Attendee = mongoose.model("Attendee", attendeeSchema);
 
+let resetCountdowns = {}; // Global variable for tracking countdowns
+app.post("/forgottenpassword", async (req, res) => {
+  try {
+    const { email, username } = req.body;
+    console.log(email, username);
+
+    // Fetch user by email and username
+    const emailcheck = await axios
+      .get(`http://localhost:3001/getbyemail/${email}`)
+      .catch(() => null);
+    const usernamecheck = await axios
+      .get(`http://localhost:3001/getbyusername/${username}`)
+      .catch(() => null);
+
+    if (!emailcheck?.data && !usernamecheck?.data) {
+      return res.status(404).send({ message: "Attendee not found" });
+    }
+
+    // Determine the attendee
+    const attendee = emailcheck?.data || usernamecheck?.data;
+
+    // Generate reset code and expiry time (1 min)
+    const resetCode = crypto.randomInt(100000, 999999).toString();
+    const expiry = new Date(Date.now() + 60 * 1000);
+
+    // Assign reset code
+    attendee.resetCode = resetCode;
+    attendee.resetCodeExpiry = expiry;
+
+    // Save updated attendee (if using MongoDB, use `findByIdAndUpdate`)
+    await Attendee.findByIdAndUpdate(attendee._id, {
+      resetCode,
+      resetCodeExpiry: expiry,
+    });
+
+    // Send email
+    await axios.post("http://localhost:3005/send", {
+      useremail: attendee.email,
+      subject: "🔑 Reset Your Password - Event Management",
+      message: `
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
+          <h2 style="color: #333; text-align: center;">🔑 Password Reset Request</h2>
+          <p>Dear <b>${attendee.name}</b>,</p>
+          <p>You recently requested to reset your password for your EventSync account. Use the following code to reset your password:</p>
+          <div style="text-align: center; margin: 20px 0;">
+            <span style="display: inline-block; padding: 10px 20px; font-size: 20px; font-weight: bold; color: #fff; background-color: #007bff; border-radius: 5px;">
+              ${resetCode}
+            </span>
+          </div>
+          <p style="color: red; text-align: center;">⚠ This code will expire in 1 minute.</p>
+          <p>If you did not request a password reset, please ignore this email. Your account remains secure.</p>
+          <hr>
+          <p style="font-size: 12px; color: #666; text-align: center;">EventSync Team | © 2025 All rights reserved</p>
+        </div>
+      `,
+    });
+
+    // Reset code auto-expiry (optional)
+    setTimeout(async () => {
+      await Attendee.findByIdAndUpdate(attendee._id, {
+        resetCode: null,
+        resetCodeExpiry: null,
+      });
+    }, 60 * 1000);
+
+    res.status(200).send({ message: "Reset code sent to email" });
+  } catch (error) {
+    console.error("Forgotten password error:", error);
+    res.status(500).send({ message: error.message });
+  }
+});
+
+// Enter Code and Reset Password API
+app.post("/entercode", async (req, res) => {
+  try {
+    const { email, username, code, newPassword } = req.body;
+    const attendee = await Attendee.findOne(email ? { email } : { username });
+
+    if (!attendee || attendee.resetCode !== code) {
+      return res.status(400).send({ message: "Invalid or expired code" });
+    }
+
+    if (new Date() > attendee.resetCodeExpiry) {
+      return res
+        .status(400)
+        .send({ message: "Code has expired. Request a new one." });
+    }
+
+    attendee.password = await bcrypt.hash(newPassword, 10);
+    attendee.resetCode = null;
+    attendee.resetCodeExpiry = null;
+    await attendee.save();
+
+    clearTimeout(resetCountdowns[attendee.email || attendee.username]);
+    delete resetCountdowns[attendee.email || attendee.username];
+
+    res.status(200).send({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
 // Register attendee and create user entry
 app.post("/register", async (req, res) => {
   try {
@@ -55,7 +160,7 @@ app.post("/register", async (req, res) => {
       phone,
     });
 
-console.log(`${username}, ${phone} saved successfully!`);
+    console.log(`${username}, ${phone} saved successfully!`);
     await attendee.save();
     console.log(`Attendee ${username} saved successfully!`);
 
@@ -228,9 +333,7 @@ app.get("/getbyusername/:username", async (req, res) => {
     console.error(`Error fetching attendee by username: ${error.message}`);
     res.status(500).send({ error: error.message });
   }
-
 });
-
 
 // Get attendee by email
 app.get("/getbyemail/:email", async (req, res) => {
@@ -250,6 +353,5 @@ app.get("/getbyemail/:email", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
-
 
 app.listen(3001, () => console.log("✅ Attendee service running on port 3001"));

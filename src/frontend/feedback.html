@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Provide Feedback | EventSync</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link
+      rel="icon"
+      href="images/favicon.ico"
+      type="image/x-icon"
+      class="circular-favicon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    />
+    <style>
+      /* Global Styles */
+      :root {
+        --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
+        --dark-bg: #1f1f1f;
+        --light-bg: #f8f9fa;
+        --text-color: #333;
+        --highlight-color: #ffcc00;
+        --font-family: "Poppins", sans-serif;
+        --button-hover: #2575fc;
+        --button-bg: #6a11cb;
+        --input-bg: #f7f7f7;
+        --input-focus-bg: #e5e5e5;
+      }
+
+      body {
+        font-family: var(--font-family);
+        margin: 0;
+        background: var(--light-bg);
+        color: var(--text-color);
+        line-height: 1.7;
+      }
+
+      /* Navbar */
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 20px 40px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand {
+        font-size: 28px;
+        font-weight: 700;
+        color: white;
+      }
+
+      .navbar-nav .nav-link {
+        color: white !important;
+        font-size: 18px;
+        margin: 0 15px;
+        cursor: pointer;
+        transition: color 0.3s;
+      }
+
+      .navbar-nav .nav-link:hover {
+        color: #ffcc00;
+        text-decoration: underline;
+      }
+
+      /* Main Content */
+      .main-content {
+        padding: 50px;
+        transition: 0.3s;
+      }
+
+      .feedback-form {
+        background-color: #fff;
+        border-radius: 15px;
+        padding: 40px 45px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+        transition: all 0.3s ease-in-out;
+      }
+
+      .feedback-form h2 {
+        margin-bottom: 25px;
+        font-size: 30px;
+        color: var(--primary-gradient);
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+
+      .event-info {
+        margin-bottom: 25px;
+        font-size: 18px;
+        color: #555;
+      }
+
+      .event-info p {
+        margin: 12px 0;
+      }
+
+      /* Rating System */
+      .rating {
+        display: flex;
+        justify-content: center;
+        margin: 30px 0;
+        gap: 12px;
+      }
+
+      .star {
+        font-size: 50px;
+        cursor: pointer;
+        color: #bbb;
+        transition: color 0.3s ease;
+      }
+
+      .star:hover {
+        color: var(--highlight-color);
+      }
+
+      .star.selected {
+        color: var(--highlight-color);
+      }
+
+      /* Comment Section */
+      .form-group {
+        margin: 25px 0;
+      }
+
+      label {
+        font-size: 18px;
+        color: var(--primary-gradient);
+        font-weight: 600;
+      }
+
+      textarea {
+        width: 100%;
+        height: 140px;
+        padding: 15px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: var(--input-bg);
+        resize: none;
+        transition: border 0.3s ease, background-color 0.3s ease;
+      }
+
+      textarea:focus {
+        border-color: var(--primary-gradient);
+        background-color: var(--input-focus-bg);
+        outline: none;
+      }
+
+      /* Submit Button */
+      .btn-submit {
+        background-color: var(--button-bg);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 20px;
+        width: 100%;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      .btn-submit:hover {
+        background-color: var(--button-hover);
+        transform: scale(1.05);
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        .feedback-form {
+          padding: 20px;
+        }
+
+        .star {
+          font-size: 45px;
+        }
+
+        .btn-submit {
+          padding: 12px 25px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">EventSync</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Feedback Form -->
+      <div class="feedback-form">
+        <h2>Provide Your Feedback</h2>
+
+        <!-- Event Information -->
+        <div class="event-info">
+          <p><strong>Event Name:</strong> <span id="eventName"></span></p>
+          <p><strong>Event Date:</strong> <span id="eventDate"></span></p>
+          <p><strong>Venue:</strong> <span id="eventVenue"></span></p>
+          <p>
+            <strong>Tickets Purchased:</strong>
+            <span id="ticketsPurchased"></span>
+          </p>
+          <p><strong>Total Payment:</strong> <span id="totalPayment"></span></p>
+        </div>
+
+        <!-- Rating System -->
+        <div class="rating">
+          <i class="bi bi-star star" data-value="1"></i>
+          <i class="bi bi-star star" data-value="2"></i>
+          <i class="bi bi-star star" data-value="3"></i>
+          <i class="bi bi-star star" data-value="4"></i>
+          <i class="bi bi-star star" data-value="5"></i>
+        </div>
+
+        <!-- Comment Section -->
+        <div class="form-group">
+          <label for="comments">Additional Comments:</label>
+          <textarea
+            id="comments"
+            placeholder="Share your thoughts..."
+          ></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="btn-submit" id="submitFeedback">Submit Feedback</button>
+      </div>
+    </div>
+    <script>
+      // Example event data for feedback
+      const eventData = JSON.parse(localStorage.getItem("feedbackdata"));
+      console.log(eventData);
+      const username = localStorage.getItem("username");
+      console.log(username);
+      // Check if eventData is correctly retrieved and parsed
+      if (eventData) {
+        // Display event information
+        document.getElementById("eventName").innerText = eventData.name;
+        document.getElementById("eventDate").innerText = new Date(
+          eventData.date
+        ).toLocaleDateString();
+        document.getElementById("eventVenue").innerText = eventData.venue;
+        document.getElementById("ticketsPurchased").innerText =
+          eventData.ticketsPurchased;
+        document.getElementById("totalPayment").innerText =
+          eventData.totalPayment;
+      } else {
+        console.error("No event data found in localStorage");
+      }
+
+      // Rating logic
+      const stars = document.querySelectorAll(".star");
+      let selectedRating = 0;
+
+      stars.forEach((star) => {
+        star.addEventListener("click", () => {
+          selectedRating = parseInt(star.getAttribute("data-value"));
+          updateStarSelection();
+        });
+      });
+
+      function updateStarSelection() {
+        stars.forEach((star) => {
+          if (parseInt(star.getAttribute("data-value")) <= selectedRating) {
+            star.classList.add("selected");
+          } else {
+            star.classList.remove("selected");
+          }
+        });
+      }
+
+      // Handle feedback submission
+      document
+        .getElementById("submitFeedback")
+        .addEventListener("click", async () => {
+          const comments = document.getElementById("comments").value;
+
+          if (selectedRating === 0 || comments.trim() === "") {
+            alert("Please provide a rating and comments before submitting.");
+            return;
+          }
+
+          // Get necessary information from localStorage or DOM
+          const username = localStorage.getItem("username"); // Example: assuming the username is stored in localStorage
+          const eventID = eventData.eventID; // Assuming eventData is already available
+          const bookingID = eventData.bookingID; // Assuming bookingID is part of eventData
+
+          // Feedback data
+          const feedbackData = {
+            username,
+            eventid: eventID,
+            bookingid: bookingID,
+            rating: selectedRating,
+            comment: comments,
+          };
+
+          try {
+            // Make the POST request to the API
+            const response = await fetch(
+              "http://localhost:3009/create-feedback",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(feedbackData),
+              }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+              console.log("Feedback Submitted:", data.feedback);
+              alert("Thank you for your feedback!");
+            } else {
+              throw new Error(data.error || "Something went wrong.");
+            }
+          } catch (error) {
+            console.error("Error submitting feedback:", error);
+            alert("Error submitting feedback. Please try again.");
+          }
+
+          // Reset the form after submission
+          selectedRating = 0;
+          document.getElementById("comments").value = "";
+          updateStarSelection(); // Update the stars to their initial state
+          window.location.href = "attendee-dashboard.html";
+        });
+    </script>
+  </body>
+</html>

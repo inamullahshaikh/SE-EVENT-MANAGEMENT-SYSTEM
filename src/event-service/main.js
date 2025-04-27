@@ -21,7 +21,14 @@ const eventSchema = new mongoose.Schema({
   pricePerTicket: Number,
   eventOrg: String, // Username of the event organizer
 });
+const bookingSchema = new mongoose.Schema({
+  username: String,
+  eventId: String, // MongoDB ObjectId stored as a string
+  ticketsPurchased: Number,
+  totalPayment: Number,
+});
 
+const Booking = mongoose.model("Booking", bookingSchema);
 const Event = mongoose.model("Event", eventSchema, "events");
 
 // Create an event
@@ -144,9 +151,10 @@ app.get("/get-by-organizer/:username", async (req, res) => {
   try {
     const events = await Event.find({ eventOrg: req.params.username });
 
-
     if (!events.length) {
-      return res.status(404).send({ message: "No events found for this organizer" });
+      return res
+        .status(404)
+        .send({ message: "No events found for this organizer" });
     }
 
     res.status(200).send(events);
@@ -155,4 +163,49 @@ app.get("/get-by-organizer/:username", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+// Get events along with booking details by attendee username
+
+app.get("/get-by-attendee/:username", async (req, res) => {
+  try {
+    const bookingsResponse = await axios.get(
+      `http://localhost:3004/get-bookings-by-attendee/${req.params.username}`
+    );
+
+    // Check where the bookings array is
+    const bookingsData = bookingsResponse.data;
+    const bookings = Array.isArray(bookingsData)
+      ? bookingsData
+      : bookingsData.bookings;
+
+    console.log(bookings);
+
+    if (!bookings || !bookings.length) {
+      return res
+        .status(404)
+        .send({ message: "No bookings found for this attendee" });
+    }
+
+    const eventIds = bookings.map((booking) => booking.eventId);
+    const events = await Event.find({ _id: { $in: eventIds } });
+
+    const mergedData = bookings.map((booking) => {
+      const event = events.find((e) => e._id.toString() === booking.eventId);
+      return {
+        name: event?.name,
+        venue: event?.venue,
+        date: event?.date,
+        ticketsPurchased: booking.ticketsPurchased,
+        totalPayment: booking.totalPayment,
+        eventID: event?._id,
+        bookingID: booking._id,
+      };
+    });
+
+    res.status(200).send(mergedData);
+  } catch (error) {
+    console.error(`Error fetching events by attendee: ${error.message}`);
+    res.status(500).send({ error: error.message });
+  }
+});
+
 app.listen(3003, () => console.log("Event service running on port 3003"));

@@ -143,7 +143,7 @@ app.delete("/delete/:id", async (req, res) => {
       }
     } catch (err) {
       console.error("Error fetching event details:", err.message);
-      eventExists = false; 
+      eventExists = false;
     }
 
     // Restore event tickets if the event still exists
@@ -196,7 +196,9 @@ app.get("/get-bookings/:eventId", async (req, res) => {
     const bookings = await Booking.find({ eventId: eventId });
 
     if (!bookings.length) {
-      return res.status(404).json({ message: "No bookings found for this event." });
+      return res
+        .status(404)
+        .json({ message: "No bookings found for this event." });
     }
 
     res.status(200).json({ bookings });
@@ -207,46 +209,72 @@ app.get("/get-bookings/:eventId", async (req, res) => {
 });
 app.get("/get-attendees-by-event/:eventId", async (req, res) => {
   try {
-      const { eventId } = req.params;
+    const { eventId } = req.params;
 
-      // Step 1: Fetch bookings for this event
-      const bookings = await Booking.find({ eventId });
+    // Step 1: Fetch bookings for this event
+    const bookings = await Booking.find({ eventId });
 
-      if (!bookings.length) {
-          return res.status(404).json({ message: "No attendees found for this event." });
-      }
+    if (!bookings.length) {
+      return res
+        .status(404)
+        .json({ message: "No attendees found for this event." });
+    }
 
-      // Step 2: Fetch attendee details for each booking
-      const attendeesData = await Promise.all(
-          bookings.map(async (booking) => {
-              try {
-                  const response = await axios.get(`http://localhost:3001/getbyusername/${booking.username}`);
-console.log(response.data);
-                  return {
-                      bookingId: booking._id,        // Include Booking ID
-                      name: response.data.name,
-                      email: response.data.email,
-                      phone: response.data.phone,
-                      ticketsPurchased: booking.ticketsPurchased // Include Tickets Purchased
-                  };
-              } catch (error) {
-                  console.warn(`⚠️ Attendee not found for username: ${booking.username}`);
-                  return null;
-              }
-          })
-      );
+    // Step 2: Fetch attendee details for each booking
+    const attendeesData = await Promise.all(
+      bookings.map(async (booking) => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3001/getbyusername/${booking.username}`
+          );
+          console.log(response.data);
+          return {
+            bookingId: booking._id, // Include Booking ID
+            name: response.data.name,
+            email: response.data.email,
+            phone: response.data.phone,
+            ticketsPurchased: booking.ticketsPurchased, // Include Tickets Purchased
+          };
+        } catch (error) {
+          console.warn(
+            `⚠️ Attendee not found for username: ${booking.username}`
+          );
+          return null;
+        }
+      })
+    );
 
-      // Remove null values
-      const attendees = attendeesData.filter(attendee => attendee !== null);
+    // Remove null values
+    const attendees = attendeesData.filter((attendee) => attendee !== null);
 
-      res.status(200).json({ attendees });
+    res.status(200).json({ attendees });
   } catch (error) {
-      console.error("Error fetching attendees by event:", error.message);
-      res.status(500).json({ error: error.message });
+    console.error("Error fetching attendees by event:", error.message);
+    res.status(500).json({ error: error.message });
   }
 });
 
+app.get("/get-bookings-by-attendee/:username", async (req, res) => {
+  try {
+    const { username } = req.params;
 
+    console.log("Fetching bookings for username:", username);
+
+    // Find bookings by username
+    const bookings = await Booking.find({ username });
+
+    if (!bookings.length) {
+      return res
+        .status(404)
+        .json({ message: "No bookings found for this user." });
+    }
+
+    res.status(200).json({ bookings });
+  } catch (error) {
+    console.error("Error in /get-bookings-by-attendee:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Start server
 app.listen(3004, () => console.log("Booking Service running on port 3004"));

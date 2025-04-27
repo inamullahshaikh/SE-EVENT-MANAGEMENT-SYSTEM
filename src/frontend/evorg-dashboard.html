@@ -17,6 +17,32 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
     />
     <style>
+      .event-card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.event-card:hover {
+    transform: scale(1.05);
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+}
+
+.btn-update {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.card-body p {
+    font-size: 14px;
+    color: #555;
+}
+
       .circular-favicon {
         border-radius: 50%;
       }
@@ -344,9 +370,6 @@
         <a onclick="showSection('deleteEvent')">
           <i class="bi bi-trash"></i> Delete Event
         </a>
-        <a onclick="showSection('removeAttendee')">
-          <i class="bi bi-person-x"></i> Remove Attendee
-        </a>
         <a onclick="showSection('generateAnalysis')">
           <i class="bi bi-bar-chart"></i> Generate Analysis
         </a>
@@ -453,25 +476,21 @@
 
       <div id="updateEvent" class="content-section">
         <h3>Update Event</h3>
-        <button class="btn btn-primary">Update Event</button>
+          <div id="eventCardsForUpdate" class="row">
+          </div>
       </div>
 
       <div id="deleteEvent" class="content-section">
         <h3>Delete Event</h3>
-        <button class="btn btn-danger">Delete Event</button>
+                  <div id="eventCardsForDelete" class="row">
+          </div>
       </div>
 
-      <div id="removeAttendee" class="content-section">
-        <h3>Remove Attendee</h3>
-        <button class="btn btn-danger">Remove Attendee</button>
-      </div>
 
       <div id="generateAnalysis" class="content-section">
-        <h3>Generate Event Analysis</h3>
-        <button class="btn btn-primary" onclick="generateAnalysis()">
-          Generate Analysis
-        </button>
-        <div id="analysisResults" class="mt-3"></div>
+        <h3>Generate Analysis</h3>
+        <div id="eventCardsForAnalysis" class="row">
+          </div>
       </div>
       <div class="container mt-5" id="yourEvents">
         <h3>Your Events</h3>
@@ -509,6 +528,8 @@
       }
 
       function showSection(sectionId) {
+                document.getElementById("sidebar").classList.remove("active");
+
     // Hide all sections first
     document.querySelectorAll('.content-section, .container.mt-5').forEach(section => {
         section.style.display = 'none';
@@ -684,8 +705,171 @@ document.getElementById("searchAttendee").addEventListener("input", function () 
         card.style.display = card.textContent.toLowerCase().includes(searchValue) ? "" : "none";
     });
 });
+async function displayEventsForUpdate() {
+    try {
+        const response = await fetch(`http://localhost:3003/get-by-organizer/${username}`);
+        const events = await response.json();
+
+        const eventCardsContainer = document.getElementById("eventCardsForUpdate");
+        if (!eventCardsContainer) {
+            console.error("Event cards container not found.");
+            return;
+        }
+
+        eventCardsContainer.innerHTML = "";  // Clear any existing content
+
+        if (events.length === 0) {
+            eventCardsContainer.innerHTML = "<p>No events found or failed to fetch events.</p>";
+            return;
+        }
+
+        events.forEach(event => {
+            const card = document.createElement("div");
+            card.classList.add("col-md-4", "mb-4");
+
+            card.innerHTML = `
+                <div class="event-card card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
+                        <p><strong>📍 Venue:</strong> ${event.venue}</p>
+                        <p><strong>📅 Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+                        <p><strong>🎟️ Tickets Bought:</strong> ${event.numberOfTickets}</p>
+                        <p><strong>💵 Total Payment:</strong> ${event.pricePerTicket}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary" onclick="updateEvent('${event._id}')">Update Event</button>
+                    </div>
+                </div>
+            `;
+
+            eventCardsContainer.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Error displaying events:", error);
+    }
+}
+
+async function displayEventsForDelete() {
+    try {
+        const response = await fetch(`http://localhost:3003/get-by-organizer/${username}`);
+        const events = await response.json();
+
+        const eventCardsContainer = document.getElementById("eventCardsForDelete");
+        if (!eventCardsContainer) {
+            console.error("Event cards container not found.");
+            return;
+        }
+
+        eventCardsContainer.innerHTML = "";  // Clear any existing content
+
+        if (events.length === 0) {
+            eventCardsContainer.innerHTML = "<p>No events found or failed to fetch events.</p>";
+            return;
+        }
+
+        events.forEach(event => {
+            const card = document.createElement("div");
+            card.classList.add("col-md-4", "mb-4");
+
+            card.innerHTML = `
+                <div class="event-card card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
+                        <p><strong>📍 Venue:</strong> ${event.venue}</p>
+                        <p><strong>📅 Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+                        <p><strong>🎟️ Tickets Bought:</strong> ${event.numberOfTickets}</p>
+                        <p><strong>💵 Total Payment:</strong> ${event.pricePerTicket}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary" color="RED" onclick="deleteEvent('${event._id}')">Delete Event</button>
+                    </div>
+                </div>
+            `;
+
+            eventCardsContainer.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Error displaying events:", error);
+    }
+}
+async function displayEventsForAnalysis() {
+    try {
+        const response = await fetch(`http://localhost:3003/get-by-organizer/${username}`);
+        const events = await response.json();
+
+        const eventCardsContainer = document.getElementById("eventCardsForAnalysis");
+        if (!eventCardsContainer) {
+            console.error("Event cards container not found.");
+            return;
+        }
+
+        eventCardsContainer.innerHTML = "";  // Clear any existing content
+
+        if (events.length === 0) {
+            eventCardsContainer.innerHTML = "<p>No events found or failed to fetch events.</p>";
+            return;
+        }
+
+        events.forEach(event => {
+            const card = document.createElement("div");
+            card.classList.add("col-md-4", "mb-4");
+
+            card.innerHTML = `
+                <div class="event-card card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
+                        <p><strong>📍 Venue:</strong> ${event.venue}</p>
+                        <p><strong>📅 Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+                        <p><strong>🎟️ Tickets Bought:</strong> ${event.numberOfTickets}</p>
+                        <p><strong>💵 Total Payment:</strong> ${event.pricePerTicket}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary" onclick="GenerateAnalysis('${event._id}')">Generate Analysis</button>
+                    </div>
+                </div>
+            `;
+
+            eventCardsContainer.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Error displaying events:", error);
+    }
+}
+
+// Function to handle the update event (you can modify this to show a form, etc.)
+function updateEvent(eventID) {
+    console.log("Updating event with ID:", eventID);
+    localStorage.setItem("EventIDtoupdate", eventID);
+    window.location.href = "updateevent.html";
+}
+function GenerateAnalysis(eventID){
+      localStorage.setItem("EventIDtoanalyse", eventID);
+    window.location.href = "generateAnalysis.html";
+}
+async function deleteEvent(eventID) {
+  try {
+    const response = await fetch(`http://localhost:3003/delete/${eventID}`, { method: 'DELETE' });
+    const result = await response.json();
+    
+    if (response.ok) {
+      alert('✅ Event deleted successfully!');
+      window.location.href = "evorg-dashboard.html";
+    } else {
+      alert('❌ Error: ' + (result.message || 'Failed to delete event.'));
+    }
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    alert('❌ Error deleting event. Please try again.');
+  }
+}
 
 
+// Call the displayEventsForUpdate function when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+    displayEventsForUpdate();
+    displayEventsForDelete(); 
+    displayEventsForAnalysis();// Fetch and display events on page load
+});
     </script>
   </body>
 </html>

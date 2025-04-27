@@ -350,11 +350,6 @@
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" onclick="showSection('paymentMethods')"
-                >Manage Payments</a
-              >
-            </li>
-            <li class="nav-item">
               <a class="nav-link logout-btn" onclick="logout()">Logout</a>
             </li>
           </ul>
@@ -377,6 +372,9 @@
         >
         <a onclick="showSection('bookEvent')"
           ><i class="bi bi-calendar-check"></i> Book an Event</a
+        >
+        <a onclick="showSection('feedback')"
+          ><i class="bi bi-star-fill"></i> Provide Feedback</a
         >
       </div>
       <div class="sidebar-footer">
@@ -435,12 +433,13 @@
       <!-- Upcoming Events -->
       <div id="upcomingEvents" class="content-section">
         <h3>Upcoming Events</h3>
+        <div class="row" id="BookingCards"></div>
       </div>
 
       <!-- Manage Bookings -->
       <div id="manageBookings" class="content-section">
         <h3>Manage Bookings</h3>
-        <p>Here you can manage your booked events.</p>
+        <div class="row" id="BookingManageCards"></div>
       </div>
 
       <div id="bookEvent" class="content-section">
@@ -449,11 +448,19 @@
         <div class="row" id="eventCards"></div>
       </div>
 
+      <div id="feedback" class="content-section">
+        <h3>Provide Feedback</h3>
+        <div class="row" id="eventCardsforfeedback"></div>
+
+        <!-- This is where event cards should be loaded -->
+      </div>
       <!-- Payment Methods -->
       <div id="paymentMethods" class="content-section">
         <h3>Manage Payment Methods</h3>
         <div id="paymentCards"></div>
-        <button class="btn btn-success mt-3">+ Add Payment Method</button>
+        <button class="btn btn-success mt-3" id="addPaymentMethodBtn">
+          + Add Payment Method
+        </button>
       </div>
     </div>
 
@@ -510,14 +517,12 @@
             document.getElementById("profileEmail").textContent = data.email;
             document.getElementById("profilePhone").textContent =
               data.phone || "N/A";
-            document.getElementById("profilePoints").textContent =
-              data.loyaltyPoints;
+            document.getElementById("profilePoints").textContent = Math.round(
+              data.loyaltyPoints
+            );
           })
           .catch((error) => console.error(error.message));
       }
-      document.addEventListener("DOMContentLoaded", function () {
-        fetchEvents();
-      });
 
       function fetchEvents() {
         fetch("http://localhost:3003/get")
@@ -529,41 +534,290 @@
               card.classList.add("col-md-4");
 
               card.innerHTML = `
-                <div class="event-card">
-                <div class="card-body">
-                  <h5 class="card-title"><strong>🎉 ${event.name} </strong></h5>
-                  <p><strong>📍 Venue:</strong> ${event.venue}</p>
-                  <p><strong>📅 Date:</strong> ${new Date(
-                    event.date
-                  ).toLocaleDateString()}</p>
-                  <p><strong>🎟️ Tickets Available:</strong> ${
-                    event.numberOfTickets
-                  }</p>
-                  <p><strong>💵 Price per Ticket:</strong> PKR ${
-                    event.pricePerTicket
-                  }</p>
-                </div>
-                <div class="ticket-select">
-                  <select id="ticketSelect-${event._id}">
-                  ${Array.from(
-                    { length: event.numberOfTickets },
-                    (_, i) => `<option value="${i + 1}">${i + 1}</option>`
-                  ).join("")}
-                  </select>
-                </div>
-                  <button class="btn-book" onclick="bookEvent('${event._id}', ${
-                event.pricePerTicket
-              })">Book Now</button>
-                </div>
+                      <div class="event-card">
+                      <div class="card-body">
+                        <h5 class="card-title"><strong>🎉 ${
+                          event.name
+                        } </strong></h5>
+                        <p><strong>📍 Venue:</strong> ${event.venue}</p>
+                        <p><strong>📅 Date:</strong> ${new Date(
+                          event.date
+                        ).toLocaleDateString()}</p>
+                        <p><strong>🎟️ Tickets Available:</strong> ${
+                          event.numberOfTickets
+                        }</p>
+                        <p><strong>💵 Price per Ticket:</strong> PKR ${
+                          event.pricePerTicket
+                        }</p>
+                      </div>
+                      <div class="ticket-select">
+                        <select id="ticketSelect-${event._id}">
+                        ${Array.from(
+                          { length: event.numberOfTickets },
+                          (_, i) => `<option value="${i + 1}">${i + 1}</option>`
+                        ).join("")}
+                        </select>
+                      </div>
+                        <button class="btn-book" onclick="bookEvent('${
+                          event._id
+                        }', ${event.pricePerTicket})">Book Now</button>
+                      </div>
 
-              `;
+                    `;
               eventCardsContainer.appendChild(card);
+            });
+          })
+          .catch((error) => console.error("Error fetching events:", error));
+      }
+      function fetchEventsforfeedback() {
+        fetch(`http://localhost:3003/get-by-attendee/${username}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const eventCardsContainer = document.getElementById(
+              "eventCardsforfeedback"
+            );
+
+            // Iterate through each event to check feedback
+            data.forEach((event) => {
+              const bookingID = event.bookingID;
+              console.log(`Fetching feedback for booking ID: ${bookingID}`);
+
+              fetch(`http://localhost:3009/get-event-by-booking/${bookingID}`)
+                .then((response) => {
+                  if (response.status === 404) {
+                    // If feedback is not found, response status will be 404
+                    return null;
+                  } else {
+                    return response.json();
+                  }
+                })
+                .then((feedbackData) => {
+                  if (feedbackData === null || feedbackData.length === 0) {
+                    const eventName = event.name.replace(/'/g, "\\'"); // Escape single quotes
+                    const eventVenue = event.venue.replace(/'/g, "\\'"); // Escape single quotes
+
+                    const card = document.createElement("div");
+                    card.classList.add("col-md-4");
+                    card.innerHTML = `
+        <div class="event-card">
+          <div class="card-body">
+            <h5 class="card-title"><strong>🎉 ${event.name} </strong></h5>
+            <p><strong>📍 Venue:</strong> ${event.venue}</p>
+            <p><strong>📅 Date:</strong> ${new Date(
+              event.date
+            ).toLocaleDateString()}</p>
+            <p><strong>🎟️ Tickets Bought:</strong> ${event.ticketsPurchased}</p>
+            <p><strong>💵 Total Payment:</strong> ${event.totalPayment}</p>
+          </div>
+          <button class="btn-book" onclick="providefeedback(
+            '${event.bookingID}',
+            '${event.eventID}',
+            '${eventName}',
+            '${eventVenue}',
+            '${event.date}',
+            '${event.ticketsPurchased}',
+            '${event.totalPayment}'
+          )">Provide Feedback</button>
+        </div>
+      `;
+
+                    eventCardsContainer.appendChild(card);
+                  }
+                })
+                .catch((error) =>
+                  console.error("Error fetching feedback:", error)
+                );
             });
           })
           .catch((error) => console.error("Error fetching events:", error));
       }
 
       // Handle event booking
+      function providefeedback(
+        bookingID,
+        eventID,
+        name,
+        venue,
+        date,
+        ticketsPurchased,
+        totalPayment
+      ) {
+        // Get today's date
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const eventDate = new Date(date);
+        eventDate.setHours(0, 0, 0, 0);
+
+        // Check if the event date is today or in the past
+        if (eventDate <= today) {
+          // Store the feedback data in localStorage
+          localStorage.setItem(
+            "feedbackdata",
+            JSON.stringify({
+              bookingID,
+              eventID,
+              name,
+              venue,
+              date,
+              ticketsPurchased,
+              totalPayment,
+            })
+          );
+          // Redirect to the feedback page
+          window.location.href = "feedback.html";
+        } else {
+          // If the event date is in the future, alert the user
+          alert(
+            "You can only provide feedback for events that have already passed or are occurring today."
+          );
+        }
+      }
+      function fetchBookings() {
+        const username = localStorage.getItem("username");
+        if (!username) {
+          console.error("Username not found in localStorage");
+          return;
+        }
+
+        fetch(`http://localhost:3003/get-by-attendee/${username}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const eventCardsContainer =
+              document.getElementById("BookingManageCards");
+
+            // Check if there are bookings data
+            if (data.length === 0) {
+              eventCardsContainer.innerHTML =
+                "<p>No bookings found for this user.</p>";
+              return;
+            }
+
+            data.forEach((event) => {
+              const card = document.createElement("div");
+              card.classList.add("event-card");
+
+              // Populate the event card with data
+              card.innerHTML = `
+                <div class="card-body">
+                  <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
+                  <p><strong>📍 Venue:</strong> ${event.venue}</p>
+                  <p><strong>📅 Date:</strong> ${new Date(
+                    event.date
+                  ).toLocaleDateString()}</p>
+                  <p><strong>🎟️ Tickets Bought:</strong> ${
+                    event.ticketsPurchased
+                  }</p>
+                  <p><strong>💵 Total Payment:</strong> ${
+                    event.totalPayment
+                  }</p>
+                </div>
+                <button class="btn-book" onclick="deleteBooking(
+                  '${event.bookingID}'
+                )">Cancel Booking</button>
+              `;
+              eventCardsContainer.appendChild(card);
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching bookings:", error);
+            //alert("There was an error fetching the bookings.");
+          });
+      }
+      function displayBookings() {
+        const username = localStorage.getItem("username");
+        if (!username) {
+          console.error("Username not found in localStorage");
+          return;
+        }
+
+        fetch(`http://localhost:3003/get-by-attendee/${username}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const eventCardsContainer = document.getElementById("BookingCards");
+
+            // Get the current date (today) in the format "YYYY-MM-DD"
+            const currentDate = new Date().toISOString().split("T")[0];
+
+            // Filter events that are in the future
+            const futureEvents = data.filter((event) => {
+              const eventDate = new Date(event.date)
+                .toISOString()
+                .split("T")[0];
+              return eventDate > currentDate; // Compare only the date part (ignore time)
+            });
+
+            // Check if there are any future events
+            if (futureEvents.length === 0) {
+              eventCardsContainer.innerHTML =
+                "<p>No future bookings found for this user.</p>";
+              return;
+            }
+
+            // Clear the container before adding new content
+            eventCardsContainer.innerHTML = "";
+
+            // Display future events
+            futureEvents.forEach((event) => {
+              const card = document.createElement("div");
+              card.classList.add("event-card");
+
+              // Populate the event card with data
+              card.innerHTML = `
+                <div class="card-body">
+                  <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
+                  <p><strong>📍 Venue:</strong> ${event.venue}</p>
+                  <p><strong>📅 Date:</strong> ${new Date(
+                    event.date
+                  ).toLocaleDateString()}</p>
+                  <p><strong>🎟️ Tickets Bought:</strong> ${
+                    event.ticketsPurchased
+                  }</p>
+                  <p><strong>💵 Total Payment:</strong> ${
+                    event.totalPayment
+                  }</p>
+                </div>
+              `;
+              eventCardsContainer.appendChild(card);
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching bookings:", error);
+            // alert("There was an error fetching the bookings.");
+          });
+      }
+
+      function deleteBooking(bookingID) {
+        // Confirm if the user wants to delete the booking
+        const confirmation = confirm(
+          "Are you sure you want to delete this booking?"
+        );
+        if (!confirmation) {
+          return; // If user cancels, do nothing
+        }
+
+        // Make a DELETE request to the API
+        fetch(`http://localhost:3004/delete/${bookingID}`, {
+          method: "DELETE",
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to delete the booking");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            // Show success message
+            alert("Booking deleted successfully!");
+            // Optionally, remove the booking from the UI
+            window.location.href = "attendee-dashboard.html";
+          })
+          .catch((error) => {
+            console.error("Error deleting booking:", error);
+            alert("There was an error deleting the booking.");
+          });
+      }
+
       function bookEvent(eventId, pricePerTicket) {
         const tickets = document.getElementById(
           `ticketSelect-${eventId}`
@@ -579,13 +833,13 @@
         const messageContainer = document.createElement("div");
         messageContainer.id = "redirectingMessage";
         messageContainer.innerHTML = `
-    <div class="loading-message">
-      Redirecting to payment gateway
-      <span class="dots">.</span>
-      <span class="dots">.</span>
-      <span class="dots">.</span>
-    </div>
-  `;
+          <div class="loading-message">
+            Redirecting to payment gateway
+            <span class="dots">.</span>
+            <span class="dots">.</span>
+            <span class="dots">.</span>
+          </div>
+        `;
         document.body.appendChild(messageContainer);
 
         // Add transition for the loading message
@@ -599,6 +853,12 @@
           window.location.href = "payment.html";
         }, 2000);
       }
+      document.addEventListener("DOMContentLoaded", function () {
+        fetchEvents();
+        fetchEventsforfeedback();
+        fetchBookings();
+        displayBookings();
+      });
     </script>
   </body>
 </html>

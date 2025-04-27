@@ -306,10 +306,7 @@
       <!-- Generate Event Analysis -->
       <div id="generateAnalysis" class="content-section">
         <h3>Generate Event Analysis</h3>
-        <button class="btn btn-primary" onclick="generateAnalysis()">
-          Generate Analysis
-        </button>
-        <div id="analysisResults" class="mt-3"></div>
+        <div id="eventCardsForAnalysis" class="row"></div>
       </div>
 
       <!-- Remove Event Organizer -->
@@ -428,7 +425,62 @@
           })
           .catch(() => console.error("Failed to fetch requests"));
       }
+      async function displayEventsForAnalysis() {
+        try {
+          const response = await fetch(`http://localhost:3003/get`);
+          const events = await response.json();
 
+          const eventCardsContainer = document.getElementById(
+            "eventCardsForAnalysis"
+          );
+          if (!eventCardsContainer) {
+            console.error("Event cards container not found.");
+            return;
+          }
+
+          eventCardsContainer.innerHTML = ""; // Clear any existing content
+
+          if (events.length === 0) {
+            eventCardsContainer.innerHTML =
+              "<p>No events found or failed to fetch events.</p>";
+            return;
+          }
+
+          events.forEach((event) => {
+            const card = document.createElement("div");
+            card.classList.add("col-md-4", "mb-4");
+
+            card.innerHTML = `
+                <div class="event-card card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><strong>🎉 ${
+                          event.name
+                        }</strong></h5>
+                        <p><strong>📍 Venue:</strong> ${event.venue}</p>
+                        <p><strong>📅 Date:</strong> ${new Date(
+                          event.date
+                        ).toLocaleDateString()}</p>
+                        <p><strong>🎟️ Tickets Bought:</strong> ${
+                          event.numberOfTickets
+                        }</p>
+                        <p><strong>💵 Total Payment:</strong> ${
+                          event.pricePerTicket
+                        }</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary" onclick="GenerateAnalysis('${
+                          event._id
+                        }')">Generate Analysis</button>
+                    </div>
+                </div>
+            `;
+
+            eventCardsContainer.appendChild(card);
+          });
+        } catch (error) {
+          console.error("Error displaying events:", error);
+        }
+      }
       function fetchUnansweredQueries() {
         fetch(`http://localhost:3008/getallunansweredqueries`)
           .then((response) => response.json())
@@ -503,9 +555,13 @@
           .then(() => fetchOrganizerRequests())
           .catch(() => console.error("Failed to approve organizer"));
       }
-      function generateAnalysis() {
-        // Function to generate event analysis
+      function GenerateAnalysis(eventID) {
+        localStorage.setItem("EventIDtoanalyse", eventID);
+        window.location.href = "generateAnalysis.html";
       }
+      document.addEventListener("DOMContentLoaded", function () {
+        displayEventsForAnalysis(); // Fetch and display events on page load
+      });
     </script>
   </body>
 </html>
