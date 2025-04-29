@@ -5,6 +5,8 @@
 ## **REPORT (Doc Link)**
 https://docs.google.com/document/d/1BF_ix8mH52zB6ckdrTVtjle4hJz2lizKYOYXFxRlWqw/edit?pli=1&tab=t.0
 
+## **Presentation Slides**
+https://www.canva.com/design/DAGl6sEozZk/NAzNzr7G798KknJB8PU5gw/edit
 ## **TIMELINE**
 
 ### 1. **Use Cases Implemented**
