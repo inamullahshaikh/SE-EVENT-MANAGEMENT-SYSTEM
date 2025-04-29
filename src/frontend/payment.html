@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Event Payment</title>
+    <title>EventSync Payment</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -14,160 +14,712 @@
       type="image/x-icon"
       class="circular-favicon"
     />
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
     />
     <style>
-      .circular-favicon {
-        border-radius: 50%;
-      }      /* Navbar */
+      :root {
+        --primary-color: #6366f1;
+        --secondary-color: #4f46e5;
+        --accent-color: #818cf8;
+        --text-color: #1f2937;
+        --light-bg: #f9fafb;
+        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--text-color);
+        background-color: #f3f4f6;
+        line-height: 1.6;
+      }
+
       .navbar {
-        background: var(--primary-gradient);
-        padding: 15px 20px;
         background: linear-gradient(to right, #6a11cb, #2575fc);
+        padding: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       }
 
       .navbar-brand {
-        font-size: 22px;
-        font-weight: bold;
+        font-size: 1.5rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
       }
 
-      .navbar-nav .nav-link {
-        color: white !important;
-        font-size: 16px;
-        margin: 0 10px;
+      .navbar-brand i {
+        margin-right: 8px;
+        font-size: 1.75rem;
+      }
+
+      .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+
+      .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1.25rem 1.5rem;
+      }
+
+      .card-title {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        font-size: 1.25rem;
+      }
+
+      .card-body {
+        padding: 1.5rem;
+        background-color: #fff;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 0.625rem 1.5rem;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-warning {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+        padding: 0.625rem 1.5rem;
+        font-weight: 500;
+        border-radius: 8px;
+      }
+
+      .btn-warning:hover {
+        background-color: #6366f1;
+        border-color: #6366f1;
+      }
+
+      .btn-info {
+        background-color: #e0e7ff;
+        border-color: #e0e7ff;
+        color: var(--primary-color);
+        padding: 0.625rem 1.5rem;
+        font-weight: 500;
+        border-radius: 8px;
+      }
+
+      .btn-info:hover {
+        background-color: #c7d2fe;
+        border-color: #c7d2fe;
+        color: var(--secondary-color);
+      }
+
+      .form-control,
+      .form-select {
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+      }
+
+      .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: var(--card-shadow);
+      }
+
+      .modal-header {
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1.25rem 1.5rem;
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      .price-tag {
+        background-color: #f3f4f6;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-block;
+      }
+
+      .highlight-box {
+        background-color: #f3f4f6;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        border-left: 4px solid var(--primary-color);
+      }
+
+      .total-row {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        padding-top: 0.75rem;
+        margin-top: 0.75rem;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      .badge {
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        font-weight: 500;
+      }
+
+      .badge-success {
+        background-color: #10b981;
+        color: white;
+      }
+
+      .event-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .card-header i {
+        margin-right: 0.5rem;
+        color: var(--primary-color);
+      }
+
+      input[type="number"] {
+        max-width: 150px;
+      }
+
+      .payment-method-card {
+        border: 1px solid #e5e7eb;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
         cursor: pointer;
+        transition: all 0.2s ease;
       }
 
-      .navbar-nav .nav-link:hover {
-        text-decoration: underline;
+      .payment-method-card:hover {
+        border-color: var(--accent-color);
+        background-color: #f9fafb;
+      }
+
+      .payment-method-card.selected {
+        border-color: var(--primary-color);
+        background-color: #e0e7ff;
+      }
+
+      .payment-icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        color: var(--primary-color);
       }
     </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <i class="bi bi-calendar-event"></i>
+          EventSync
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#"
+                ><i class="bi bi-arrow-left"></i> Back to Events</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-lg-8">
+          <h2 class="mb-4 d-flex align-items-center">
+            <i class="bi bi-credit-card me-2"></i>
+            Complete Your Payment
+          </h2>
+
+          <!-- Event Details Card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-ticket-perforated"></i> Event Details
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="event-details-grid">
+                <div>
+                  <p class="mb-2"><strong>Event Name</strong></p>
+                  <h4 id="eventName" class="mb-3">Loading...</h4>
+                </div>
+                <div>
+                  <p class="mb-2"><strong>Date & Time</strong></p>
+                  <h4 id="eventDateTime" class="mb-3">-</h4>
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-4">
+                  <p class="mb-1">Tickets</p>
+                  <h5 id="ticketCount" class="mb-0">0</h5>
+                </div>
+                <div class="col-md-4">
+                  <p class="mb-1">Price Per Ticket</p>
+                  <h5 id="ticketPrice" class="mb-0">0 PKR</h5>
+                </div>
+                <div class="col-md-4">
+                  <p class="mb-1">Subtotal</p>
+                  <h5 id="totalPrice" class="mb-0">0 PKR</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bill Calculation Card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-calculator"></i> Payment Summary
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between mb-3">
+                <span>Subtotal</span>
+                <span id="subtotalDisplay">0 PKR</span>
+              </div>
+              <div class="d-flex justify-content-between mb-3">
+                <span>Platform Fee (15%)</span>
+                <span id="platformFee">0 PKR</span>
+              </div>
+              <div class="total-row d-flex justify-content-between">
+                <span>Total</span>
+                <span id="finalTotal">0 PKR</span>
+              </div>
+
+              <div class="highlight-box mt-4">
+                <h6 class="mb-3">
+                  <i class="bi bi-star-fill text-warning me-2"></i> Loyalty
+                  Points
+                </h6>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Available Points</span>
+                  <span id="loyaltyPoints" class="badge bg-light text-dark"
+                    >0</span
+                  >
+                </div>
+                <div class="input-group mt-3">
+                  <input
+                    type="number"
+                    id="loyaltyPointsToUse"
+                    class="form-control"
+                    placeholder="Points to redeem"
+                    min="0"
+                  />
+                  <button id="applyLoyaltyBtn" class="btn btn-warning">
+                    <i class="bi bi-check2"></i> Apply
+                  </button>
+                </div>
+              </div>
+
+              <div class="total-row d-flex justify-content-between mt-4">
+                <span>Final Amount</span>
+                <span id="finalBillAfterLoyalty" class="text-success"
+                  >0 PKR</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <!-- Payment Method Card -->
+          <div class="card sticky-top" style="top: 2rem">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-credit-card"></i> Payment Method
+              </h5>
+            </div>
+            <div class="card-body">
+              <div id="paymentMethodContainer">
+                <!-- Payment methods will be added dynamically -->
+              </div>
+
+              <select id="paymentMethod" class="form-select mb-3">
+                <option value="">Select Payment Method</option>
+              </select>
+
+              <button
+                id="addPaymentMethodBtn"
+                class="btn btn-info w-100"
+                data-bs-toggle="modal"
+                data-bs-target="#addPaymentModal"
+              >
+                <i class="bi bi-plus-circle me-2"></i> Add Payment Method
+              </button>
+
+              <button
+                class="btn btn-primary w-100 mt-4"
+                onclick="RegisterBooking()"
+              >
+                <i class="bi bi-lock-fill me-2"></i> Complete Payment
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Adding Payment Method -->
+    <div
+      class="modal fade"
+      id="addPaymentModal"
+      tabindex="-1"
+      aria-labelledby="addPaymentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addPaymentModalLabel">
+              <i class="bi bi-credit-card me-2"></i> Add New Payment Method
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="paymentForm">
+              <div class="mb-3">
+                <label for="cardNumber" class="form-label">Card Number</label>
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-credit-card"></i
+                  ></span>
+                  <input
+                    type="text"
+                    id="cardNumber"
+                    class="form-control"
+                    placeholder="1234 5678 9012 3456"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="cardHolderName" class="form-label"
+                  >Card Holder Name</label
+                >
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-person"></i
+                  ></span>
+                  <input
+                    type="text"
+                    id="cardHolderName"
+                    class="form-control"
+                    placeholder="John Doe"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="dateOfIssue" class="form-label"
+                      >Date of Issue (MM/YY)</label
+                    >
+                    <input
+                      type="text"
+                      id="dateOfIssue"
+                      class="form-control"
+                      placeholder="MM/YY"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="dateOfExpiry" class="form-label"
+                      >Date of Expiry (MM/YY)</label
+                    >
+                    <input
+                      type="text"
+                      id="dateOfExpiry"
+                      class="form-control"
+                      placeholder="MM/YY"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="cvc" class="form-label">CVC</label>
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-shield-lock"></i
+                  ></span>
+                  <input
+                    type="text"
+                    id="cvc"
+                    class="form-control"
+                    placeholder="123"
+                    required
+                  />
+                </div>
+                <div class="form-text">
+                  3-digit security code on the back of your card
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn btn-primary w-100"
+                onclick="addPaymentMethod()"
+              >
+                <i class="bi bi-plus-circle me-2"></i> Add Payment Method
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
     <script>
-        let tp = 0;
-        async function loadEventData() {
-  const bookedEvent = JSON.parse(localStorage.getItem("bookedEvent"));
-  if (!bookedEvent) {
-    alert("No booked event found.");
-    return;
-  }
+      let tp = 0;
 
-  const username = bookedEvent.username;
-  const myButton = document.getElementById("applyLoyaltyBtn");
-  const loyaltyPointsSpan = document.getElementById("loyaltyPoints");
-  const totalPriceSpan = document.getElementById("totalPrice");
-  const totalBillSpan = document.getElementById("finalTotal");
-  const finalBillSpan = document.getElementById("finalBillAfterLoyalty");
+      async function loadEventData() {
+        const bookedEvent = JSON.parse(localStorage.getItem("bookedEvent"));
+        if (!bookedEvent) {
+          showNotification("No booked event found.", "danger");
+          return;
+        }
 
-  const { eventId, tickets, pricePerTicket } = bookedEvent;
+        const username = bookedEvent.username;
+        const myButton = document.getElementById("applyLoyaltyBtn");
+        const loyaltyPointsSpan = document.getElementById("loyaltyPoints");
+        const totalPriceSpan = document.getElementById("totalPrice");
+        const totalBillSpan = document.getElementById("finalTotal");
+        const finalBillSpan = document.getElementById("finalBillAfterLoyalty");
+        const subtotalDisplay = document.getElementById("subtotalDisplay");
 
-  try {
-    // Fetch event data
-    const eventResponse = await fetch(`http://localhost:3003/get/${eventId}`);
-    if (!eventResponse.ok) {
-      throw new Error("Error fetching event data");
-    }
-    const event = await eventResponse.json();
+        const { eventId, tickets, pricePerTicket } = bookedEvent;
 
-    if (event) {
-      const eventNameElem = document.getElementById("eventName");
-      const ticketCountElem = document.getElementById("ticketCount");
-      const ticketPriceElem = document.getElementById("ticketPrice");
+        try {
+          // Fetch event data
+          const eventResponse = await fetch(
+            `http://localhost:3003/get/${eventId}`
+          );
+          if (!eventResponse.ok) {
+            throw new Error("Error fetching event data");
+          }
+          const event = await eventResponse.json();
 
-      if (eventNameElem) eventNameElem.innerText = event.name;
-      if (ticketCountElem) ticketCountElem.innerText = tickets;
-      if (ticketPriceElem) ticketPriceElem.innerText = pricePerTicket;
+          if (event) {
+            const eventNameElem = document.getElementById("eventName");
+            const ticketCountElem = document.getElementById("ticketCount");
+            const ticketPriceElem = document.getElementById("ticketPrice");
+            const eventDateTimeElem = document.getElementById("eventDateTime");
 
-      const totalPrice = tickets * pricePerTicket;
-      if (totalPriceSpan) totalPriceSpan.innerText = totalPrice;
+            // Format event date if available
+            if (event.date && event.time) {
+              const eventDate = new Date(event.date);
+              const formattedDate = eventDate.toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              });
+              eventDateTimeElem.innerText = `${formattedDate} at ${event.time}`;
+            } else {
+              eventDateTimeElem.innerText = "Date TBD";
+            }
 
-      const platformFee = totalPrice * 0.15;
-      if (document.getElementById("platformFee")) {
-        document.getElementById("platformFee").innerText = platformFee;
-      }
+            if (eventNameElem) eventNameElem.innerText = event.name;
+            if (ticketCountElem) ticketCountElem.innerText = tickets;
+            if (ticketPriceElem)
+              ticketPriceElem.innerText = `${pricePerTicket} PKR`;
 
-      const totalBill = totalPrice + platformFee;
-      if (totalBillSpan) totalBillSpan.innerText = totalBill;
+            const totalPrice = tickets * pricePerTicket;
+            if (totalPriceSpan) totalPriceSpan.innerText = `${totalPrice} PKR`;
+            if (subtotalDisplay)
+              subtotalDisplay.innerText = `${totalPrice} PKR`;
 
-      // Fetch user loyalty points
-      const userResponse = await fetch(`http://localhost:3001/getbyusername/${username}`);
-      if (!userResponse.ok) {
-        throw new Error("Error fetching user loyalty points");
-      }
-      const userObj = await userResponse.json();
-      const loyaltyPoints = userObj.loyaltyPoints;
+            const platformFee = totalPrice * 0.15;
+            if (document.getElementById("platformFee")) {
+              document.getElementById(
+                "platformFee"
+              ).innerText = `${platformFee.toFixed(2)} PKR`;
+            }
 
-      if (loyaltyPointsSpan) loyaltyPointsSpan.innerText = loyaltyPoints;
+            const totalBill = totalPrice + platformFee;
+            if (totalBillSpan)
+              totalBillSpan.innerText = `${totalBill.toFixed(2)} PKR`;
+            if (finalBillSpan)
+              finalBillSpan.innerText = `${totalBill.toFixed(2)} PKR`;
+            tp = totalBill;
 
-      // Fetch payment methods
-      const paymentResponse = await fetch(`http://localhost:3007/get-by-attendee/${username}`);
-      if (!paymentResponse.ok) {
-        throw new Error("Error fetching payment methods");
-      }
-      const payments = await paymentResponse.json();
+            // Fetch user loyalty points
+            const userResponse = await fetch(
+              `http://localhost:3001/getbyusername/${username}`
+            );
+            if (!userResponse.ok) {
+              throw new Error("Error fetching user loyalty points");
+            }
+            const userObj = await userResponse.json();
+            const loyaltyPoints = userObj.loyaltyPoints;
 
-      const paymentDropdown = document.getElementById("paymentMethod");
-      if (paymentDropdown) {
-        paymentDropdown.innerHTML = ""; // Clear existing options
-        if (payments.length > 0) {
-          payments.forEach((payment) => {
-            const option = document.createElement("option");
-            option.value = payment.cardNumber;
-            option.innerText = `${payment.cardType} ending in ${payment.cardNumber.slice(-4)}`;
-            paymentDropdown.appendChild(option);
-          });
-        } else {
-          const option = document.createElement("option");
-          option.value = "";
-          option.innerText = "No payment methods found";
-          paymentDropdown.appendChild(option);
+            if (loyaltyPointsSpan) loyaltyPointsSpan.innerText = loyaltyPoints;
+
+            // Fetch payment methods
+            const paymentResponse = await fetch(
+              `http://localhost:3007/get-by-attendee/${username}`
+            );
+            if (!paymentResponse.ok) {
+              throw new Error("Error fetching payment methods");
+            }
+            const payments = await paymentResponse.json();
+
+            const paymentDropdown = document.getElementById("paymentMethod");
+            const paymentMethodContainer = document.getElementById(
+              "paymentMethodContainer"
+            );
+
+            if (paymentDropdown) {
+              paymentDropdown.innerHTML = ""; // Clear existing options
+              if (payments.length > 0) {
+                payments.forEach((payment) => {
+                  const option = document.createElement("option");
+                  option.value = payment.cardNumber;
+                  option.innerText = `${
+                    payment.cardType || "Card"
+                  } ending in ${payment.cardNumber.slice(-4)}`;
+                  paymentDropdown.appendChild(option);
+                });
+              } else {
+                const option = document.createElement("option");
+                option.value = "";
+                option.innerText = "No payment methods found";
+                paymentDropdown.appendChild(option);
+              }
+            }
+
+            // Event listener for applying loyalty points
+            if (myButton) {
+              myButton.addEventListener("click", function () {
+                const loyaltyPointsToUse = parseInt(
+                  document.getElementById("loyaltyPointsToUse").value
+                );
+                const availablePoints = parseInt(loyaltyPointsSpan.innerText);
+
+                if (isNaN(loyaltyPointsToUse) || loyaltyPointsToUse < 0) {
+                  showNotification(
+                    "Please enter a valid number of loyalty points.",
+                    "warning"
+                  );
+                  return;
+                }
+
+                if (loyaltyPointsToUse > availablePoints) {
+                  showNotification("Insufficient loyalty points.", "danger");
+                  return;
+                }
+
+                // Calculate the final bill after loyalty points
+                const totalBill = parseFloat(totalBillSpan.innerText);
+                const finalBill = totalBill - loyaltyPointsToUse;
+                tp = finalBill;
+
+                if (finalBillSpan)
+                  finalBillSpan.innerText = `${finalBill.toFixed(2)} PKR`;
+                showNotification(
+                  `${loyaltyPointsToUse} loyalty points applied successfully!`,
+                  "success"
+                );
+              });
+            }
+          } else {
+            showNotification("Event details not found.", "warning");
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          showNotification(
+            "Error loading data. Please try again later.",
+            "danger"
+          );
         }
       }
 
-      // Event listener for applying loyalty points
-      if (myButton) {
-        myButton.addEventListener("click", function () {
-          const loyaltyPointsToUse = parseInt(document.getElementById("loyaltyPointsToUse").value);
-          const availablePoints = parseInt(loyaltyPointsSpan.innerText);
+      // Function to display notifications
+      function showNotification(message, type = "info") {
+        // Create notification element
+        const notification = document.createElement("div");
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed bottom-0 end-0 m-3`;
+        notification.style.zIndex = "1050";
+        notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
 
-          if (isNaN(loyaltyPointsToUse) || loyaltyPointsToUse < 0) {
-            alert("Please enter a valid number of loyalty points.");
-            return;
-          }
-          console.log(loyaltyPointsToUse,availablePoints);
-          if (loyaltyPointsToUse > availablePoints) {
-            alert("Insufficient loyalty points.");
-            return;
-          }
+        // Add to body
+        document.body.appendChild(notification);
 
-          // Calculate the final bill after loyalty points
-          const totalBill = parseFloat(totalBillSpan.innerText);
-          const finalBill = totalBill - loyaltyPointsToUse;
-          console.log(finalBill);
-          tp = finalBill;
-          console.log(tp);
-          if (finalBillSpan) finalBillSpan.innerText = finalBill.toFixed(2);
-        });
+        // Auto dismiss after 5 seconds
+        setTimeout(() => {
+          notification.classList.remove("show");
+          setTimeout(() => notification.remove(), 300);
+        }, 5000);
       }
-    } else {
-      alert("Event details not found.");
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-   //
-   // alert("Error fetching event data or payment methods.");
-  }
-}
-
-
-      window.onload = loadEventData;
 
       // Function to validate card number using the Luhn algorithm
       function validateCardNumber(cardNumber) {
-        if(cardNumber.length<16)
-          return false;
+        // Remove spaces and non-numeric characters
+        cardNumber = cardNumber.replace(/\D/g, "");
+        if (cardNumber.length < 16) return false;
         return true;
       }
 
@@ -191,331 +743,643 @@
         return /^\d{3}$/.test(cvc); // Check if it's a 3-digit number
       }
 
-      // Handling form submission// Handling form submission
+      // Handling form submission
       function addPaymentMethod() {
+        event.preventDefault(); // Prevent form submission for validation
 
-            event.preventDefault(); // Prevent form submission for validation
+        const card = document.getElementById("cardNumber").value;
+        const Name = document.getElementById("cardHolderName").value;
+        const Issue = document.getElementById("dateOfIssue").value;
+        const Expiry = document.getElementById("dateOfExpiry").value;
+        const cvs = document.getElementById("cvc").value;
 
-            const card = document.getElementById("cardNumber").value;
-            const Name = document.getElementById("cardHolderName").value;
-            const Issue = document.getElementById("dateOfIssue").value;
-            const Expiry = document.getElementById("dateOfExpiry").value;
-            const cvs = document.getElementById("cvc").value;
+        // Check if all required fields are filled
+        if (!card || !Name || !Issue || !Expiry || !cvs) {
+          showNotification("Please fill in all fields.", "warning");
+          return;
+        }
 
-            // Check if all required fields are filled
-            if (!card || !Name || !Issue || !Expiry || !cvs) {
-              alert("Please fill in all fields.");
-              return;
+        // Validate card number
+        if (!validateCardNumber(card)) {
+          showNotification("Invalid card number.", "danger");
+          return;
+        }
+
+        // Validate date format (MM/YY)
+        if (!isValidDate(Issue) || !isValidDate(Expiry)) {
+          showNotification("Invalid date format. Please use MM/YY.", "danger");
+          return;
+        }
+
+        // Check if expiry date is valid (future date)
+        if (!isExpiryDateValid(Expiry)) {
+          showNotification("Card has expired.", "danger");
+          return;
+        }
+
+        // Validate CVC
+        if (!isValidCVC(cvs)) {
+          showNotification(
+            "Invalid CVC. It should be a 3-digit number.",
+            "danger"
+          );
+          return;
+        }
+
+        // If all validations pass, proceed with API request
+        const cardNumber = document
+          .getElementById("cardNumber")
+          .value.replace(/\s/g, "");
+        const cardHolderName = document.getElementById("cardHolderName").value;
+        const dateOfIssue = document.getElementById("dateOfIssue").value;
+        const dateOfExpiry = document.getElementById("dateOfExpiry").value;
+        const cvc = document.getElementById("cvc").value;
+        const username = JSON.parse(
+          localStorage.getItem("bookedEvent")
+        ).username;
+
+        // Determine card type based on first digit
+        let cardType = "Unknown";
+        if (cardNumber.startsWith("4")) {
+          cardType = "Visa";
+        } else if (cardNumber.startsWith("5")) {
+          cardType = "MasterCard";
+        } else if (cardNumber.startsWith("3")) {
+          cardType = "American Express";
+        } else if (cardNumber.startsWith("6")) {
+          cardType = "Discover";
+        }
+
+        const newPayment = {
+          cardNumber,
+          cardType,
+          cardHolderName,
+          dateOfIssue,
+          dateOfExpiry,
+          cvc,
+          attendee: username,
+        };
+
+        fetch("http://localhost:3007/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newPayment),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message === "Payment created successfully") {
+              showNotification("Payment method added successfully.", "success");
+
+              // Close the modal
+              const modal = bootstrap.Modal.getInstance(
+                document.getElementById("addPaymentModal")
+              );
+              modal.hide();
+
+              // Reload event data to show updated payment methods
+              loadEventData();
+            } else {
+              showNotification(data.message, "danger");
             }
-
-            // Validate card number
-            if (!validateCardNumber(card)) {
-              alert("Invalid card number.");
-              return;
-            }
-
-            // Validate date format (MM/YY)
-            if (!isValidDate(Issue) || !isValidDate(Expiry)) {
-              alert("Invalid date format. Please use MM/YY.");
-              return;
-            }
-
-            // Check if expiry date is valid (future date)
-            if (!isExpiryDateValid(Expiry)) {
-              alert("Card has expired.");
-              return;
-            }
-
-            // Validate CVC
-            if (!isValidCVC(cvs)) {
-              alert("Invalid CVC. It should be a 3-digit number.");
-              return;
-            }
-
-            // If all validations pass, you can proceed to submit the form (e.g., making an API request)
-            alert("Payment method is valid! Proceeding with API request...");
-            const cardNumber = document.getElementById("cardNumber").value;
-            const cardHolderName =
-              document.getElementById("cardHolderName").value;
-            const dateOfIssue = document.getElementById("dateOfIssue").value;
-            const dateOfExpiry = document.getElementById("dateOfExpiry").value;
-            const cvc = document.getElementById("cvc").value;
-            const username = JSON.parse(
-              localStorage.getItem("bookedEvent")
-            ).username;
-
-            const newPayment = {
-              cardNumber,
-              cardHolderName,
-              dateOfIssue,
-              dateOfExpiry,
-              cvc,
-              attendee: username,
-            };
-
-            fetch("http://localhost:3007/create", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(newPayment),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                if (data.message === "Payment created successfully") {
-                  alert("Payment method added successfully.");
-                  loadEventDetails(); // Reload the page to show updated payment methods
-                } else {
-                  alert(data.message);
-                }
-              })
-              .catch((error) => {
-                console.error("Error adding payment method:", error);
-                //alert("Error adding payment method.");
-              });
-          
+          })
+          .catch((error) => {
+            console.error("Error adding payment method:", error);
+            showNotification(
+              "Error adding payment method. Please try again.",
+              "danger"
+            );
+          });
       }
+
       async function RegisterBooking() {
-        console.log("HERE IN FUNC");
-  const bookedEvent = JSON.parse(localStorage.getItem("bookedEvent"));
-  if (!bookedEvent) {
-    alert("No booked event found.");
-    return;
-  }
+        const bookedEvent = JSON.parse(localStorage.getItem("bookedEvent"));
+        if (!bookedEvent) {
+          showNotification("No booked event found.", "danger");
+          return;
+        }
 
-  const username = bookedEvent.username;
-  const { eventId, tickets, pricePerTicket } = bookedEvent;
+        const paymentMethod = document.getElementById("paymentMethod").value;
+        if (!paymentMethod) {
+          showNotification("Please select a payment method.", "warning");
+          return;
+        }
 
-  const totalPayment = document.getElementById("finalBillAfterLoyalty");
-  console.log("finalBillAfterLoyalty"+tp);
+        const username = bookedEvent.username;
+        const { eventId, tickets, pricePerTicket } = bookedEvent;
 
-  try {
-    const bookingData = {
-      username,
-      eventId,
-      ticketsPurchased: tickets,
-      totalPayment: tp,
-    };
-    console.log(bookingData);
-    // Call the backend API to create a booking
-    const response = await fetch("http://localhost:3004/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(bookingData),
-    });
+        try {
+          const bookingData = {
+            username,
+            eventId,
+            ticketsPurchased: tickets,
+            totalPayment: tp,
+          };
 
-    const result = await response.json();
-    if (response.ok) {
-      alert("Booking successful. Confirmation email sent.");
-      console.log("Booking details:", result.booking);
-      localStorage.removeItem("bookedEvent");
-      window.location.href = "attendee-dashboard.html"; // Redirect to the home page
-    } else {
-      alert(result.message || "Error occurred during booking.");
-    }
-  } catch (error) {
-    console.error("Error registering booking:", error);
-    alert("Error occurred while registering the booking.");
-  }
-}
+          // Show loading state
+          const bookingButton = document.querySelector(
+            "button[onclick='RegisterBooking()']"
+          );
+          const originalButtonText = bookingButton.innerHTML;
+          bookingButton.innerHTML =
+            '<i class="bi bi-hourglass-split me-2"></i> Processing...';
+          bookingButton.disabled = true;
 
-      // Call the function on page load
-      
-    </script>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand" href="#">EventSync - Payment Portal</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto"></ul>
-        </div>
-      </div>
-    </nav>
+          // Call the backend API to create a booking
+          const response = await fetch("http://localhost:3004/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(bookingData),
+          });
 
-    <div class="container mt-5">
-      <h2>Event Payment</h2>
+          const result = await response.json();
+          if (response.ok) {
+            showNotification(
+              "Booking successful! Confirmation email sent.",
+              "success"
+            );
+            setTimeout(() => {
+              localStorage.removeItem("bookedEvent");
+              window.location.href = "attendee-dashboard.html"; // Redirect to dashboard
+            }, 2000);
+          } else {
+            showNotification(
+              result.message || "Error occurred during booking.",
+              "danger"
+            );
+            // Reset button
+            bookingButton.innerHTML = originalButtonText;
+            bookingButton.disabled = false;
+          }
+        } catch (error) {
+          console.error("Error registering booking:", error);
+          showNotification(
+            "Error occurred while registering the booking.",
+            "danger"
+          );
 
-      <!-- Event Details Card -->
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Event Details</h5>
-          <p>
-            <strong>Event Name: </strong><span id="eventName">Loading...</span>
-          </p>
-          <p>
-            <strong>Tickets Purchased: </strong><span id="ticketCount">0</span>
-          </p>
-          <p>
-            <strong>Price per Ticket (PKR): </strong
-            ><span id="ticketPrice">0</span>
-          </p>
-          <div class="total-info">
-            <p>
-              <strong>Total Price: </strong><span id="totalPrice">0</span> PKR
-            </p>
-          </div>
-        </div>
-      </div>
+          // Reset button state on error
+          const bookingButton = document.querySelector(
+            "button[onclick='RegisterBooking()']"
+          );
+          bookingButton.innerHTML =
+            '<i class="bi bi-lock-fill me-2"></i> Complete Payment';
+          bookingButton.disabled = false;
+        }
+      }
 
-      <!-- Bill Calculation Card -->
-      <div class="card mt-4">
-        <div class="card-body">
-          <h5 class="card-title">Bill Calculation</h5>
-          <p>
-            <strong>Platform Fee (15%): </strong
-            ><span id="platformFee">0</span> PKR
-          </p>
-          <p>
-            <strong>Total Bill (with Fee): </strong
-            ><span id="finalTotal">0</span> PKR
-          </p>
-          <p>
-            <strong>Loyalty Points (Available): </strong
-            ><span id="loyaltyPoints">0</span>
-          </p>
+      // Format card number with spaces for better readability
+      document
+        .getElementById("cardNumber")
+        .addEventListener("input", function (e) {
+          let value = e.target.value.replace(/\s/g, "");
+          if (value.length > 16) value = value.substr(0, 16);
+
+          // Add spaces after every 4 digits
+          let formattedValue = "";
+          for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+              formattedValue += " ";
+            }
+            formattedValue += value[i];
+          }
+
+          e.target.value = formattedValue;
+        });
+
+      // Format date inputs to enforce MM/YY format
+      document
+        .querySelectorAll("#dateOfIssue, #dateOfExpiry")
+        .forEach((input) => {
+          input.addEventListener("input", function (e) {
+            let value = e.target.value.replace(/\D/g, "");
+
+            if (value.length > 0) {
+              // First two digits (month)
+              if (value.length > 2) {
+                value = value.substring(0, 2) + "/" + value.substring(2, 4);
+              }
+
+              // Limit to MM/YY format
+              if (value.length > 5) {
+                value = value.substring(0, 5);
+              }
+
+              // Fix month if greater than 12
+              const month = parseInt(value.substring(0, 2));
+              if (month > 12) {
+                value = "12" + value.substring(2);
+              } else if (month === 0) {
+                value = "01" + value.substring(2);
+              }
+            }
+
+            e.target.value = value;
+          });
+        });
+
+      // Limit CVC to 3 digits
+      document.getElementById("cvc").addEventListener("input", function (e) {
+        let value = e.target.value.replace(/\D/g, "");
+        if (value.length > 3) value = value.substr(0, 3);
+        e.target.value = value;
+      });
+
+      // Create visual card selection
+      function createPaymentMethodCards() {
+        const paymentDropdown = document.getElementById("paymentMethod");
+        const paymentMethodContainer = document.getElementById(
+          "paymentMethodContainer"
+        );
+
+        if (
+          !paymentMethodContainer ||
+          !paymentDropdown ||
+          paymentDropdown.options.length <= 1
+        )
+          return;
+
+        paymentMethodContainer.innerHTML = ""; // Clear existing cards
+
+        // Create cards for each payment option
+        for (let i = 1; i < paymentDropdown.options.length; i++) {
+          const option = paymentDropdown.options[i];
+          const cardText = option.text;
+          const cardValue = option.value;
+
+          // Determine card icon based on text
+          let cardIcon = "bi-credit-card";
+          if (cardText.includes("Visa")) {
+            cardIcon = "bi-credit-card-2-front";
+          } else if (cardText.includes("Master")) {
+            cardIcon = "bi-credit-card-2-back";
+          } else if (cardText.includes("American")) {
+            cardIcon = "bi-credit-card";
+          }
+
+          const cardElement = document.createElement("div");
+          cardElement.className = "payment-method-card";
+          cardElement.dataset.value = cardValue;
+          cardElement.innerHTML = `
+          <i class="${cardIcon} payment-icon"></i>
           <div>
-            <label for="loyaltyPointsToUse">Use Loyalty Points: </label>
-            <input
-              type="number"
-              id="loyaltyPointsToUse"
-              class="form-control"
-              placeholder="Enter points to use"
-            />
-            <button id="applyLoyaltyBtn" class="btn btn-warning mt-3">
-              Apply Loyalty Points
-            </button>
+            <div>${cardText}</div>
+            <small class="text-muted">Expires: XX/XX</small>
           </div>
-          <p>
-            <strong>Final Bill After Loyalty Points: </strong
-            ><span id="finalBillAfterLoyalty">0</span> PKR
-          </p>
-        </div>
-      </div>
+        `;
 
-      <!-- Payment Method Card -->
-      <div class="card mt-4">
+          // Add click handler to select card and update dropdown
+          cardElement.addEventListener("click", function () {
+            // Remove selected class from all cards
+            document
+              .querySelectorAll(".payment-method-card")
+              .forEach((card) => {
+                card.classList.remove("selected");
+              });
+
+            // Add selected class to clicked card
+            this.classList.add("selected");
+
+            // Update dropdown value
+            paymentDropdown.value = this.dataset.value;
+          });
+
+          paymentMethodContainer.appendChild(cardElement);
+        }
+      }
+
+      // Add progress indicators for better UX
+      // function initProgressIndicators() {
+      //   // Add a small progress indicator at the top
+      //   const progressContainer = document.createElement("div");
+      //   progressContainer.className = "mb-4";
+      //   progressContainer.innerHTML = `
+      //   <div class="d-flex justify-content-between mb-2">
+      //     <span class="small text-muted">Event Selection</span>
+      //     <span class="small text-muted">Payment</span>
+      //     <span class="small text-muted">Confirmation</span>
+      //   </div>
+      //   <div class="progress" style="height: 8px;">
+      //     <div class="progress-bar bg-primary" role="progressbar" style="width: 66%;"
+      //          aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
+      //   </div>
+      // `;
+
+      //   const container = document.querySelector(".container");
+      //   container.insertBefore(progressContainer, container.firstChild);
+      // }
+
+      // Order summary for smaller screens
+      function createMobileOrderSummary() {
+        // Only needed for mobile view
+        if (window.innerWidth >= 992) return;
+
+        const summaryButton = document.createElement("button");
+        summaryButton.className =
+          "btn btn-light w-100 d-flex justify-content-between align-items-center d-lg-none mb-4";
+        summaryButton.setAttribute("type", "button");
+        summaryButton.setAttribute("data-bs-toggle", "collapse");
+        summaryButton.setAttribute("data-bs-target", "#mobileSummary");
+        summaryButton.innerHTML = `
+        <span><i class="bi bi-receipt me-2"></i> View Order Summary</span>
+        <span class="badge bg-primary" id="mobileTotalBadge">0 PKR</span>
+      `;
+
+        const summaryCollapse = document.createElement("div");
+        summaryCollapse.className = "collapse mb-4 d-lg-none";
+        summaryCollapse.id = "mobileSummary";
+        summaryCollapse.innerHTML = `
+        <div class="card card-body">
+          <div class="d-flex justify-content-between mb-2">
+            <span>Event</span>
+            <span id="mobileSummaryEvent">-</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Tickets</span>
+            <span id="mobileSummaryTickets">0</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal</span>
+            <span id="mobileSummarySubtotal">0 PKR</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Fees</span>
+            <span id="mobileSummaryFees">0 PKR</span>
+          </div>
+          <div class="d-flex justify-content-between fw-bold">
+            <span>Total</span>
+            <span id="mobileSummaryTotal">0 PKR</span>
+          </div>
+        </div>
+      `;
+
+        const mainHeading = document.querySelector("h2.mb-4");
+        mainHeading.parentNode.insertBefore(
+          summaryButton,
+          mainHeading.nextSibling
+        );
+        mainHeading.parentNode.insertBefore(
+          summaryCollapse,
+          summaryButton.nextSibling
+        );
+      }
+
+      // Update mobile summary with current data
+      function updateMobileSummary() {
+        // Skip if not on mobile
+        if (window.innerWidth >= 992) return;
+
+        const eventName = document.getElementById("eventName").innerText;
+        const ticketCount = document.getElementById("ticketCount").innerText;
+        const subtotal = document.getElementById("totalPrice").innerText;
+        const platformFee = document.getElementById("platformFee").innerText;
+        const totalBill = document.getElementById("finalTotal").innerText;
+
+        document.getElementById("mobileSummaryEvent").innerText = eventName;
+        document.getElementById("mobileSummaryTickets").innerText = ticketCount;
+        document.getElementById("mobileSummarySubtotal").innerText = subtotal;
+        document.getElementById("mobileSummaryFees").innerText = platformFee;
+        document.getElementById("mobileSummaryTotal").innerText = totalBill;
+        document.getElementById("mobileTotalBadge").innerText = totalBill;
+      }
+
+      // Add dark mode toggle
+      function addDarkModeToggle() {
+        // Create the toggle button
+        const darkModeToggle = document.createElement("button");
+        darkModeToggle.className = "btn btn-sm btn-outline-light ms-2";
+        darkModeToggle.innerHTML = '<i class="bi bi-moon"></i>';
+        darkModeToggle.title = "Toggle Dark Mode";
+
+        // Add click handler
+        darkModeToggle.addEventListener("click", function () {
+          document.body.classList.toggle("dark-mode");
+
+          // Update icon
+          const icon = this.querySelector("i");
+          if (icon.classList.contains("bi-moon")) {
+            icon.classList.remove("bi-moon");
+            icon.classList.add("bi-sun");
+          } else {
+            icon.classList.remove("bi-sun");
+            icon.classList.add("bi-moon");
+          }
+
+          // Store preference
+          const isDarkMode = document.body.classList.contains("dark-mode");
+          localStorage.setItem("darkMode", isDarkMode ? "true" : "false");
+        });
+
+        // Add to navbar
+        const navbarNav = document.querySelector(".navbar-nav");
+        navbarNav.appendChild(darkModeToggle);
+
+        // Check for saved preference
+        const savedDarkMode = localStorage.getItem("darkMode");
+        if (savedDarkMode === "true") {
+          document.body.classList.add("dark-mode");
+          darkModeToggle.innerHTML = '<i class="bi bi-sun"></i>';
+        }
+
+        // Add dark mode styles
+        const darkModeStyles = document.createElement("style");
+        darkModeStyles.textContent = `
+        .dark-mode {
+          background-color: #121212;
+          color: #e0e0e0;
+        }
+        
+        .dark-mode .card {
+          background-color: #1e1e1e;
+          border-color: #2d2d2d;
+        }
+        
+        .dark-mode .card-header {
+          background-color: #262626;
+          border-color: #2d2d2d;
+        }
+        
+        .dark-mode .highlight-box {
+          background-color: #262626;
+        }
+        
+        .dark-mode .form-control,
+        .dark-mode .form-select,
+        .dark-mode .input-group-text {
+          background-color: #333;
+          border-color: #444;
+          color: #e0e0e0;
+        }
+        
+        .dark-mode .modal-content {
+          background-color: #1e1e1e;
+          color: #e0e0e0;
+        }
+        
+        .dark-mode .close {
+          color: #e0e0e0;
+        }
+        
+        .dark-mode .payment-method-card {
+          background-color: #262626;
+          border-color: #333;
+        }
+        
+        .dark-mode .payment-method-card:hover {
+          background-color: #333;
+        }
+        
+        .dark-mode .payment-method-card.selected {
+          background-color: #3b3d8a;
+          border-color: #4545a0;
+        }
+      `;
+        document.head.appendChild(darkModeStyles);
+      }
+
+      // Add estimated delivery time countdown
+      function createTimeEstimation() {
+        const countdownContainer = document.createElement("div");
+        countdownContainer.className = "alert alert-info mt-3";
+        countdownContainer.innerHTML = `
+        <div class="d-flex align-items-center">
+          <i class="bi bi-clock me-2"></i>
+          <div>
+            <strong>Limited Time Offer</strong>
+            <div>Complete your payment within <span id="countdown">10:00</span> minutes</div>
+          </div>
+        </div>
+      `;
+
+        // Add after the payment selection
+        const paymentCard = document.querySelector(
+          ".card:last-child .card-body"
+        );
+        paymentCard.appendChild(countdownContainer);
+
+        // Start countdown
+        let timeLeft = 10 * 60; // 10 minutes in seconds
+        const countdownElement = document.getElementById("countdown");
+
+        const countdownInterval = setInterval(() => {
+          timeLeft--;
+
+          const minutes = Math.floor(timeLeft / 60);
+          const seconds = timeLeft % 60;
+          countdownElement.textContent = `${minutes}:${seconds
+            .toString()
+            .padStart(2, "0")}`;
+
+          // Warning when less than 2 minutes
+          if (timeLeft < 120) {
+            countdownContainer.className = "alert alert-warning mt-3";
+          }
+
+          // Danger when less than 30 seconds
+          if (timeLeft < 30) {
+            countdownContainer.className = "alert alert-danger mt-3";
+          }
+
+          // Stop when timer reaches zero
+          if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            countdownElement.textContent = "0:00";
+            countdownContainer.innerHTML = `
+            <div class="d-flex align-items-center">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              <div>
+                <strong>Session Expired</strong>
+                <div>Your reservation has timed out. Please try again.</div>
+              </div>
+            </div>
+          `;
+          }
+        }, 1000);
+      }
+
+      // Add dynamic recommendations based on event type
+      function addRecommendations() {
+        const recommendationsContainer = document.createElement("div");
+        recommendationsContainer.className = "card mt-4 promotion-card";
+        recommendationsContainer.innerHTML = `
+        <div class="card-header">
+          <h5 class="card-title mb-0"><i class="bi bi-gift"></i> You Might Also Like</h5>
+        </div>
         <div class="card-body">
-          <h5 class="card-title">Payment Method</h5>
-          <select id="paymentMethod" class="form-select">
-            <option value="">Select Payment Method</option>
-          </select>
-          <div class="mt-3">
-            <button
-              id="addPaymentMethodBtn"
-              class="btn btn-info"
-              data-bs-toggle="modal"
-              data-bs-target="#addPaymentModal"
-            >
-              + Add Payment Method
-            </button>
+          <div class="recommendations-container d-flex overflow-auto pb-2">
+            <!-- Recommendations will be added here -->
           </div>
         </div>
-      </div>
+      `;
 
-      <!-- Modal for Adding Payment Method -->
-      <div
-        class="modal fade"
-        id="addPaymentModal"
-        tabindex="-1"
-        aria-labelledby="addPaymentModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog"id=>
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="addPaymentModalLabel">
-                Add New Payment Method
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <form id="paymentForm">
-                <div class="mb-3">
-                  <label for="cardNumber" class="form-label">Card Number</label>
-                  <input
-                    type="text"
-                    id="cardNumber"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="cardHolderName" class="form-label"
-                    >Card Holder Name</label
-                  >
-                  <input
-                    type="text"
-                    id="cardHolderName"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="dateOfIssue" class="form-label"
-                    >Date of Issue (MM/YY)</label
-                  >
-                  <input
-                    type="text"
-                    id="dateOfIssue"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="dateOfExpiry" class="form-label"
-                    >Date of Expiry (MM/YY)</label
-                  >
-                  <input
-                    type="text"
-                    id="dateOfExpiry"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="cvc" class="form-label">CVC</label>
-                  <input type="text" id="cvc" class="form-control" required />
-                </div>
-                <button
-                  type="submitpayment"
-                  class="btn btn-primary"
-                  onclick="addPaymentMethod()"
-                >
-                  Add Payment Method
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+        // Add to the container
+        const mainColumn = document.querySelector(".col-lg-8");
+        mainColumn.appendChild(recommendationsContainer);
 
-      <!-- Proceed to Payment Button -->
-      <div class="d-flex justify-content-end mt-4">
-        <button class="btn btn-primary" onclick="RegisterBooking()">Proceed to Payment</button>
-      </div>
-    </div>
+        // Fake recommendations - would normally be populated from API
+        const recommendationItems = [
+          {
+            name: "Premium Event Insurance",
+            price: "500 PKR",
+            icon: "shield-check",
+          },
+          {
+            name: "VIP Meet & Greet Pass",
+            price: "1,500 PKR",
+            icon: "person-badge",
+          },
+          {
+            name: "Early Entry Package",
+            price: "750 PKR",
+            icon: "clock-history",
+          },
+          { name: "Merchandise Bundle", price: "1,200 PKR", icon: "bag" },
+        ];
 
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+        const recommendationsContent = document.querySelector(
+          ".recommendations-container"
+        );
+        recommendationItems.forEach((item) => {
+          const recCard = document.createElement("div");
+          recCard.className =
+            "recommendation-item me-3 p-3 border rounded text-center";
+          recCard.style.minWidth = "180px";
+          recCard.innerHTML = `
+          <div class="mb-2"><i class="bi bi-${item.icon} fs-4 text-primary"></i></div>
+          <div class="fw-bold">${item.name}</div>
+          <div class="text-muted small">${item.price}</div>
+          <button class="btn btn-sm btn-outline-primary mt-2">Add</button>
+        `;
+          recommendationsContent.appendChild(recCard);
+        });
+      }
+
+      // Initialize the page and components
+      window.onload = function () {
+        loadEventData().then(() => {
+          // Initialize additional UI components after data is loaded
+          createPaymentMethodCards();
+          initProgressIndicators();
+          createMobileOrderSummary();
+          updateMobileSummary();
+          addDarkModeToggle();
+          createTimeEstimation();
+          addRecommendations();
+
+          // Add event listeners for updating mobile summary when data changes
+          document
+            .getElementById("applyLoyaltyBtn")
+            .addEventListener("click", updateMobileSummary);
+        });
+      };
+
+      // Add resize listener to handle responsive elements
+      window.addEventListener("resize", function () {
+        updateMobileSummary();
+      });
+    </script>
   </body>
 </html>

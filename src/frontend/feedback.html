@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Provide Feedback | EventSync</title>
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link
       rel="icon"
       href="images/favicon.ico"
@@ -12,175 +11,229 @@
       class="circular-favicon"
     />
     <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
     />
     <style>
-      /* Global Styles */
       :root {
-        --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
-        --dark-bg: #1f1f1f;
-        --light-bg: #f8f9fa;
-        --text-color: #333;
-        --highlight-color: #ffcc00;
-        --font-family: "Poppins", sans-serif;
-        --button-hover: #2575fc;
-        --button-bg: #6a11cb;
-        --input-bg: #f7f7f7;
-        --input-focus-bg: #e5e5e5;
+        --primary: #5856d6;
+        --primary-light: #7a78e6;
+        --accent: #00c3ff;
+        --dark: #191a2a;
+        --light: #ffffff;
+        --gray-100: #f8f9fa;
+        --gray-200: #e9ecef;
+        --gray-300: #dee2e6;
+        --text-primary: #333;
+        --text-secondary: #6c757d;
       }
 
       body {
-        font-family: var(--font-family);
-        margin: 0;
-        background: var(--light-bg);
-        color: var(--text-color);
-        line-height: 1.7;
+        font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+        background-color: var(--gray-100);
+        color: var(--text-primary);
+        line-height: 1.6;
       }
 
       /* Navbar */
       .navbar {
-        background: var(--primary-gradient);
-        padding: 20px 40px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        padding: 1rem 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
 
       .navbar-brand {
-        font-size: 28px;
+        font-size: 1.5rem;
         font-weight: 700;
         color: white;
-      }
-
-      .navbar-nav .nav-link {
-        color: white !important;
-        font-size: 18px;
-        margin: 0 15px;
-        cursor: pointer;
-        transition: color 0.3s;
-      }
-
-      .navbar-nav .nav-link:hover {
-        color: #ffcc00;
-        text-decoration: underline;
+        letter-spacing: 0.5px;
       }
 
       /* Main Content */
       .main-content {
-        padding: 50px;
-        transition: 0.3s;
+        padding: 3rem 1.5rem;
       }
 
-      .feedback-form {
-        background-color: #fff;
-        border-radius: 15px;
-        padding: 40px 45px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        max-width: 900px;
+      .feedback-container {
+        max-width: 800px;
         margin: 0 auto;
-        text-align: center;
-        transition: all 0.3s ease-in-out;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        background: var(--light);
       }
 
-      .feedback-form h2 {
-        margin-bottom: 25px;
-        font-size: 30px;
-        color: var(--primary-gradient);
+      .feedback-header {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        padding: 2rem;
+        position: relative;
+      }
+
+      .feedback-header h2 {
+        margin: 0;
         font-weight: 700;
-        letter-spacing: 1px;
+        font-size: 1.8rem;
       }
 
-      .event-info {
-        margin-bottom: 25px;
-        font-size: 18px;
-        color: #555;
+      .feedback-body {
+        padding: 2.5rem;
       }
 
-      .event-info p {
-        margin: 12px 0;
+      /* Event Info Cards */
+      .event-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .info-card {
+        background-color: var(--gray-100);
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.2s ease;
+      }
+
+      .info-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .info-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin-bottom: 0.3rem;
+        letter-spacing: 0.5px;
+      }
+
+      .info-value {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--text-primary);
       }
 
       /* Rating System */
+      .rating-container {
+        margin: 2rem 0;
+        text-align: center;
+      }
+
+      .rating-title {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: var(--text-secondary);
+      }
+
       .rating {
         display: flex;
         justify-content: center;
-        margin: 30px 0;
-        gap: 12px;
+        gap: 0.5rem;
       }
 
       .star {
-        font-size: 50px;
+        font-size: 2.5rem;
         cursor: pointer;
-        color: #bbb;
-        transition: color 0.3s ease;
+        color: var(--gray-300);
+        transition: transform 0.2s ease, color 0.2s ease;
       }
 
       .star:hover {
-        color: var(--highlight-color);
+        transform: scale(1.1);
       }
 
       .star.selected {
-        color: var(--highlight-color);
+        color: #ffdd00;
       }
 
-      /* Comment Section */
+      /* Form Elements */
       .form-group {
-        margin: 25px 0;
+        margin-bottom: 2rem;
       }
 
       label {
-        font-size: 18px;
-        color: var(--primary-gradient);
-        font-weight: 600;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        display: block;
       }
 
       textarea {
         width: 100%;
-        height: 140px;
-        padding: 15px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        background-color: var(--input-bg);
+        padding: 1rem;
+        font-size: 1rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 12px;
+        background-color: var(--gray-100);
         resize: none;
-        transition: border 0.3s ease, background-color 0.3s ease;
+        transition: all 0.3s ease;
+        height: 150px;
       }
 
       textarea:focus {
-        border-color: var(--primary-gradient);
-        background-color: var(--input-focus-bg);
         outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(88, 86, 214, 0.1);
+        background-color: white;
       }
 
       /* Submit Button */
       .btn-submit {
-        background-color: var(--button-bg);
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
         color: white;
-        padding: 15px 30px;
         border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 20px;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
         width: 100%;
-        transition: background-color 0.3s ease, transform 0.2s ease;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(88, 86, 214, 0.3);
       }
 
       .btn-submit:hover {
-        background-color: var(--button-hover);
-        transform: scale(1.05);
+        transform: translateY(-2px);
+        box-shadow: 0 7px 14px rgba(88, 86, 214, 0.4);
       }
 
-      /* Responsive Styles */
+      .btn-submit:active {
+        transform: translateY(0);
+      }
+
+      /* Responsive Adjustments */
       @media (max-width: 768px) {
-        .feedback-form {
-          padding: 20px;
+        .feedback-header {
+          padding: 1.5rem;
+        }
+
+        .feedback-body {
+          padding: 1.5rem;
+        }
+
+        .event-info-grid {
+          grid-template-columns: 1fr 1fr;
         }
 
         .star {
-          font-size: 45px;
+          font-size: 2rem;
         }
+      }
 
-        .btn-submit {
-          padding: 12px 25px;
+      @media (max-width: 576px) {
+        .event-info-grid {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -204,50 +257,74 @@
 
     <!-- Main Content -->
     <div class="main-content">
-      <!-- Feedback Form -->
-      <div class="feedback-form">
-        <h2>Provide Your Feedback</h2>
-
-        <!-- Event Information -->
-        <div class="event-info">
-          <p><strong>Event Name:</strong> <span id="eventName"></span></p>
-          <p><strong>Event Date:</strong> <span id="eventDate"></span></p>
-          <p><strong>Venue:</strong> <span id="eventVenue"></span></p>
-          <p>
-            <strong>Tickets Purchased:</strong>
-            <span id="ticketsPurchased"></span>
-          </p>
-          <p><strong>Total Payment:</strong> <span id="totalPayment"></span></p>
+      <div class="feedback-container">
+        <!-- Feedback Header -->
+        <div class="feedback-header">
+          <h2>Share Your Experience</h2>
         </div>
 
-        <!-- Rating System -->
-        <div class="rating">
-          <i class="bi bi-star star" data-value="1"></i>
-          <i class="bi bi-star star" data-value="2"></i>
-          <i class="bi bi-star star" data-value="3"></i>
-          <i class="bi bi-star star" data-value="4"></i>
-          <i class="bi bi-star star" data-value="5"></i>
-        </div>
+        <!-- Feedback Body -->
+        <div class="feedback-body">
+          <!-- Event Information Grid -->
+          <div class="event-info-grid">
+            <div class="info-card">
+              <div class="info-label">Event</div>
+              <div class="info-value" id="eventName">-</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Date</div>
+              <div class="info-value" id="eventDate">-</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Venue</div>
+              <div class="info-value" id="eventVenue">-</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Tickets</div>
+              <div class="info-value" id="ticketsPurchased">-</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Payment</div>
+              <div class="info-value" id="totalPayment">-</div>
+            </div>
+          </div>
 
-        <!-- Comment Section -->
-        <div class="form-group">
-          <label for="comments">Additional Comments:</label>
-          <textarea
-            id="comments"
-            placeholder="Share your thoughts..."
-          ></textarea>
-        </div>
+          <!-- Rating System -->
+          <div class="rating-container">
+            <div class="rating-title">How would you rate your experience?</div>
+            <div class="rating">
+              <i class="bi bi-star star" data-value="1"></i>
+              <i class="bi bi-star star" data-value="2"></i>
+              <i class="bi bi-star star" data-value="3"></i>
+              <i class="bi bi-star star" data-value="4"></i>
+              <i class="bi bi-star star" data-value="5"></i>
+            </div>
+          </div>
 
-        <!-- Submit Button -->
-        <button class="btn-submit" id="submitFeedback">Submit Feedback</button>
+          <!-- Comment Section -->
+          <div class="form-group">
+            <label for="comments">Share your thoughts with us</label>
+            <textarea
+              id="comments"
+              placeholder="What did you enjoy? What could be improved?"
+            ></textarea>
+          </div>
+
+          <!-- Submit Button -->
+          <button class="btn-submit" id="submitFeedback">
+            Submit Feedback
+          </button>
+        </div>
       </div>
     </div>
+
     <script>
       // Example event data for feedback
       const eventData = JSON.parse(localStorage.getItem("feedbackdata"));
       console.log(eventData);
       const username = localStorage.getItem("username");
       console.log(username);
+
       // Check if eventData is correctly retrieved and parsed
       if (eventData) {
         // Display event information
@@ -273,14 +350,39 @@
           selectedRating = parseInt(star.getAttribute("data-value"));
           updateStarSelection();
         });
+
+        // Add hover effect
+        star.addEventListener("mouseenter", () => {
+          const value = parseInt(star.getAttribute("data-value"));
+          stars.forEach((s) => {
+            if (parseInt(s.getAttribute("data-value")) <= value) {
+              s.classList.add("bi-star-fill");
+              s.classList.remove("bi-star");
+            }
+          });
+        });
+
+        star.addEventListener("mouseleave", () => {
+          stars.forEach((s) => {
+            if (!s.classList.contains("selected")) {
+              s.classList.add("bi-star");
+              s.classList.remove("bi-star-fill");
+            }
+          });
+        });
       });
 
       function updateStarSelection() {
         stars.forEach((star) => {
-          if (parseInt(star.getAttribute("data-value")) <= selectedRating) {
+          const value = parseInt(star.getAttribute("data-value"));
+          if (value <= selectedRating) {
             star.classList.add("selected");
+            star.classList.add("bi-star-fill");
+            star.classList.remove("bi-star");
           } else {
             star.classList.remove("selected");
+            star.classList.add("bi-star");
+            star.classList.remove("bi-star-fill");
           }
         });
       }

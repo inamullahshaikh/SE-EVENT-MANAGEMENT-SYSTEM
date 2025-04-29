@@ -4,7 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Event Organizer Dashboard | EventSync</title>
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts: Inter -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="icon"
       href="images/favicon.ico"
@@ -12,392 +30,665 @@
       class="circular-favicon"
     />
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
-    />
     <style>
-      .event-card {
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.2s ease;
-}
-
-.event-card:hover {
-    transform: scale(1.05);
-}
-
-.card-footer {
-    background-color: #f8f9fa;
-}
-
-.btn-update {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-}
-
-.card-body p {
-    font-size: 14px;
-    color: #555;
-}
-
-      .circular-favicon {
-        border-radius: 50%;
-      }
       :root {
-        --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
-        --dark-bg: #1f1f1f;
-        --light-bg: #f8f9fa;
-        --sidebar-width: 250px;
-        --alert-success-bg: #28a745;
-        --alert-error-bg: #dc3545;
+        --primary: #4361ee;
+        --primary-light: #4895ef;
+        --primary-dark: #3f37c9;
+        --secondary: #4cc9f0;
+        --success: #4ade80;
+        --warning: #fbbf24;
+        --danger: #f87171;
+        --dark: #1e293b;
+        --light: #f8fafc;
+        --gray: #64748b;
+        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --transition: all 0.3s ease;
+        --sidebar-width: 280px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
       body {
-        font-family: "Poppins", sans-serif;
-        background: var(--light-bg);
-        margin: 0;
-        padding: 0;
+        font-family: "Inter", sans-serif;
+        background-color: #f1f5f9;
+        color: var(--dark);
+        transition: var(--transition);
+        min-height: 100vh;
+        position: relative;
       }
 
+      /* Navbar Styles */
       .navbar {
-        background: var(--primary-gradient);
-        padding: 15px 20px;
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-dark)
+        );
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 0.75rem 1.5rem;
+        z-index: 1030;
       }
 
       .navbar-brand {
-        font-size: 22px;
-        font-weight: bold;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white !important;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .navbar-brand i {
+        font-size: 1.75rem;
+      }
+
+      .navbar-toggler {
+        border: none;
         color: white;
+      }
+
+      .navbar-toggler:focus {
+        box-shadow: none;
       }
 
       .navbar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.85) !important;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        border-radius: 0.375rem;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .navbar-nav .nav-link:hover,
+      .navbar-nav .nav-link.active {
         color: white !important;
-        font-size: 16px;
-        margin: 0 10px;
-        cursor: pointer;
+        background-color: rgba(255, 255, 255, 0.1);
       }
 
-      .navbar-nav .nav-link:hover {
-        text-decoration: underline;
+      .navbar-nav .nav-link i {
+        font-size: 1.25rem;
       }
 
+      /* Sidebar Styles */
       .sidebar {
         width: var(--sidebar-width);
         height: 100vh;
-        background: var(--dark-bg);
+        background: white;
         position: fixed;
         top: 0;
-        left: -250px;
-        padding: 20px;
-        color: white;
-        transition: 0.3s;
-        z-index: 1000;
+        left: calc(-1 * var(--sidebar-width));
+        padding: 1.5rem 1rem;
+        transition: var(--transition);
+        z-index: 1040;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+        overflow-y: auto;
       }
 
       .sidebar.active {
         left: 0;
       }
 
-      .sidebar a {
-        color: white;
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .sidebar-header h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin: 0;
+      }
+
+      .sidebar-close {
+        background: transparent;
+        border: none;
+        color: var(--gray);
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .sidebar-close:hover {
+        color: var(--danger);
+      }
+
+      .sidebar-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.375rem;
+        color: var(--dark);
+        font-weight: 500;
         text-decoration: none;
-        display: block;
-        padding: 12px 15px;
-        font-size: 16px;
-        margin-bottom: 12px;
-        border-radius: 5px;
-        transition: 0.3s;
+        transition: var(--transition);
         cursor: pointer;
       }
 
-      .sidebar a:hover {
-        background: rgba(255, 255, 255, 0.2);
+      .sidebar-link:hover,
+      .sidebar-link.active {
+        background-color: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+      }
+
+      .sidebar-link i {
+        font-size: 1.25rem;
       }
 
       .sidebar-footer {
         margin-top: auto;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e2e8f0;
       }
 
-      .sidebar-toggle {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        font-size: 24px;
-        color: white;
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.375rem;
+        background-color: rgba(248, 113, 113, 0.1);
+        color: var(--danger);
+        font-weight: 500;
+        text-decoration: none;
+        transition: var(--transition);
         cursor: pointer;
-        z-index: 1100;
-        transition: left 0.3s;
+        width: 100%;
+        border: none;
       }
 
-      .sidebar.active + .sidebar-toggle {
-        left: 270px;
+      .logout-btn:hover {
+        background-color: rgba(248, 113, 113, 0.2);
       }
 
+      /* Content Styles */
       .main-content {
-        padding: 40px;
-        margin-left: var(--sidebar-width);
-        transition: 0.3s;
+        padding: 2rem;
+        transition: var(--transition);
+        margin-left: 0;
+        width: 100%;
       }
-      .btn-primary {
-        background-color: #007bff; /* Add a blue color */
-        color: white; /* Ensure the text is white */
-        border: none; /* Remove border */
-        padding: 10px 20px; /* Add padding */
-        font-size: 16px; /* Adjust font size */
-        border-radius: 5px; /* Add rounded corners */
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-    
-        .event-section {
-            margin-top: 20px;
+
+      @media (min-width: 992px) {
+        .sidebar {
+          left: 0;
         }
-        .attendee-section {
-            margin-top: 20px;
+        .main-content {
+          margin-left: var(--sidebar-width);
+          width: calc(100% - var(--sidebar-width));
         }
-        .search-bar {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
+        .sidebar-toggle {
+          display: none;
         }
-      .btn-primary:hover {
-        background-color: #0056b3; /* Darker shade of blue on hover */
-        cursor: pointer;
-        transform: translateY(-10px); /* Slight lift on hover */
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Change cursor to pointer on hover */
       }
 
-      .btn-primary:focus {
-        outline: none; /* Remove the outline when focused */
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a glow effect when focused */
+      /* Card Styles */
+      .card {
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition);
+        overflow: hidden;
       }
 
-      .alert {
-        font-size: 16px;
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        font-weight: bold;
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
       }
 
-      .alert-success {
-        background-color: var(--alert-success-bg);
-        color: white;
-      }
-
-      .alert-danger {
-        background-color: var(--alert-error-bg);
-        color: white;
-      }
-
-      .content-section h3 {
-        font-size: 28px;
-        color: #333;
+      .card-title {
         font-weight: 600;
-        margin-bottom: 20px;
+        color: var(--primary);
       }
-      .content-section, .container.mt-5 {
-    display: none;
-}.attendee-card {
-    position: relative;
-    background-color: #1772c7;
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 8px;
-    margin: 10px;
-    width: 300px; /* Set a fixed width */
-    display: inline-block;
-    text-align: center; /* Center content */
-    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-    overflow: hidden; /* Prevent blur effect from going outside */
-}
 
-.attendee-card:hover {
-    transform: scale(1.05);
-    background-color: #08067d;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    filter: blur(0.06px) brightness(0.9);
-}
-
-/* Apply blur effect only to the background */
-.attendee-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: inherit;
-    filter: blur(5px); /* Blur the background */
-    z-index: 0;
-    border-radius: 8px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.attendee-card:hover::before {
-    opacity: 1; /* Make blur effect visible on hover */
-}
-
-/* Keep the content (text and button) sharp */
-.attendee-card .card-body {
-    position: relative;
-    z-index: 2; /* Ensure text and button stay sharp */
-}
-
-.attendee-card h5 {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: rgb(4, 13, 117); /* Ensure visibility */
-}
-
-.attendee-card p {
-    font-size: 14px;
-    color: #090909; /* Light text for better visibility */
-}
-
-/* Centered Delete Button */
-.btn-delete {
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Center button */
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 3; /* Ensure button stays on top */
-    
-}
-
-.attendee-card:hover .btn-delete {
-    display: block;
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.1);
-   
-}
-
-.btn-delete:hover {
-    background: #c82333;
-    transform: translate(-50%, -50%) scale(1.2);
-  
-}
-
-
+      /* Form Styles */
       .form-label {
         font-weight: 500;
-        font-size: 16px;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
       }
 
       .form-control {
-        border-radius: 8px;
-        box-shadow: none;
-        margin-bottom: 20px;
-      }
-      #createEvent .card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 0.5rem;
+        border: 1px solid #cbd5e1;
+        padding: 0.75rem 1rem;
+        transition: var(--transition);
       }
 
-      #createEvent .card:hover {
-        transform: translateY(-10px); /* Slight lift on hover */
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Add shadow for emphasis */
+      .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: var(--transition);
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .btn-primary:hover,
+      .btn-primary:focus {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(67, 97, 238, 0.4);
+      }
+
+      /* Event Cards */
+      .event-card {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        transition: var(--transition);
+        height: 100%;
+        background: white;
+      }
+
+      .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--card-shadow);
+      }
+
+      .event-card .card-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-light),
+          var(--primary)
+        );
+        color: white;
+        font-weight: 600;
+        padding: 1rem;
+        border-bottom: none;
+      }
+
+      .event-card .card-body {
+        padding: 1.25rem;
+      }
+
+      .event-card .card-footer {
+        background-color: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        padding: 1rem;
+      }
+
+      .event-badge {
+        background-color: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+        font-weight: 500;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Attendee Cards */
+      .attendee-card {
+        position: relative;
+        background-color: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: var(--transition);
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      }
+
+      .attendee-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--card-shadow);
+      }
+
+      .attendee-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          var(--primary-light),
+          var(--primary)
+        );
+        opacity: 0;
+        transition: var(--transition);
+        z-index: 0;
+      }
+
+      .attendee-card:hover::before {
+        opacity: 0.05;
+      }
+
+      .attendee-card .card-content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .attendee-card h5 {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+      }
+
+      .attendee-card p {
+        color: var(--gray);
+        margin-bottom: 0.25rem;
+      }
+
+      .btn-delete {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        background-color: var(--danger);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        opacity: 0;
+        transition: var(--transition);
+        z-index: 2;
+      }
+
+      .attendee-card:hover .btn-delete {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .btn-delete:hover {
+        background-color: #ef4444;
+        transform: translate(-50%, -50%) scale(1.05);
+      }
+
+      /* Alert Styles */
+      .alert {
+        border-radius: 0.5rem;
+        font-weight: 500;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border: none;
+      }
+
+      .alert-success {
+        background-color: rgba(74, 222, 128, 0.2);
+        color: #16a34a;
+      }
+
+      .alert-danger {
+        background-color: rgba(248, 113, 113, 0.2);
+        color: #dc2626;
+      }
+
+      /* Utility Styles */
+      .content-section,
+      .container.mt-5 {
+        display: none;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.75rem;
+      }
+
+      .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 3px;
+      }
+
+      /* Search Bar */
+      .search-bar {
+        position: relative;
+        margin-bottom: 1.5rem;
+      }
+
+      .search-bar input {
+        padding-left: 2.75rem;
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+
+      .search-bar i {
+        position: absolute;
+        top: 50%;
+        left: 1rem;
+        transform: translateY(-50%);
+        color: var(--gray);
+      }
+
+      /* Event Select Dropdown */
+      .event-select {
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+
+      .event-badge {
+        background-color: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+        font-weight: 500;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-right: 0.5rem;
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--gray);
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #cbd5e1;
+      }
+
+      .empty-state p {
+        font-size: 1.125rem;
+        font-weight: 500;
+      }
+
+      /* Loading Spinner */
+      .loading-spinner {
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .loading-spinner i {
+        font-size: 2rem;
+        color: var(--primary);
+        animation: spin 1s infinite linear;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 991.98px) {
+        .sidebar-toggle {
+          position: fixed;
+          top: 1rem;
+          left: 1rem;
+          background-color: white;
+          color: var(--primary);
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+          z-index: 1030;
+          transition: var(--transition);
+        }
+
+        .sidebar.active + .sidebar-toggle {
+          left: calc(var(--sidebar-width) + 1rem);
+        }
+      }
+
+      @media (max-width: 767.98px) {
+        .main-content {
+          padding: 1.5rem 1rem;
+        }
+
+        .section-title {
+          font-size: 1.25rem;
+        }
       }
     </style>
   </head>
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
       <div class="container">
-        <a class="navbar-brand" href="#">EventSync - Organizer</a>
+        <a class="navbar-brand" href="#">
+          <i class="bi bi-calendar-event"></i>
+          EventSync
+        </a>
         <button
           class="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
-          <span class="navbar-toggler-icon"></span>
+          <i class="bi bi-list"></i>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-              <li class="nav-item">
-                  <a class="nav-link" onclick="showSection('createEvent')">
-                      <i class="bi bi-calendar-plus"></i> Create Event
-                  </a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" onclick="showSection('updateEvent')">
-                      <i class="bi bi-pencil-square"></i> Update Event
-                  </a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" onclick="showSection('yourEvents')">
-                      <i class="bi bi-calendar-check"></i> Your Events
-                  </a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link logout-btn" onclick="logout()">
-                      <i class="bi bi-box-arrow-right"></i> Logout
-                  </a>
-              </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('createEvent')">
+                <i class="bi bi-calendar-plus"></i> Create Event
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('updateEvent')">
+                <i class="bi bi-pencil-square"></i> Update Event
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="showSection('yourEvents')">
+                <i class="bi bi-calendar-check"></i> Your Events
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link logout-btn" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </a>
+            </li>
           </ul>
+        </div>
       </div>
-    
     </nav>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div>
-        <h4>Organizer Panel</h4>
-        <a onclick="showSection('createEvent')">
-          <i class="bi bi-calendar-plus"></i> Create Event
-        </a>
-        <a onclick="showSection('updateEvent')">
-          <i class="bi bi-pencil-square"></i> Update Event
-        </a>
-        <a onclick="showSection('deleteEvent')">
-          <i class="bi bi-trash"></i> Delete Event
-        </a>
-        <a onclick="showSection('generateAnalysis')">
-          <i class="bi bi-bar-chart"></i> Generate Analysis
-        </a>
-        <a class="nav-link" onclick="showSection('yourEvents')">
-            <i class="bi bi-calendar-check"></i> Your Events
-        </a>
-      </div>
-      <div class="sidebar-footer">
-        <a class="logout-btn" onclick="logout()">
-          <i class="bi bi-box-arrow-right"></i> Logout
-        </a>
-      </div>
-    </div>
 
     <!-- Sidebar Toggle Button -->
     <div class="sidebar-toggle" onclick="toggleSidebar()">
       <i class="bi bi-list"></i>
     </div>
 
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h4><i class="bi bi-calendar-event"></i> EventSync</h4>
+        <button class="sidebar-close" onclick="toggleSidebar()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="sidebar-menu">
+        <a class="sidebar-link" onclick="showSection('createEvent')">
+          <i class="bi bi-calendar-plus"></i> Create Event
+        </a>
+        <a class="sidebar-link" onclick="showSection('updateEvent')">
+          <i class="bi bi-pencil-square"></i> Update Event
+        </a>
+        <a class="sidebar-link" onclick="showSection('deleteEvent')">
+          <i class="bi bi-trash"></i> Delete Event
+        </a>
+        <a class="sidebar-link" onclick="showSection('generateAnalysis')">
+          <i class="bi bi-bar-chart"></i> Generate Analysis
+        </a>
+        <a class="sidebar-link" onclick="showSection('yourEvents')">
+          <i class="bi bi-calendar-check"></i> Your Events
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="logout()">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </div>
+    </div>
+
     <!-- Main Content -->
     <div class="main-content">
       <!-- Create Event Section -->
-      <div class="container mt-5" id="createEvent">
+      <div class="container" id="createEvent">
+        <h2 class="section-title">Create New Event</h2>
         <div class="row">
-          <div class="col-md-6 offset-md-1">
-            <div class="card shadow-lg">
-              <div class="card-body">
-                <h3 class="card-title text-center mb-4">Create Event</h3>
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="card">
+              <div class="card-body p-4">
                 <form id="createEventForm">
                   <div class="mb-3">
                     <label for="eventName" class="form-label">Event Name</label>
@@ -412,58 +703,81 @@
 
                   <div class="mb-3">
                     <label for="eventVenue" class="form-label">Venue</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="eventVenue"
-                      placeholder="Enter event venue"
-                      required
-                    />
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-geo-alt"></i>
+                      </span>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="eventVenue"
+                        placeholder="Enter event venue"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div class="mb-3">
-                    <label for="eventDate" class="form-label">Event Date</label>
-                    <input
-                      type="datetime-local"
-                      class="form-control"
-                      id="eventDate"
-                      required
-                    />
-                  </div>
-
-                  <div class="mb-3">
-                    <label for="numTickets" class="form-label"
-                      >Number of Tickets</label
+                    <label for="eventDate" class="form-label"
+                      >Event Date & Time</label
                     >
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="numTickets"
-                      placeholder="Enter number of tickets"
-                      required
-                    />
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-calendar-date"></i>
+                      </span>
+                      <input
+                        type="datetime-local"
+                        class="form-control"
+                        id="eventDate"
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <div class="mb-3">
-                    <label for="pricePerTicket" class="form-label"
-                      >Price per Ticket</label
-                    >
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="pricePerTicket"
-                      placeholder="Enter price per ticket"
-                      required
-                    />
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="numTickets" class="form-label"
+                          >Number of Tickets</label
+                        >
+                        <div class="input-group">
+                          <span class="input-group-text">
+                            <i class="bi bi-ticket-perforated"></i>
+                          </span>
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="numTickets"
+                            placeholder="Enter number of tickets"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="pricePerTicket" class="form-label"
+                          >Price per Ticket</label
+                        >
+                        <div class="input-group">
+                          <span class="input-group-text">
+                            <i class="bi bi-currency-dollar"></i>
+                          </span>
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="pricePerTicket"
+                            placeholder="Enter price per ticket"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="mb-3">
-                    <button
-                      type="submit"
-                      class="btn btn-primary w-100"
-                      id="butt"
-                    >
-                      Create Event
+                  <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="bi bi-plus-circle me-2"></i> Create Event
                     </button>
                   </div>
                 </form>
@@ -474,89 +788,156 @@
         </div>
       </div>
 
+      <!-- Update Event Section -->
       <div id="updateEvent" class="content-section">
-        <h3>Update Event</h3>
-          <div id="eventCardsForUpdate" class="row">
+        <h2 class="section-title">Update Event</h2>
+        <div class="row g-4" id="eventCardsForUpdate">
+          <!-- Event cards will be loaded here -->
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="bi bi-calendar-x"></i>
+              <p>No events found. Create your first event to get started.</p>
+            </div>
           </div>
-      </div>
-
-      <div id="deleteEvent" class="content-section">
-        <h3>Delete Event</h3>
-                  <div id="eventCardsForDelete" class="row">
-          </div>
-      </div>
-
-
-      <div id="generateAnalysis" class="content-section">
-        <h3>Generate Analysis</h3>
-        <div id="eventCardsForAnalysis" class="row">
-          </div>
-      </div>
-      <div class="container mt-5" id="yourEvents">
-        <h3>Your Events</h3>
-        
-        <!-- Event Dropdown -->
-        <select id="eventSelect" class="form-control mb-3"></select>
-    
-        <h3>Attendees</h3>
-    
-        <!-- Search bar -->
-        <input type="text" id="searchAttendee" class="form-control mb-3" placeholder="Search attendees...">
-    
-        <!-- Attendee List -->
-        <div id="attendeeList" class="row">
-            <p class="text-center">Select an event to view attendees</p>
         </div>
+      </div>
+
+      <!-- Delete Event Section -->
+      <div id="deleteEvent" class="content-section">
+        <h2 class="section-title">Delete Event</h2>
+        <div class="row g-4" id="eventCardsForDelete">
+          <!-- Event cards will be loaded here -->
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="bi bi-calendar-x"></i>
+              <p>No events found. Create your first event to get started.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate Analysis Section -->
+      <div id="generateAnalysis" class="content-section">
+        <h2 class="section-title">Generate Analysis</h2>
+        <div class="row g-4" id="eventCardsForAnalysis">
+          <!-- Event cards will be loaded here -->
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="bi bi-bar-chart"></i>
+              <p>
+                No events found for analysis. Create events to see analytics.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Your Events Section -->
+      <div id="yourEvents" class="content-section">
+        <h2 class="section-title">Your Events</h2>
+
+        <!-- Event Dropdown -->
+        <div class="row mb-4">
+          <div class="col-md-8 mx-auto">
+            <div class="card">
+              <div class="card-body">
+                <label for="eventSelect" class="form-label">Select Event</label>
+                <select id="eventSelect" class="form-select event-select">
+                  <option value="" selected disabled>
+                    Choose an event to view attendees
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="section-title mb-4">Attendees</h3>
+
+        <!-- Search bar -->
+        <div class="row mb-4">
+          <div class="col-md-8 mx-auto">
+            <div class="search-bar">
+              <i class="bi bi-search"></i>
+              <input
+                type="text"
+                id="searchAttendee"
+                class="form-control"
+                placeholder="Search attendees by name, email or ticket ID..."
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Attendee List -->
+        <div class="row g-4" id="attendeeList">
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="bi bi-people"></i>
+              <p>Select an event to view attendees</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
+    <!-- JavaScript code will be added later -->
     <script>
+      // Get user data from localStorage
       const username = localStorage.getItem("username");
       const email = localStorage.getItem("email");
       console.log(username, email);
+
+      // Redirect if not logged in
       if (!username || !email) {
         window.href = "index.html";
       }
-      function toggleSidebar() {
-        document.getElementById("sidebar").classList.toggle("active");
-      }
 
-      function logout() {
+      // Toggle sidebar visibility
+      const toggleSidebar = () => {
+        document.getElementById("sidebar").classList.toggle("active");
+      };
+
+      // Logout functionality
+      const logout = () => {
         localStorage.setItem("loggedin", 0);
         window.location.href = "index.html";
+      };
+
+      // Show selected section and hide others
+      function showSection(sectionId) {
+        document.getElementById("createEvent").style.display = "none";
+        document.querySelectorAll(".content-section").forEach((section) => {
+          section.style.display = "none";
+        });
+
+        // document.querySelector(".profile-card").style.display = "none"; // Hide profile card
+        document.getElementById("sidebar").classList.remove("active");
+
+        document.getElementById(sectionId).style.display = "block";
       }
 
-      function showSection(sectionId) {
-                document.getElementById("sidebar").classList.remove("active");
+      // Set default section on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        showSection("createEvent");
+      });
 
-    // Hide all sections first
-    document.querySelectorAll('.content-section, .container.mt-5').forEach(section => {
-        section.style.display = 'none';
-    });
-    document.addEventListener("DOMContentLoaded", function() {
-    showSection('createEvent'); // Default section on load
-});
-
-    // Show the selected section
-    const section = document.getElementById(sectionId);
-    if (section) {
-        section.style.display = 'block';
-    }
-}
-
-
-      function generateAnalysis() {
+      // Generate analysis placeholder function
+      const generateAnalysis = () => {
         document.getElementById("analysisResults").innerHTML =
           "<p>Event Analysis Generated!</p>";
-      }
-      // Handle the form submission to create an event
+      };
+
+      // Handle event creation form submission
       document
         .getElementById("createEventForm")
-        .addEventListener("submit", function (event) {
-          event.preventDefault(); // Prevent the form from submitting the traditional way
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
 
-          // Get the form data
+          // Get form data
           const eventName = document.getElementById("eventName").value;
           const eventVenue = document.getElementById("eventVenue").value;
           const eventDate = document.getElementById("eventDate").value;
@@ -565,311 +946,376 @@
             document.getElementById("pricePerTicket").value;
           const eventOrg = username;
 
-          // Create the event object
+          // Create event object
           const eventData = {
             name: eventName,
             venue: eventVenue,
             date: new Date(eventDate),
             numberOfTickets: numTickets,
             pricePerTicket: pricePerTicket,
-            eventOrg: eventOrg,
+            eventOrg,
           };
 
-          // Send the POST request to create the event
-          fetch("http://localhost:3003/create", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(eventData),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.message) {
-                // Success
-                document.getElementById(
-                  "createEventMessage"
-                ).innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                // Optionally, you can reset the form here
-                document.getElementById("createEventForm").reset();
-              } else if (data.error) {
-                // Error
-                document.getElementById(
-                  "createEventMessage"
-                ).innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
-              }
-            })
-            .catch((error) => {
-              // Handle error
+          try {
+            // Send POST request to create event
+            const response = await fetch("http://localhost:3003/create", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(eventData),
+            });
+
+            const data = await response.json();
+
+            if (data.message) {
+              // Success
               document.getElementById(
                 "createEventMessage"
-              ).innerHTML = `<div class="alert alert-danger">Something went wrong! Please try again later.</div>`;
-            });
+              ).innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+              // Reset form
+              document.getElementById("createEventForm").reset();
+            } else if (data.error) {
+              // Error
+              document.getElementById(
+                "createEventMessage"
+              ).innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+            }
+          } catch (error) {
+            // Handle error
+            document.getElementById(
+              "createEventMessage"
+            ).innerHTML = `<div class="alert alert-danger">Something went wrong! Please try again later.</div>`;
+          }
         });
-        document.addEventListener("DOMContentLoaded", async () => {
-    await fetchEvents();
-});
 
-// Fetch events created by the event organizer
-async function fetchEvents() {
-    try {
-        const response = await fetch(`http://localhost:3003/get-by-organizer/${username}`);
-        const events = await response.json();
+      // Initialize page and fetch events
+      document.addEventListener("DOMContentLoaded", async () => {
+        await fetchEvents();
+      });
 
-        const eventSelect = document.getElementById("eventSelect");
-        eventSelect.innerHTML = '<option value="">-- Select Event --</option>';
-        
-        events.forEach(event => {
-            let option = document.createElement("option");
+      // Fetch events created by the event organizer
+      const fetchEvents = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:3003/get-by-organizer/${username}`
+          );
+          const events = await response.json();
+
+          const eventSelect = document.getElementById("eventSelect");
+          eventSelect.innerHTML =
+            '<option value="">-- Select Event --</option>';
+
+          events.forEach((event) => {
+            const option = document.createElement("option");
             option.value = event._id;
-            option.textContent = `${event.name} - ${event.venue} (${new Date(event.date).toLocaleDateString()})`;
+            option.textContent = `${event.name} - ${event.venue} (${new Date(
+              event.date
+            ).toLocaleDateString()})`;
             eventSelect.appendChild(option);
-        });
+          });
 
-        // Fetch attendees when an event is selected
-        eventSelect.addEventListener("change", function () {
+          // Fetch attendees when an event is selected
+          eventSelect.addEventListener("change", function () {
             fetchAttendees(this.value);
-        });
-
-    } catch (error) {
-        console.error("Error fetching events:", error);
-    }
-}
-
-async function fetchAttendees(eventId) {
-    if (!eventId) return;
-
-    try {
-        const response = await fetch(`http://localhost:3004/get-attendees-by-event/${eventId}`);
-        const data = await response.json();
-
-        if (!data.attendees.length) {
-            document.getElementById("attendeeList").innerHTML = "<tr><td colspan='5' class='text-center'>No attendees found</td></tr>";
-            return;
+          });
+        } catch (error) {
+          console.error("Error fetching events:", error);
         }
+      };
 
-        let attendeeCardsContainer = document.getElementById("attendeeList");
-        attendeeCardsContainer.innerHTML = ""; // Clear previous attendees
+      // Fetch attendees for a specific event
+      const fetchAttendees = async (eventId) => {
+        if (!eventId) return;
 
-        data.attendees.forEach(attendee => {
+        try {
+          const response = await fetch(
+            `http://localhost:3004/get-attendees-by-event/${eventId}`
+          );
+          const data = await response.json();
+
+          const attendeeCardsContainer =
+            document.getElementById("attendeeList");
+
+          if (!data.attendees.length) {
+            attendeeCardsContainer.innerHTML =
+              "<tr><td colspan='5' class='text-center'>No attendees found</td></tr>";
+            return;
+          }
+
+          attendeeCardsContainer.innerHTML = ""; // Clear previous attendees
+
+          data.attendees.forEach((attendee) => {
             const attendeeCard = document.createElement("div");
             attendeeCard.classList.add("attendee-card");
 
             attendeeCard.innerHTML = `
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><strong>👤 ${attendee.name}</strong></h5>
-                        <p><strong>📧 Email:</strong> ${attendee.email}</p>
-                        <p><strong>📞 Phone:</strong> ${attendee.phone}</p>
-                        <p><strong>🎟️ Tickets Booked:</strong> ${attendee.ticketsPurchased}</p>
-                        <p><strong>🆔 Booking ID:</strong> ${attendee.bookingId}</p>
-                        
-                        <!-- Delete Button (Initially Hidden) -->
-                        <button class="btn-delete" onclick="deleteBooking('${attendee.bookingId}')">Cancel Booking</button>
-                    </div>
-                </div>
-            `;
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title"><strong>👤 ${attendee.name}</strong></h5>
+            <p><strong>📧 Email:</strong> ${attendee.email}</p>
+            <p><strong>📞 Phone:</strong> ${attendee.phone}</p>
+            <p><strong>🎟️ Tickets Booked:</strong> ${attendee.ticketsPurchased}</p>
+            <p><strong>🆔 Booking ID:</strong> ${attendee.bookingId}</p>
+            
+            <!-- Delete Button -->
+            <button class="btn-delete" onclick="deleteBooking('${attendee.bookingId}')">Cancel Booking</button>
+          </div>
+        </div>
+      `;
             attendeeCardsContainer.appendChild(attendeeCard);
-        });
+          });
+        } catch (error) {
+          console.error("Error fetching attendees:", error);
+        }
+      };
 
-    } catch (error) {
-        console.error("Error fetching attendees:", error);
-    }
-}
+      // Delete booking function
+      const deleteBooking = async (bookingId) => {
+        if (!confirm("Are you sure you want to cancel this booking?")) return;
 
-async function deleteBooking(bookingId) {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
+        try {
+          const response = await fetch(
+            `http://localhost:3004/delete/${bookingId}`,
+            {
+              method: "DELETE",
+            }
+          );
 
-    try {
-        const response = await fetch(`http://localhost:3004/delete/${bookingId}`, {
-            method: "DELETE",
-        });
-
-        const result = await response.json();
-        if (response.ok) {
+          const result = await response.json();
+          if (response.ok) {
             alert("✅ Booking cancelled successfully!");
-            fetchAttendees(document.getElementById("eventSelect").value); // Refresh attendee list
-        } else {
+            // Refresh attendee list
+            fetchAttendees(document.getElementById("eventSelect").value);
+          } else {
             alert(`❌ Error: ${result.message}`);
+          }
+        } catch (error) {
+          console.error("Error deleting booking:", error);
+          alert("❌ Failed to cancel booking.");
         }
-    } catch (error) {
-        console.error("Error deleting booking:", error);
-        alert("❌ Failed to cancel booking.");
-    }
-}
+      };
 
-// Search filter for attendees
-document.getElementById("searchAttendee").addEventListener("input", function () {
-    const searchValue = this.value.toLowerCase();
-    document.querySelectorAll("#attendeeList .attendee-card").forEach(card => {
-        card.style.display = card.textContent.toLowerCase().includes(searchValue) ? "" : "none";
-    });
-});
-async function displayEventsForUpdate() {
-    try {
-        const response = await fetch(`http://localhost:3003/get-by-organizer/${username}`);
-        const events = await response.json();
+      // Search filter for attendees
+      document
+        .getElementById("searchAttendee")
+        .addEventListener("input", function () {
+          const searchValue = this.value.toLowerCase();
+          document
+            .querySelectorAll("#attendeeList .attendee-card")
+            .forEach((card) => {
+              card.style.display = card.textContent
+                .toLowerCase()
+                .includes(searchValue)
+                ? ""
+                : "none";
+            });
+        });
 
-        const eventCardsContainer = document.getElementById("eventCardsForUpdate");
-        if (!eventCardsContainer) {
+      // Display events for update
+      const displayEventsForUpdate = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:3003/get-by-organizer/${username}`
+          );
+          const events = await response.json();
+
+          const eventCardsContainer = document.getElementById(
+            "eventCardsForUpdate"
+          );
+          if (!eventCardsContainer) {
             console.error("Event cards container not found.");
             return;
-        }
+          }
 
-        eventCardsContainer.innerHTML = "";  // Clear any existing content
+          eventCardsContainer.innerHTML = ""; // Clear existing content
 
-        if (events.length === 0) {
-            eventCardsContainer.innerHTML = "<p>No events found or failed to fetch events.</p>";
+          if (events.length === 0) {
+            eventCardsContainer.innerHTML =
+              "<p>No events found or failed to fetch events.</p>";
             return;
-        }
+          }
 
-        events.forEach(event => {
+          events.forEach((event) => {
             const card = document.createElement("div");
             card.classList.add("col-md-4", "mb-4");
 
             card.innerHTML = `
-                <div class="event-card card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
-                        <p><strong>📍 Venue:</strong> ${event.venue}</p>
-                        <p><strong>📅 Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
-                        <p><strong>🎟️ Tickets Bought:</strong> ${event.numberOfTickets}</p>
-                        <p><strong>💵 Total Payment:</strong> ${event.pricePerTicket}</p>
-                    </div>
-                    <div class="card-footer text-center">
-                        <button class="btn btn-primary" onclick="updateEvent('${event._id}')">Update Event</button>
-                    </div>
-                </div>
-            `;
+        <div class="event-card card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
+            <p><strong>📍 Venue:</strong> ${event.venue}</p>
+            <p><strong>📅 Date:</strong> ${new Date(
+              event.date
+            ).toLocaleDateString()}</p>
+            <p><strong>🎟️ Tickets Bought:</strong> ${event.numberOfTickets}</p>
+            <p><strong>💵 Total Payment:</strong> ${event.pricePerTicket}</p>
+          </div>
+          <div class="card-footer text-center">
+            <button class="btn btn-primary" onclick="updateEvent('${
+              event._id
+            }')">Update Event</button>
+          </div>
+        </div>
+      `;
 
             eventCardsContainer.appendChild(card);
-        });
-    } catch (error) {
-        console.error("Error displaying events:", error);
-    }
-}
+          });
+        } catch (error) {
+          console.error("Error displaying events:", error);
+        }
+      };
 
-async function displayEventsForDelete() {
-    try {
-        const response = await fetch(`http://localhost:3003/get-by-organizer/${username}`);
-        const events = await response.json();
+      // Display events for deletion
+      const displayEventsForDelete = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:3003/get-by-organizer/${username}`
+          );
+          const events = await response.json();
 
-        const eventCardsContainer = document.getElementById("eventCardsForDelete");
-        if (!eventCardsContainer) {
+          const eventCardsContainer = document.getElementById(
+            "eventCardsForDelete"
+          );
+          if (!eventCardsContainer) {
             console.error("Event cards container not found.");
             return;
-        }
+          }
 
-        eventCardsContainer.innerHTML = "";  // Clear any existing content
+          eventCardsContainer.innerHTML = ""; // Clear existing content
 
-        if (events.length === 0) {
-            eventCardsContainer.innerHTML = "<p>No events found or failed to fetch events.</p>";
+          if (events.length === 0) {
+            eventCardsContainer.innerHTML =
+              "<p>No events found or failed to fetch events.</p>";
             return;
-        }
+          }
 
-        events.forEach(event => {
+          events.forEach((event) => {
             const card = document.createElement("div");
             card.classList.add("col-md-4", "mb-4");
 
             card.innerHTML = `
-                <div class="event-card card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
-                        <p><strong>📍 Venue:</strong> ${event.venue}</p>
-                        <p><strong>📅 Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
-                        <p><strong>🎟️ Tickets Bought:</strong> ${event.numberOfTickets}</p>
-                        <p><strong>💵 Total Payment:</strong> ${event.pricePerTicket}</p>
-                    </div>
-                    <div class="card-footer text-center">
-                        <button class="btn btn-primary" color="RED" onclick="deleteEvent('${event._id}')">Delete Event</button>
-                    </div>
-                </div>
-            `;
+        <div class="event-card card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
+            <p><strong>📍 Venue:</strong> ${event.venue}</p>
+            <p><strong>📅 Date:</strong> ${new Date(
+              event.date
+            ).toLocaleDateString()}</p>
+            <p><strong>🎟️ Tickets Bought:</strong> ${event.numberOfTickets}</p>
+            <p><strong>💵 Total Payment:</strong> ${event.pricePerTicket}</p>
+          </div>
+          <div class="card-footer text-center">
+            <button class="btn btn-primary" color="RED" onclick="deleteEvent('${
+              event._id
+            }')">Delete Event</button>
+          </div>
+        </div>
+      `;
 
             eventCardsContainer.appendChild(card);
-        });
-    } catch (error) {
-        console.error("Error displaying events:", error);
-    }
-}
-async function displayEventsForAnalysis() {
-    try {
-        const response = await fetch(`http://localhost:3003/get-by-organizer/${username}`);
-        const events = await response.json();
+          });
+        } catch (error) {
+          console.error("Error displaying events:", error);
+        }
+      };
 
-        const eventCardsContainer = document.getElementById("eventCardsForAnalysis");
-        if (!eventCardsContainer) {
+      // Display events for analysis
+      const displayEventsForAnalysis = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:3003/get-by-organizer/${username}`
+          );
+          const events = await response.json();
+
+          const eventCardsContainer = document.getElementById(
+            "eventCardsForAnalysis"
+          );
+          if (!eventCardsContainer) {
             console.error("Event cards container not found.");
             return;
-        }
+          }
 
-        eventCardsContainer.innerHTML = "";  // Clear any existing content
+          eventCardsContainer.innerHTML = ""; // Clear existing content
 
-        if (events.length === 0) {
-            eventCardsContainer.innerHTML = "<p>No events found or failed to fetch events.</p>";
+          if (events.length === 0) {
+            eventCardsContainer.innerHTML =
+              "<p>No events found or failed to fetch events.</p>";
             return;
-        }
+          }
 
-        events.forEach(event => {
+          events.forEach((event) => {
             const card = document.createElement("div");
             card.classList.add("col-md-4", "mb-4");
 
             card.innerHTML = `
-                <div class="event-card card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
-                        <p><strong>📍 Venue:</strong> ${event.venue}</p>
-                        <p><strong>📅 Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
-                        <p><strong>🎟️ Tickets Bought:</strong> ${event.numberOfTickets}</p>
-                        <p><strong>💵 Total Payment:</strong> ${event.pricePerTicket}</p>
-                    </div>
-                    <div class="card-footer text-center">
-                        <button class="btn btn-primary" onclick="GenerateAnalysis('${event._id}')">Generate Analysis</button>
-                    </div>
-                </div>
-            `;
+        <div class="event-card card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title"><strong>🎉 ${event.name}</strong></h5>
+            <p><strong>📍 Venue:</strong> ${event.venue}</p>
+            <p><strong>📅 Date:</strong> ${new Date(
+              event.date
+            ).toLocaleDateString()}</p>
+            <p><strong>🎟️ Tickets Bought:</strong> ${event.numberOfTickets}</p>
+            <p><strong>💵 Total Payment:</strong> ${event.pricePerTicket}</p>
+          </div>
+          <div class="card-footer text-center">
+            <button class="btn btn-primary" onclick="GenerateAnalysis('${
+              event._id
+            }')">Generate Analysis</button>
+          </div>
+        </div>
+      `;
 
             eventCardsContainer.appendChild(card);
-        });
-    } catch (error) {
-        console.error("Error displaying events:", error);
-    }
-}
+          });
+        } catch (error) {
+          console.error("Error displaying events:", error);
+        }
+      };
 
-// Function to handle the update event (you can modify this to show a form, etc.)
-function updateEvent(eventID) {
-    console.log("Updating event with ID:", eventID);
-    localStorage.setItem("EventIDtoupdate", eventID);
-    window.location.href = "updateevent.html";
-}
-function GenerateAnalysis(eventID){
-      localStorage.setItem("EventIDtoanalyse", eventID);
-    window.location.href = "generateAnalysis.html";
-}
-async function deleteEvent(eventID) {
-  try {
-    const response = await fetch(`http://localhost:3003/delete/${eventID}`, { method: 'DELETE' });
-    const result = await response.json();
-    
-    if (response.ok) {
-      alert('✅ Event deleted successfully!');
-      window.location.href = "evorg-dashboard.html";
-    } else {
-      alert('❌ Error: ' + (result.message || 'Failed to delete event.'));
-    }
-  } catch (error) {
-    console.error('Error deleting event:', error);
-    alert('❌ Error deleting event. Please try again.');
-  }
-}
+      // Function to handle the update event
+      function updateEvent(eventID) {
+        console.log("Updating event with ID:", eventID);
+        localStorage.setItem("EventIDtoupdate", eventID);
+        window.location.href = "updateevent.html";
+      }
 
+      // Function to generate analysis
+      function GenerateAnalysis(eventID) {
+        localStorage.setItem("EventIDtoanalyse", eventID);
+        window.location.href = "generateAnalysis.html";
+      }
 
-// Call the displayEventsForUpdate function when the page loads
-document.addEventListener("DOMContentLoaded", function () {
-    displayEventsForUpdate();
-    displayEventsForDelete(); 
-    displayEventsForAnalysis();// Fetch and display events on page load
-});
+      // Function to delete an event
+      async function deleteEvent(eventID) {
+        try {
+          const response = await fetch(
+            `http://localhost:3003/delete/${eventID}`,
+            {
+              method: "DELETE",
+            }
+          );
+          const result = await response.json();
+
+          if (response.ok) {
+            alert("✅ Event deleted successfully!");
+            window.location.href = "evorg-dashboard.html";
+          } else {
+            alert("❌ Error: " + (result.message || "Failed to delete event."));
+          }
+        } catch (error) {
+          console.error("Error deleting event:", error);
+          alert("❌ Error deleting event. Please try again.");
+        }
+      }
+
+      // Initialize page data on load
+      document.addEventListener("DOMContentLoaded", () => {
+        displayEventsForUpdate();
+        displayEventsForDelete();
+        displayEventsForAnalysis();
+      });
     </script>
   </body>
 </html>

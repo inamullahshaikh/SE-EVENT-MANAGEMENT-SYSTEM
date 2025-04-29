@@ -4,234 +4,573 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard | EventSync</title>
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+    />
     <link
       rel="icon"
       href="images/favicon.ico"
       type="image/x-icon"
       class="circular-favicon"
     />
-
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
     />
     <style>
-      .remove-eventorg-container {
-        max-width: 1200px;
-        margin: auto;
-        padding: 20px;
-        text-align: center;
-      }
-      .remove-eventorg-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-      }
-      .remove-eventorg-card {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        position: relative;
-        text-align: left;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      .remove-eventorg-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-      }
-      .remove-eventorg-btn {
-        background-color: red;
-        color: white;
-        border: none;
-        padding: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        position: absolute;
-        bottom: 15px;
-        right: 15px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-      .remove-eventorg-card:hover .remove-eventorg-btn {
-        opacity: 1;
-      }
-      .remove-eventorg-icon {
-        font-size: 40px;
-        color: #007bff;
-        margin-bottom: 10px;
-      }
-      .circular-favicon {
-        border-radius: 50%;
-      }
       :root {
-        --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
-        --dark-bg: #1f1f1f;
-        --sidebar-width: 250px;
+        --primary: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary: #4cc9f0;
+        --dark: #2b2d42;
+        --light: #f8f9fa;
+        --danger: #ef476f;
+        --success: #06d6a0;
+        --warning: #ffd166;
+        --gray-dark: #343a40;
+        --gray: #6c757d;
+        --gray-light: #e9ecef;
+        --transition: all 0.3s ease;
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+        --border-radius: 0.75rem;
       }
 
       body {
-        font-family: "Poppins", sans-serif;
-        background: #f8f9fa;
-      }
-      /* Container for the buttons */
-      .button-container {
-        display: flex;
-        gap: 10px;
-      }
-
-      /* Base styles for the buttons */
-      button {
-        padding: 10px 20px;
-        border-radius: 5px;
-        border: none;
-        cursor: pointer;
-        font-size: 14px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        display: inline-block;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-
-      /* Approve button styles */
-      .btn-approve {
-        background-color: #28a745; /* Green */
-        color: white;
-      }
-
-      .btn-approve:hover {
-        transform: scale(1.1); /* Slightly grow on hover */
-        box-shadow: 0 6px 12px rgba(40, 167, 69, 0.2);
-      }
-
-      /* Delete button styles */
-      .btn-delete {
-        background-color: #dc3545; /* Red */
-        color: white;
-      }
-
-      .btn-delete:hover {
-        transform: scale(1.1); /* Slightly grow on hover */
-        box-shadow: 0 6px 12px rgba(220, 53, 69, 0.2);
-      }
-
-      /* Add a smooth transition effect when hovering over the card */
-      .card {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background-color: #f5f7fa;
+        color: var(--dark);
+        overflow-x: hidden;
         position: relative;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
 
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      .card .answer-box {
-        display: none;
-        margin-top: 10px;
-      }
-
-      .card.expanded .answer-box {
-        display: block;
-      }
-
+      /* Navbar Styles */
       .navbar {
-        background: var(--primary-gradient);
-        padding: 15px 20px;
+        background-color: var(--primary);
+        box-shadow: var(--shadow);
+        padding: 0.75rem 0;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1030;
       }
 
       .navbar-brand {
-        font-size: 22px;
-        font-weight: bold;
+        font-weight: 700;
+        font-size: 1.5rem;
+        letter-spacing: -0.5px;
+        color: white;
+        display: flex;
+        align-items: center;
       }
 
-      .navbar-nav .nav-link {
+      .navbar-brand:before {
+        content: "";
+        display: inline-block;
+        width: 1.75rem;
+        height: 1.75rem;
+        margin-right: 0.75rem;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 0.5rem;
+        position: relative;
+      }
+
+      .navbar-brand:after {
+        content: "";
+        position: absolute;
+        width: 1rem;
+        height: 1rem;
+        background-color: white;
+        border-radius: 0.25rem;
+        transform: rotate(45deg);
+        margin-left: 0.375rem;
+      }
+
+      .navbar .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: var(--transition);
+        border-radius: var(--border-radius);
+        margin: 0 0.25rem;
+      }
+
+      .navbar .nav-link:hover,
+      .navbar .nav-link.active {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .logout-btn {
+        background-color: rgba(255, 255, 255, 0.15);
         color: white !important;
-        font-size: 16px;
-        margin: 0 10px;
+        border-radius: var(--border-radius);
+        margin-left: 0.75rem;
+        padding: 0.5rem 1.25rem !important;
         cursor: pointer;
+        transition: var(--transition);
+        font-weight: 600;
       }
 
-      .navbar-nav .nav-link:hover {
-        text-decoration: underline;
+      .logout-btn:hover {
+        background-color: rgba(255, 255, 255, 0.25);
       }
 
+      /* Sidebar Styles */
       .sidebar {
-        width: var(--sidebar-width);
-        height: 100vh;
-        background: var(--dark-bg);
         position: fixed;
         top: 0;
-        left: -250px;
-        padding: 20px;
-        color: white;
-        transition: 0.3s;
-        z-index: 1000;
+        left: 0;
+        height: 100vh;
+        width: 280px;
+        background: white;
+        box-shadow: var(--shadow);
+        padding-top: 4.5rem;
+        z-index: 1020;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        transition: transform 0.3s ease;
       }
 
-      .sidebar.active {
-        left: 0;
+      .sidebar h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--gray);
+        margin: 0.75rem 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--gray-light);
       }
 
       .sidebar a {
-        color: white;
+        display: flex;
+        align-items: center;
+        padding: 0.875rem 1.5rem;
+        color: var(--dark);
         text-decoration: none;
-        display: block;
-        padding: 10px;
-        font-size: 16px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        transition: 0.3s;
+        font-weight: 500;
+        transition: var(--transition);
+        margin: 0.25rem 0.75rem;
+        border-radius: var(--border-radius);
         cursor: pointer;
       }
 
-      .sidebar a:hover {
-        background: rgba(255, 255, 255, 0.2);
+      .sidebar a:hover,
+      .sidebar a.active {
+        background-color: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
       }
 
+      .sidebar a i {
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
+        color: var(--gray);
+        transition: var(--transition);
+        width: 2rem;
+        text-align: center;
+      }
+
+      .sidebar a:hover i,
+      .sidebar a.active i {
+        color: var(--primary);
+      }
+
+      .sidebar-footer {
+        padding: 1.5rem;
+        border-top: 1px solid var(--gray-light);
+      }
+
+      .sidebar-footer .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--gray-light);
+        color: var(--gray-dark) !important;
+        width: 100%;
+        padding: 0.75rem !important;
+        font-weight: 600;
+      }
+
+      .sidebar-footer .logout-btn:hover {
+        background-color: var(--danger);
+        color: white !important;
+      }
+
+      .sidebar-footer .logout-btn i {
+        color: inherit;
+      }
+
+      /* Sidebar Toggle Button */
       .sidebar-toggle {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        font-size: 24px;
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 3.5rem;
+        height: 3.5rem;
+        background-color: var(--primary);
         color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-lg);
         cursor: pointer;
-        z-index: 1100;
-        transition: left 0.3s;
+        z-index: 1040;
+        transition: var(--transition);
       }
 
-      .sidebar.active + .sidebar-toggle {
-        left: 270px;
+      .sidebar-toggle:hover {
+        background-color: var(--primary-dark);
+        transform: scale(1.05);
       }
 
+      .sidebar-toggle i {
+        font-size: 1.5rem;
+      }
+
+      /* Main Content */
       .main-content {
-        padding: 40px;
-        transition: 0.3s;
+        margin-left: 280px;
+        padding: 6rem 2rem 2rem;
+        min-height: 100vh;
+        transition: var(--transition);
       }
 
       .content-section {
         display: none;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
       }
 
-      .sidebar-footer {
-        margin-top: auto;
+      .content-section.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Dashboard Cards & Components */
+      .content-section h3 {
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        position: relative;
+        padding-bottom: 0.75rem;
+      }
+
+      .content-section h3:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 4rem;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      .dashboard-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: var(--transition);
+      }
+
+      .dashboard-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-5px);
+      }
+
+      /* Request list styles */
+      #requestsList,
+      #queriesList {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .request-card,
+      .query-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: var(--transition);
+      }
+
+      .request-card:hover,
+      .query-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-3px);
+      }
+
+      .request-header,
+      .query-header {
+        padding: 1.25rem;
+        background-color: var(--light);
+        border-bottom: 1px solid var(--gray-light);
+      }
+
+      .request-content,
+      .query-content {
+        padding: 1.25rem;
+      }
+
+      .request-actions,
+      .query-actions {
+        padding: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        background-color: var(--light);
+        border-top: 1px solid var(--gray-light);
+      }
+
+      /* Organizer grid */
+      .remove-eventorg-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .organizer-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: var(--transition);
+      }
+
+      .organizer-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-3px);
+      }
+
+      .organizer-header {
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--gray-light);
+      }
+
+      .organizer-avatar {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background-color: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-right: 1rem;
+      }
+
+      .organizer-info {
+        flex: 1;
+      }
+
+      .organizer-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .organizer-email {
+        color: var(--gray);
+        font-size: 0.875rem;
+      }
+
+      .organizer-content {
+        padding: 1.25rem;
+      }
+
+      .organizer-actions {
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        background-color: var(--light);
+        border-top: 1px solid var(--gray-light);
+      }
+
+      /* Event Analysis Section */
+      #eventCardsForAnalysis {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .event-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: var(--transition);
+      }
+
+      .event-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-3px);
+      }
+
+      .event-header {
+        height: 10rem;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+      }
+
+      .event-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.8),
+          rgba(0, 0, 0, 0.1)
+        );
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1.25rem;
+        color: white;
+      }
+
+      .event-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        font-size: 1.25rem;
+      }
+
+      .event-meta {
+        font-size: 0.875rem;
+        opacity: 0.9;
+      }
+
+      .event-content {
+        padding: 1.25rem;
+      }
+
+      .event-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-value {
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--primary);
+      }
+
+      .stat-label {
+        font-size: 0.8125rem;
+        color: var(--gray);
+      }
+
+      .event-actions {
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        background-color: var(--light);
+        border-top: 1px solid var(--gray-light);
+      }
+
+      /* Buttons and UI Components */
+      .btn {
+        padding: 0.5rem 1.25rem;
+        font-weight: 500;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+      }
+
+      .btn-danger {
+        background-color: var(--danger);
+        border-color: var(--danger);
+      }
+
+      .btn-success {
+        background-color: var(--success);
+        border-color: var(--success);
+      }
+
+      .btn-warning {
+        background-color: var(--warning);
+        border-color: var(--warning);
+        color: var(--dark);
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        border: 1px solid currentColor;
+      }
+
+      .btn-outline-primary {
+        color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .btn-outline-primary:hover {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 992px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .main-content {
+          margin-left: 0;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .navbar-brand {
+          font-size: 1.25rem;
+        }
+
+        .main-content {
+          padding: 5.5rem 1rem 1.5rem;
+        }
+
+        #requestsList,
+        #queriesList,
+        #eventCardsForAnalysis,
+        .remove-eventorg-grid {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
-    <!-- ✅ Navbar -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container">
-        <a id="wow" class="navbar-brand" href="#">EventSync - Admin</a>
+        <a id="wow" class="navbar-brand" href="#">EventSync</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -243,324 +582,1140 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link" onclick="showSection('manageRequests')"
-                >Manage Organizer Requests</a
-              >
+              <a class="nav-link" onclick="showSection('manageRequests')">
+                <i class="bi bi-person-plus me-1"></i>Manage Requests
+              </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" onclick="showSection('generateAnalysis')"
-                >Generate Event Analysis</a
-              >
+              <a class="nav-link" onclick="showSection('generateAnalysis')">
+                <i class="bi bi-graph-up me-1"></i>Event Analysis
+              </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" onclick="showSection('removeOrganizer')"
-                >Remove Event Organizer</a
-              >
+              <a class="nav-link" onclick="showSection('removeOrganizer')">
+                <i class="bi bi-person-dash me-1"></i>Remove Organizer
+              </a>
             </li>
-            <li class="nav-item"></li>
             <li class="nav-item">
-              <a class="nav-link logout-btn" onclick="logout()">Logout</a>
+              <a class="nav-link" onclick="showSection('manageQueries')">
+                <i class="bi bi-question-circle me-1"></i>Queries
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link logout-btn" onclick="logout()">
+                <i class="bi bi-box-arrow-right me-1"></i>Logout
+              </a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
 
-    <!-- ✅ Sidebar -->
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
       <div>
-        <h4>Admin Panel</h4>
-        <a onclick="showSection('manageRequests')"
-          ><i class="bi bi-person-plus"></i> Manage Requests</a
-        >
-        <a onclick="showSection('generateAnalysis')"
-          ><i class="bi bi-graph-up"></i> Event Analysis</a
-        >
-        <a onclick="showSection('removeOrganizer')"
-          ><i class="bi bi-person-dash"></i> Remove Organizer</a
-        >
+        <h4>Admin Dashboard</h4>
+        <a onclick="showSection('manageRequests')">
+          <i class="bi bi-person-plus"></i> Manage Requests
+        </a>
+        <a onclick="showSection('generateAnalysis')">
+          <i class="bi bi-graph-up"></i> Event Analysis
+        </a>
+        <a onclick="showSection('removeOrganizer')">
+          <i class="bi bi-person-dash"></i> Remove Organizer
+        </a>
         <a onclick="showSection('manageQueries')">
           <i class="bi bi-question-circle"></i> Manage Queries
         </a>
       </div>
       <div class="sidebar-footer">
-        <a class="logout-btn" onclick="logout()"
-          ><i class="bi bi-box-arrow-right"></i> Logout</a
-        >
+        <a class="logout-btn" onclick="logout()">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
       </div>
     </div>
 
-    <!-- ✅ Sidebar Toggle Button -->
+    <!-- Sidebar Toggle Button -->
     <div class="sidebar-toggle" onclick="toggleSidebar()">
       <i class="bi bi-list"></i>
     </div>
 
-    <!-- ✅ Main Content -->
+    <!-- Main Content -->
     <div class="main-content">
       <!-- Manage Event Organizer Requests -->
       <div id="manageRequests" class="content-section">
         <h3>Manage Event Organizer Requests</h3>
-        <div id="requestsList"></div>
+        <div id="requestsList">
+          <!-- Sample request card - will be populated dynamically -->
+          <div class="request-card">
+            <div class="request-header">
+              <h5 class="mb-0">John Doe</h5>
+              <small class="text-muted">Submitted on April 15, 2025</small>
+            </div>
+            <div class="request-content">
+              <p><strong>Email:</strong> john.doe@example.com</p>
+              <p><strong>Organization:</strong> Tech Conference Group</p>
+              <p>
+                <strong>Experience:</strong> 5 years organizing tech events and
+                conferences
+              </p>
+            </div>
+            <div class="request-actions">
+              <button class="btn btn-outline-primary">View Details</button>
+              <button class="btn btn-success">Approve</button>
+              <button class="btn btn-danger">Decline</button>
+            </div>
+          </div>
+
+          <!-- Sample request card - will be populated dynamically -->
+          <div class="request-card">
+            <div class="request-header">
+              <h5 class="mb-0">Sarah Johnson</h5>
+              <small class="text-muted">Submitted on April 18, 2025</small>
+            </div>
+            <div class="request-content">
+              <p><strong>Email:</strong> sarah.j@example.com</p>
+              <p><strong>Organization:</strong> Community Events Inc.</p>
+              <p>
+                <strong>Experience:</strong> 3 years in event planning and
+                coordination
+              </p>
+            </div>
+            <div class="request-actions">
+              <button class="btn btn-outline-primary">View Details</button>
+              <button class="btn btn-success">Approve</button>
+              <button class="btn btn-danger">Decline</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Generate Event Analysis -->
       <div id="generateAnalysis" class="content-section">
         <h3>Generate Event Analysis</h3>
-        <div id="eventCardsForAnalysis" class="row"></div>
+        <div id="eventCardsForAnalysis">
+          <!-- Sample event card - will be populated dynamically -->
+          <div class="event-card">
+            <div
+              class="event-header"
+              style="background-image: url('/api/placeholder/400/320')"
+            >
+              <div class="event-overlay">
+                <h5 class="event-title">Tech Summit 2025</h5>
+                <div class="event-meta">
+                  <i class="bi bi-calendar me-1"></i> Apr 22, 2025
+                </div>
+              </div>
+            </div>
+            <div class="event-content">
+              <div class="event-stats mb-3">
+                <div class="stat-item">
+                  <div class="stat-value">328</div>
+                  <div class="stat-label">Attendees</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">92%</div>
+                  <div class="stat-label">Check-in Rate</div>
+                </div>
+              </div>
+              <p class="mb-0 text-muted">Organized by: TechConf Inc.</p>
+            </div>
+            <div class="event-actions">
+              <button class="btn btn-primary">
+                <i class="bi bi-graph-up me-1"></i> View Analysis
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample event card - will be populated dynamically -->
+          <div class="event-card">
+            <div
+              class="event-header"
+              style="background-image: url('/api/placeholder/400/320')"
+            >
+              <div class="event-overlay">
+                <h5 class="event-title">Design Workshop</h5>
+                <div class="event-meta">
+                  <i class="bi bi-calendar me-1"></i> Apr 15, 2025
+                </div>
+              </div>
+            </div>
+            <div class="event-content">
+              <div class="event-stats mb-3">
+                <div class="stat-item">
+                  <div class="stat-value">85</div>
+                  <div class="stat-label">Attendees</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">97%</div>
+                  <div class="stat-label">Check-in Rate</div>
+                </div>
+              </div>
+              <p class="mb-0 text-muted">
+                Organized by: Creative Design Studio
+              </p>
+            </div>
+            <div class="event-actions">
+              <button class="btn btn-primary">
+                <i class="bi bi-graph-up me-1"></i> View Analysis
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample event card - will be populated dynamically -->
+          <div class="event-card">
+            <div
+              class="event-header"
+              style="background-image: url('/api/placeholder/400/320')"
+            >
+              <div class="event-overlay">
+                <h5 class="event-title">Marketing Conference</h5>
+                <div class="event-meta">
+                  <i class="bi bi-calendar me-1"></i> Apr 10, 2025
+                </div>
+              </div>
+            </div>
+            <div class="event-content">
+              <div class="event-stats mb-3">
+                <div class="stat-item">
+                  <div class="stat-value">156</div>
+                  <div class="stat-label">Attendees</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">89%</div>
+                  <div class="stat-label">Check-in Rate</div>
+                </div>
+              </div>
+              <p class="mb-0 text-muted">Organized by: Marketing Pro Group</p>
+            </div>
+            <div class="event-actions">
+              <button class="btn btn-primary">
+                <i class="bi bi-graph-up me-1"></i> View Analysis
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Remove Event Organizer -->
-      <div
-        id="removeOrganizer"
-        class="remove-eventorg-container"
-        style="display: none"
-      >
+      <div id="removeOrganizer" class="content-section">
         <h3>Remove Event Organizer</h3>
-        <div id="organizerList" class="remove-eventorg-grid"></div>
+        <div class="mb-4">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search organizers..."
+              aria-label="Search organizers"
+            />
+            <button class="btn btn-outline-primary" type="button">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+        <div id="organizerList" class="remove-eventorg-grid">
+          <!-- Sample organizer card - will be populated dynamically -->
+          <div class="organizer-card">
+            <div class="organizer-header">
+              <div class="organizer-avatar">JD</div>
+              <div class="organizer-info">
+                <div class="organizer-name">Jane Doe</div>
+                <div class="organizer-email">jane.doe@example.com</div>
+              </div>
+            </div>
+            <div class="organizer-content">
+              <p><strong>Organization:</strong> Tech Events Inc.</p>
+              <p><strong>Events Organized:</strong> 12</p>
+              <p>
+                <strong>Status:</strong>
+                <span class="badge bg-success">Active</span>
+              </p>
+            </div>
+            <div class="organizer-actions">
+              <button class="btn btn-outline-primary">View Details</button>
+              <button class="btn btn-danger">
+                <i class="bi bi-person-x me-1"></i> Remove
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample organizer card - will be populated dynamically -->
+          <div class="organizer-card">
+            <div class="organizer-header">
+              <div class="organizer-avatar">MS</div>
+              <div class="organizer-info">
+                <div class="organizer-name">Michael Smith</div>
+                <div class="organizer-email">michael.s@example.com</div>
+              </div>
+            </div>
+            <div class="organizer-content">
+              <p><strong>Organization:</strong> Community Events</p>
+              <p><strong>Events Organized:</strong> 8</p>
+              <p>
+                <strong>Status:</strong>
+                <span class="badge bg-success">Active</span>
+              </p>
+            </div>
+            <div class="organizer-actions">
+              <button class="btn btn-outline-primary">View Details</button>
+              <button class="btn btn-danger">
+                <i class="bi bi-person-x me-1"></i> Remove
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample organizer card - will be populated dynamically -->
+          <div class="organizer-card">
+            <div class="organizer-header">
+              <div class="organizer-avatar">AW</div>
+              <div class="organizer-info">
+                <div class="organizer-name">Alex Wilson</div>
+                <div class="organizer-email">alex.w@example.com</div>
+              </div>
+            </div>
+            <div class="organizer-content">
+              <p><strong>Organization:</strong> Global Conferences</p>
+              <p><strong>Events Organized:</strong> 5</p>
+              <p>
+                <strong>Status:</strong>
+                <span class="badge bg-success">Active</span>
+              </p>
+            </div>
+            <div class="organizer-actions">
+              <button class="btn btn-outline-primary">View Details</button>
+              <button class="btn btn-danger">
+                <i class="bi bi-person-x me-1"></i> Remove
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Manage Queries -->
       <div id="manageQueries" class="content-section">
         <h3>Unanswered Queries</h3>
-        <div id="queriesList"></div>
+        <div id="queriesList">
+          <!-- Sample query card - will be populated dynamically -->
+          <div class="query-card">
+            <div class="query-header">
+              <h5 class="mb-0">Payment Issue</h5>
+              <small class="text-muted"
+                >From: robert@example.com • April 23, 2025</small
+              >
+            </div>
+            <div class="query-content">
+              <p>
+                I'm having trouble processing payments for my upcoming event.
+                The system shows an error when I try to connect my payment
+                processor.
+              </p>
+              <p class="mb-0">
+                <strong>Event:</strong> Business Leadership Summit
+              </p>
+            </div>
+            <div class="query-actions">
+              <button class="btn btn-outline-primary">
+                <i class="bi bi-reply me-1"></i> Reply
+              </button>
+              <button class="btn btn-success">
+                <i class="bi bi-check-circle me-1"></i> Mark as Resolved
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample query card - will be populated dynamically -->
+          <div class="query-card">
+            <div class="query-header">
+              <h5 class="mb-0">Registration Issue</h5>
+              <small class="text-muted"
+                >From: linda@example.com • April 21, 2025</small
+              >
+            </div>
+
+            <div class="query-content">
+              <p>
+                Several attendees have reported they're unable to complete
+                registration for my conference. They get stuck at the payment
+                confirmation page.
+              </p>
+              <p class="mb-0"><strong>Event:</strong> Digital Marketing Expo</p>
+            </div>
+            <div class="query-actions">
+              <button class="btn btn-outline-primary">
+                <i class="bi bi-reply me-1"></i> Reply
+              </button>
+              <button class="btn btn-success">
+                <i class="bi bi-check-circle me-1"></i> Mark as Resolved
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample query card - will be populated dynamically -->
+          <div class="query-card">
+            <div class="query-header">
+              <h5 class="mb-0">Event Cancellation Policy</h5>
+              <small class="text-muted"
+                >From: james@example.com • April 19, 2025</small
+              >
+            </div>
+            <div class="query-content">
+              <p>
+                I need to reschedule my event due to venue issues. What's the
+                process for rescheduling and notifying registered attendees?
+              </p>
+              <p class="mb-0"><strong>Event:</strong> Product Launch Gala</p>
+            </div>
+            <div class="query-actions">
+              <button class="btn btn-outline-primary">
+                <i class="bi bi-reply me-1"></i> Reply
+              </button>
+              <button class="btn btn-success">
+                <i class="bi bi-check-circle me-1"></i> Mark as Resolved
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
     <script>
-      function toggleSidebar() {
-        document.getElementById("sidebar").classList.toggle("active");
-        document.getElementById("wow").style.display = "none";
-      }
+      // Global state and configuration
+      const API_ENDPOINTS = {
+        organizers: "http://localhost:3006/getall",
+        organizerDelete: "http://localhost:3006/delete",
+        organizerAccept: "http://localhost:3006/accept",
+        pendingRequests: "http://localhost:3006/api/pending-requests",
+        events: "http://localhost:3003/get",
+        queries: "http://localhost:3008/getallunansweredqueries",
+        answerQuery: "http://localhost:3008/answerquestion",
+      };
 
+      // UI Controllers
+      const UIController = {
+        // Toggle sidebar visibility
+        toggleSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          sidebar.classList.toggle("active");
+
+          // Close sidebar on mobile after selection
+          if (window.innerWidth < 992 && sidebar.classList.contains("active")) {
+            document.body.style.overflow = "hidden";
+          } else {
+            document.body.style.overflow = "auto";
+          }
+        },
+
+        // Handle section visibility
+        showSection(sectionId) {
+          const sections = document.querySelectorAll(".content-section");
+          sections.forEach((section) => {
+            if (section.id !== sectionId) {
+              section.classList.remove("active");
+              setTimeout(() => {
+                section.style.display = "none";
+              }, 300);
+            }
+          });
+
+          // Update sidebar active states
+          document.querySelectorAll(".sidebar a").forEach((link) => {
+            link.classList.remove("active");
+            if (link.getAttribute("onclick")?.includes(sectionId)) {
+              link.classList.add("active");
+            }
+          });
+
+          // Update navbar active states
+          document.querySelectorAll(".navbar .nav-link").forEach((link) => {
+            link.classList.remove("active");
+            if (link.getAttribute("onclick")?.includes(sectionId)) {
+              link.classList.add("active");
+            }
+          });
+
+          // Now show the target section
+          const targetSection = document.getElementById(sectionId);
+          if (targetSection) {
+            targetSection.style.display = "block";
+            setTimeout(() => {
+              targetSection.classList.add("active");
+            }, 50);
+          }
+
+          // Sidebar auto close on mobile
+          if (window.innerWidth < 992) {
+            document.getElementById("sidebar").classList.remove("active");
+            document.body.style.overflow = "auto";
+          }
+
+          // Load section-specific data
+          switch (sectionId) {
+            case "manageRequests":
+              DataController.fetchOrganizerRequests();
+              break;
+            case "generateAnalysis":
+              DataController.displayEventsForAnalysis();
+              break;
+            case "removeOrganizer":
+              DataController.fetchOrganizers();
+              break;
+            case "manageQueries":
+              DataController.fetchUnansweredQueries();
+              break;
+          }
+        },
+
+        // Show toast notifications
+        showNotification(message, type = "success") {
+          const toastContainer =
+            document.getElementById("toast-container") ||
+            this.createToastContainer();
+
+          const toast = document.createElement("div");
+          toast.className = `toast-notification ${type}`;
+          toast.innerHTML = `
+      <div class="toast-icon">
+        <i class="bi ${
+          type === "success" ? "bi-check-circle" : "bi-exclamation-circle"
+        }"></i>
+      </div>
+      <div class="toast-message">${message}</div>
+    `;
+
+          toastContainer.appendChild(toast);
+
+          // Show the toast
+          setTimeout(() => toast.classList.add("show"), 10);
+
+          // Auto-remove after 3 seconds
+          setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => toast.remove(), 300);
+          }, 3000);
+        },
+
+        // Create toast container if it doesn't exist
+        createToastContainer() {
+          const container = document.createElement("div");
+          container.id = "toast-container";
+          document.body.appendChild(container);
+          return container;
+        },
+      };
+
+      // Data Controllers
+      const DataController = {
+        // Fetch all organizers
+        async fetchOrganizers() {
+          try {
+            const response = await fetch(API_ENDPOINTS.organizers);
+
+            if (!response.ok) {
+              throw new Error(
+                `Server responded with status: ${response.status}`
+              );
+            }
+
+            const organizers = await response.json();
+            const organizerList = document.getElementById("organizerList");
+
+            if (!organizerList) {
+              console.error("Organizer list container not found in DOM");
+              return;
+            }
+
+            organizerList.innerHTML = "";
+
+            if (organizers.length === 0) {
+              organizerList.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-people text-muted"></i>
+            <p>No organizers found</p>
+          </div>
+        `;
+              return;
+            }
+
+            organizers.forEach((org) => {
+              // Create initials for avatar
+              const initials = org.name
+                .split(" ")
+                .map((word) => word[0])
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+
+              const card = document.createElement("div");
+              card.className = "organizer-card";
+              card.innerHTML = `
+          <div class="organizer-header">
+            <div class="organizer-avatar">${initials}</div>
+            <div class="organizer-info">
+              <div class="organizer-name">${org.name}</div>
+              <div class="organizer-email">${org.email}</div>
+            </div>
+          </div>
+          <div class="organizer-content">
+            <p><strong>Username:</strong> ${org.username}</p>
+            <p><strong>Phone:</strong> ${org.phone}</p>
+            <p><strong>Status:</strong> <span class="badge ${
+              org.status === "active" ? "bg-success" : "bg-warning"
+            }">${org.status}</span></p>
+          </div>
+          <div class="organizer-actions">
+            <button class="btn btn-outline-primary" onclick="DataController.viewOrganizerDetails('${
+              org.username
+            }')">
+              <i class="bi bi-eye me-1"></i> View Details
+            </button>
+            <button class="btn btn-danger" onclick="DataController.deleteOrganizer('${
+              org.username
+            }')">
+              <i class="bi bi-person-x me-1"></i> Remove
+            </button>
+          </div>
+        `;
+
+              organizerList.appendChild(card);
+            });
+          } catch (error) {
+            console.error("Error fetching organizers:", error);
+            UIController.showNotification(
+              "Failed to load organizers. Please try again.",
+              "error"
+            );
+          }
+        },
+
+        // Delete an organizer
+        async deleteOrganizer(username) {
+          // Show confirmation dialog
+          if (
+            !confirm(
+              `Are you sure you want to remove organizer "${username}"? This action cannot be undone.`
+            )
+          ) {
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              `${API_ENDPOINTS.organizerDelete}/${username}`,
+              {
+                method: "DELETE",
+              }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+              UIController.showNotification(
+                `Organizer "${username}" has been successfully removed.`
+              );
+              this.fetchOrganizers(); // Refresh the list
+            } else {
+              throw new Error(data.message || "Server error");
+            }
+          } catch (error) {
+            console.error("Error deleting organizer:", error);
+            UIController.showNotification(
+              `Failed to delete organizer: ${error.message}`,
+              "error"
+            );
+          }
+        },
+
+        // Fetch organizer requests
+        async fetchOrganizerRequests() {
+          try {
+            const response = await fetch(API_ENDPOINTS.pendingRequests);
+
+            if (!response.ok) {
+              throw new Error(
+                `Server responded with status: ${response.status}`
+              );
+            }
+
+            const requests = await response.json();
+            const requestsList = document.getElementById("requestsList");
+
+            if (!requestsList) {
+              console.error("Requests list container not found in DOM");
+              return;
+            }
+
+            requestsList.innerHTML = "";
+
+            if (requests.length === 0) {
+              requestsList.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-inbox text-muted"></i>
+            <p>No pending requests</p>
+          </div>
+        `;
+              return;
+            }
+
+            requests.forEach((req) => {
+              const card = document.createElement("div");
+              card.className = "request-card";
+
+              // Format date
+              const requestDate = new Date();
+              const formattedDate = requestDate.toLocaleDateString("en-US", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              });
+
+              card.innerHTML = `
+          <div class="request-header">
+            <h5 class="mb-0">${req.name}</h5>
+            <small class="text-muted">Submitted on ${formattedDate}</small>
+          </div>
+          <div class="request-content">
+            <p><strong>Email:</strong> ${req.email}</p>
+            <p><strong>Username:</strong> ${req.username}</p>
+            <p><strong>Phone:</strong> ${req.phone}</p>
+            <p><strong>Status:</strong> <span class="badge bg-warning">${req.status}</span></p>
+          </div>
+          <div class="request-actions">
+            <button class="btn btn-outline-primary" onclick="DataController.viewOrganizerDetails('${req.username}')">
+              <i class="bi bi-eye me-1"></i> View Details
+            </button>
+            <button class="btn btn-success" onclick="DataController.approveOrganizer('${req.username}')">
+              <i class="bi bi-check2 me-1"></i> Approve
+            </button>
+            <button class="btn btn-danger" onclick="DataController.deleteOrganizer('${req.username}')">
+              <i class="bi bi-x me-1"></i> Decline
+            </button>
+          </div>
+        `;
+
+              requestsList.appendChild(card);
+            });
+          } catch (error) {
+            console.error("Error fetching organizer requests:", error);
+            UIController.showNotification(
+              "Failed to load organizer requests. Please try again.",
+              "error"
+            );
+          }
+        },
+
+        // Display events for analysis
+        async displayEventsForAnalysis() {
+          try {
+            const response = await fetch(API_ENDPOINTS.events);
+
+            if (!response.ok) {
+              throw new Error(
+                `Server responded with status: ${response.status}`
+              );
+            }
+
+            const events = await response.json();
+            const eventCardsContainer = document.getElementById(
+              "eventCardsForAnalysis"
+            );
+
+            if (!eventCardsContainer) {
+              console.error("Event cards container not found in DOM");
+              return;
+            }
+
+            eventCardsContainer.innerHTML = "";
+
+            if (events.length === 0) {
+              eventCardsContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-calendar2-x text-muted"></i>
+            <p>No events found</p>
+          </div>
+        `;
+              return;
+            }
+
+            events.forEach((event) => {
+              // Format date
+              const eventDate = new Date(event.date);
+              const formattedDate = eventDate.toLocaleDateString("en-US", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              });
+
+              // Calculate revenue
+              const revenue = event.numberOfTickets * event.pricePerTicket;
+
+              const card = document.createElement("div");
+              card.className = "event-card";
+              card.innerHTML = `
+          <div class="event-header" style="background-image: url('/api/placeholder/400/320')">
+            <div class="event-overlay">
+              <h5 class="event-title">${event.name}</h5>
+              <div class="event-meta">
+                <i class="bi bi-calendar me-1"></i> ${formattedDate}
+              </div>
+            </div>
+          </div>
+          <div class="event-content">
+            <div class="event-stats mb-3">
+              <div class="stat-item">
+                <div class="stat-value">${event.numberOfTickets}</div>
+                <div class="stat-label">Tickets</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">RS ${revenue}</div>
+                <div class="stat-label">Potential Revenue</div>
+              </div>
+            </div>
+            <p class="mb-0 text-muted"><i class="bi bi-geo-alt me-1"></i> ${event.venue}</p>
+          </div>
+          <div class="event-actions">
+            <button class="btn btn-primary" onclick="DataController.generateAnalysis('${event._id}')">
+              <i class="bi bi-graph-up me-1"></i> Generate Analysis
+            </button>
+          </div>
+        `;
+
+              eventCardsContainer.appendChild(card);
+            });
+          } catch (error) {
+            console.error("Error fetching events:", error);
+            UIController.showNotification(
+              "Failed to load events. Please try again.",
+              "error"
+            );
+          }
+        },
+
+        // Fetch unanswered queries
+        async fetchUnansweredQueries() {
+          try {
+            const response = await fetch(API_ENDPOINTS.queries);
+
+            if (!response.ok) {
+              throw new Error(
+                `Server responded with status: ${response.status}`
+              );
+            }
+
+            const queries = await response.json();
+            const queriesList = document.getElementById("queriesList");
+
+            if (!queriesList) {
+              console.error("Queries list container not found in DOM");
+              return;
+            }
+
+            queriesList.innerHTML = "";
+
+            if (queries.length === 0) {
+              queriesList.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-chat-square-text text-muted"></i>
+            <p>No unanswered queries</p>
+          </div>
+        `;
+              return;
+            }
+
+            queries.forEach((query) => {
+              // Format date
+              const queryDate = new Date();
+              const formattedDate = queryDate.toLocaleDateString("en-US", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              });
+
+              const card = document.createElement("div");
+              card.className = "query-card";
+              card.id = `query-card-${query._id}`;
+              card.innerHTML = `
+          <div class="query-header">
+            <h5 class="mb-0">Query from ${query.name}</h5>
+            <small class="text-muted">${query.email} • ${formattedDate}</small>
+          </div>
+          <div class="query-content">
+            <p>${query.question}</p>
+            <div class="form-group mt-3">
+              <label for="answer-${query._id}" class="form-label">Your Response:</label>
+              <textarea class="form-control" id="answer-${query._id}" rows="3" placeholder="Type your answer here..."></textarea>
+            </div>
+          </div>
+          <div class="query-actions">
+            <button class="btn btn-primary" onclick="DataController.submitAnswer('${query._id}')">
+              <i class="bi bi-send me-1"></i> Submit Answer
+            </button>
+          </div>
+        `;
+
+              queriesList.appendChild(card);
+            });
+          } catch (error) {
+            console.error("Error fetching unanswered queries:", error);
+            UIController.showNotification(
+              "Failed to load queries. Please try again.",
+              "error"
+            );
+          }
+        },
+
+        // Submit answer to query
+        async submitAnswer(queryId) {
+          const answerElement = document.getElementById(`answer-${queryId}`);
+          const answer = answerElement.value.trim();
+
+          if (!answer) {
+            UIController.showNotification(
+              "Please enter an answer before submitting.",
+              "error"
+            );
+            answerElement.focus();
+            return;
+          }
+
+          try {
+            const response = await fetch(API_ENDPOINTS.answerQuery, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ queryId, answer }),
+            });
+
+            if (!response.ok) {
+              throw new Error(
+                `Server responded with status: ${response.status}`
+              );
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+              throw new Error(data.error);
+            }
+
+            UIController.showNotification("Answer submitted successfully!");
+
+            // Remove the answered query card with animation
+            const queryCard = document.getElementById(`query-card-${queryId}`);
+            if (queryCard) {
+              queryCard.classList.add("fade-out");
+              setTimeout(() => {
+                queryCard.remove();
+
+                // Check if there are any queries left
+                const remainingQueries =
+                  document.querySelectorAll(".query-card");
+                if (remainingQueries.length === 0) {
+                  document.getElementById("queriesList").innerHTML = `
+              <div class="empty-state">
+                <i class="bi bi-check-circle text-muted"></i>
+                <p>All queries have been answered!</p>
+              </div>
+            `;
+                }
+              }, 300);
+            }
+          } catch (error) {
+            console.error("Error submitting answer:", error);
+            UIController.showNotification(
+              `Failed to submit answer: ${error.message}`,
+              "error"
+            );
+          }
+        },
+
+        // Approve organizer
+        async approveOrganizer(username) {
+          try {
+            const response = await fetch(
+              `${API_ENDPOINTS.organizerAccept}/${username}`,
+              {
+                method: "PUT",
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error(
+                `Server responded with status: ${response.status}`
+              );
+            }
+
+            UIController.showNotification(
+              `Organizer "${username}" has been approved successfully.`
+            );
+            this.fetchOrganizerRequests(); // Refresh the list
+          } catch (error) {
+            console.error("Error approving organizer:", error);
+            UIController.showNotification(
+              `Failed to approve organizer: ${error.message}`,
+              "error"
+            );
+          }
+        },
+
+        // View organizer details
+        viewOrganizerDetails(username) {
+          // This would typically show a modal with detailed information
+          // For now, just show an alert
+          alert(`Viewing details for organizer: ${username}`);
+
+          // Implementation of detailed view would go here
+          // Could be a modal or a new page
+        },
+
+        // Generate analysis for event
+        generateAnalysis(eventId) {
+          localStorage.setItem("EventIDtoanalyse", eventId);
+          window.location.href = "generateAnalysis.html";
+        },
+      };
+
+      // User Actions
       function logout() {
         localStorage.setItem("loggedin", 0);
-        window.location.href = "index.html";
+        UIController.showNotification("Logging out...", "info");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1000);
+      }
+
+      function toggleSidebar() {
+        UIController.toggleSidebar();
       }
 
       function showSection(sectionId) {
-        document.querySelectorAll(".content-section").forEach((section) => {
-          section.style.display = "none";
+        UIController.showSection(sectionId);
+      }
+
+      // Initialize application
+      document.addEventListener("DOMContentLoaded", function () {
+        // Add CSS for toast notifications
+        const style = document.createElement("style");
+        style.textContent = `
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+    
+    .toast-notification {
+      display: flex;
+      align-items: center;
+      background: white;
+      color: #333;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      margin-top: 10px;
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+      overflow: hidden;
+    }
+    
+    .toast-notification.show {
+      transform: translateX(0);
+    }
+    
+    .toast-notification.success {
+      border-left: 4px solid var(--success);
+    }
+    
+    .toast-notification.error {
+      border-left: 4px solid var(--danger);
+    }
+    
+    .toast-notification.info {
+      border-left: 4px solid var(--primary);
+    }
+    
+    .toast-icon {
+      margin-right: 12px;
+      font-size: 20px;
+    }
+    
+    .toast-notification.success .toast-icon {
+      color: var(--success);
+    }
+    
+    .toast-notification.error .toast-icon {
+      color: var(--danger);
+    }
+    
+    .toast-notification.info .toast-icon {
+      color: var(--primary);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    .empty-state p {
+      font-size: 18px;
+      color: var(--gray);
+    }
+    
+    .fade-out {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+      #toast-container {
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+      }
+      
+      .toast-notification {
+        width: auto;
+      }
+    }
+  `;
+        document.head.appendChild(style);
+
+        // Show default section
+        UIController.showSection("manageRequests");
+
+        // Handle responsive behavior
+        if (window.innerWidth >= 992) {
+          document.getElementById("sidebar").classList.add("active");
+        }
+
+        // Listen for window resize
+        window.addEventListener("resize", function () {
+          const sidebar = document.getElementById("sidebar");
+          if (window.innerWidth >= 992) {
+            sidebar.classList.add("active");
+          } else if (!sidebar.classList.contains("manually-toggled")) {
+            sidebar.classList.remove("active");
+          }
         });
-        document.getElementById("removeOrganizer").style.display = "none";
-        document.getElementById("sidebar").classList.remove("active");
-        document.getElementById("wow").style.display = "block";
 
-        document.getElementById(sectionId).style.display = "block";
-      }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        fetchOrganizerRequests();
-        fetchUnansweredQueries();
-        fetchOrganizers();
-      });
-      async function fetchOrganizers() {
-        try {
-          const response = await fetch("http://localhost:3006/getall");
-          const organizers = await response.json();
-          const organizerList = document.getElementById("organizerList");
-
-          organizerList.innerHTML = "";
-
-          organizers.forEach((org) => {
-            const card = document.createElement("div");
-            card.classList.add("remove-eventorg-card");
-            card.innerHTML = `
-                              <i class="bi bi-person-circle remove-eventorg-icon"></i>
-                              <h4>${org.name}</h4>
-                              <p><i class="bi bi-envelope"></i> ${org.email}</p>
-                              <p><i class="bi bi-person"></i> Username: ${org.username}</p>
-                              <p><i class="bi bi-telephone"></i> ${org.phone}</p>
-                              <p><i class="bi bi-info-circle"></i> Status: ${org.status}</p>
-      <button class="remove-eventorg-btn" onclick="deleteOrganizer('${org.username}')">
-          <i class="bi bi-trash"></i> Remove
-      </button>                    `;
-            organizerList.appendChild(card);
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        );
+        if (window.bootstrap) {
+          tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
           });
-        } catch (error) {
-          console.error("Error fetching organizers:", error);
         }
-      }
-      async function deleteOrganizer(username) {
-        try {
-          const response = await fetch(
-            `http://localhost:3006/delete/${username}`,
-            {
-              method: "DELETE",
-            }
-          );
-
-          const data = await response.json();
-          if (response.ok) {
-            console.log(`✅ Organizer deleted: ${username}`);
-            alert("organizer deleted successfully");
-            fetchOrganizers(); // Refresh the list after deletion
-          } else {
-            console.error(`❌ Error deleting organizer: ${data.message}`);
-          }
-        } catch (error) {
-          console.error("❌ Delete request failed:", error);
-        }
-      }
-
-      function fetchOrganizerRequests() {
-        fetch("http://localhost:3006/api/pending-requests")
-          .then((response) => response.json())
-          .then((data) => {
-            let requestsHTML = "";
-            data.forEach((req) => {
-              requestsHTML += `
-                      <div class="card p-3 mb-2">
-                        <p><strong>Name:</strong> ${req.name}</p>
-                        <p><strong>Email:</strong> ${req.email}</p>
-                        <p><strong>Username:</strong> ${req.username}</p>
-                        <p><strong>Phone:</strong> ${req.phone}</p>
-                        <p><strong>Status:</strong> ${req.status}</p>
-                        <div class="button-container">
-                          <button class="btn-approve" onclick="approveOrganizer('${req.username}')">Approve</button>
-                          <button class="btn-delete" onclick="deleteOrganizer('${req.username}')">Delete</button>
-                        </div>
-                      </div>`;
-            });
-            document.getElementById("requestsList").innerHTML = requestsHTML;
-          })
-          .catch(() => console.error("Failed to fetch requests"));
-      }
-      async function displayEventsForAnalysis() {
-        try {
-          const response = await fetch(`http://localhost:3003/get`);
-          const events = await response.json();
-
-          const eventCardsContainer = document.getElementById(
-            "eventCardsForAnalysis"
-          );
-          if (!eventCardsContainer) {
-            console.error("Event cards container not found.");
-            return;
-          }
-
-          eventCardsContainer.innerHTML = ""; // Clear any existing content
-
-          if (events.length === 0) {
-            eventCardsContainer.innerHTML =
-              "<p>No events found or failed to fetch events.</p>";
-            return;
-          }
-
-          events.forEach((event) => {
-            const card = document.createElement("div");
-            card.classList.add("col-md-4", "mb-4");
-
-            card.innerHTML = `
-                <div class="event-card card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title"><strong>🎉 ${
-                          event.name
-                        }</strong></h5>
-                        <p><strong>📍 Venue:</strong> ${event.venue}</p>
-                        <p><strong>📅 Date:</strong> ${new Date(
-                          event.date
-                        ).toLocaleDateString()}</p>
-                        <p><strong>🎟️ Tickets Bought:</strong> ${
-                          event.numberOfTickets
-                        }</p>
-                        <p><strong>💵 Total Payment:</strong> ${
-                          event.pricePerTicket
-                        }</p>
-                    </div>
-                    <div class="card-footer text-center">
-                        <button class="btn btn-primary" onclick="GenerateAnalysis('${
-                          event._id
-                        }')">Generate Analysis</button>
-                    </div>
-                </div>
-            `;
-
-            eventCardsContainer.appendChild(card);
-          });
-        } catch (error) {
-          console.error("Error displaying events:", error);
-        }
-      }
-      function fetchUnansweredQueries() {
-        fetch(`http://localhost:3008/getallunansweredqueries`)
-          .then((response) => response.json())
-          .then((data) => {
-            let queriesHTML = "";
-            data.forEach((query) => {
-              const queryId = query._id.toString(); // Ensure it's a string
-              console.log(queryId);
-              queriesHTML += `
-                <div class="card p-3 mb-2" id="query-card-${query._id}" onmouseover="expandCard(this)" onmouseleave="collapseCard(this)">
-          <p><strong>Name:</strong> ${query.name}</p>
-          <p><strong>Email:</strong> ${query.email}</p>
-          <p><strong>Query:</strong> ${query.question}</p>
-          <textarea class="form-control" id="answer-${query._id}" placeholder="Write your answer..."></textarea>
-          <button class="btn btn-primary mt-2" onclick="submitAnswer('${query._id}')">Submit</button>
-        </div>`;
-            });
-            document.getElementById("queriesList").innerHTML = queriesHTML;
-          })
-          .catch(() => console.error("Failed to fetch unanswered queries"));
-      }
-      function submitAnswer(queryId) {
-        const answer = document.getElementById(`answer-${queryId}`).value;
-
-        if (!answer.trim()) {
-          alert("Please enter an answer before submitting.");
-          return;
-        }
-
-        fetch("http://localhost:3008/answerquestion", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ queryId, answer }),
-        })
-          .then((response) => {
-            console.log("Raw Response:", response);
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log("Response Data:", data);
-
-            if (data.error) {
-              alert(`Error: ${data.error}`);
-            } else {
-              alert("Answer submitted successfully!");
-              //showSection("manageQueries");
-              window.location.reload(); // ✅ Reload only after a successful response
-            }
-          })
-          .catch((error) => {
-            console.error("Fetch Error:", error);
-            alert("Failed to submit the answer. Please try again.");
-          });
-      }
-
-      function expandCard(card) {
-        card.classList.add("expanded");
-      }
-
-      function collapseCard(card) {
-        card.classList.remove("expanded");
-      }
-      function approveOrganizer(username) {
-        fetch(`http://localhost:3006/accept/${username}`, {
-          method: "PUT",
-        })
-          .then(() => fetchOrganizerRequests())
-          .catch(() => console.error("Failed to approve organizer"));
-      }
-      function GenerateAnalysis(eventID) {
-        localStorage.setItem("EventIDtoanalyse", eventID);
-        window.location.href = "generateAnalysis.html";
-      }
-      document.addEventListener("DOMContentLoaded", function () {
-        displayEventsForAnalysis(); // Fetch and display events on page load
       });
     </script>
   </body>

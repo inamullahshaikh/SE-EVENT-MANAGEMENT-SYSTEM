@@ -15,178 +15,239 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       /* Global Styles */
       :root {
-        --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
-        --dark-bg: #2c2f38;
-        --light-bg: #f4f7fa;
-        --text-color: #333;
-        --highlight-color: #ffcc00;
-        --font-family: "Poppins", sans-serif;
-        --button-bg: #6a11cb;
-        --button-hover: #2575fc;
-        --input-bg: #f1f5f8;
-        --input-focus-bg: #e0e7ff;
+        --primary: #5469d4;
+        --primary-light: #6b83eb;
+        --secondary: #32325d;
+        --success: #2dce89;
+        --info: #11cdef;
+        --warning: #fb6340;
+        --danger: #f5365c;
+        --light: #f7fafc;
+        --dark: #212529;
+        --background: #f8f9fd;
+        --card-bg: #ffffff;
+        --text-primary: #32325d;
+        --text-secondary: #525f7f;
+        --text-muted: #8898aa;
+        --border-color: #eaecef;
+        --shadow-sm: 0 2px 5px rgba(50, 50, 93, 0.1),
+          0 1px 2px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 8px rgba(50, 50, 93, 0.1),
+          0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 12px 20px rgba(50, 50, 93, 0.1),
+          0 6px 10px rgba(0, 0, 0, 0.08);
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
       }
 
       body {
-        font-family: var(--font-family);
-        margin: 0;
-        background-color: var(--light-bg);
-        color: var(--text-color);
+        font-family: "Inter", sans-serif;
+        background-color: var(--background);
+        color: var(--text-primary);
         line-height: 1.6;
+        margin: 0;
+        padding: 0;
       }
 
       /* Navbar */
       .navbar {
-        background: var(--primary-gradient);
-        padding: 15px 40px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+
+        padding: 0.75rem 1.5rem;
       }
 
       .navbar-brand {
-        font-size: 26px;
+        font-size: 1.5rem;
         font-weight: 700;
-        color: white;
-        letter-spacing: 2px;
-        text-transform: uppercase;
+        color: var(--primary) !important;
+        letter-spacing: -0.5px;
       }
 
-      .navbar-nav .nav-link {
-        color: white !important;
-        font-size: 18px;
-        margin: 0 15px;
-        text-transform: capitalize;
+      .back-btn {
+        background-color: transparent;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: var(--radius-md);
+        padding: 0.5rem 0.875rem;
+        font-size: 0.875rem;
         font-weight: 500;
-        transition: color 0.3s;
+        transition: all 0.2s ease;
       }
 
-      .navbar-nav .nav-link:hover {
-        color: var(--highlight-color);
-        text-decoration: underline;
+      .back-btn:hover {
+        background-color: var(--primary);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
       }
 
       /* Main Content */
       .main-content {
-        padding: 40px 20px;
-        transition: 0.3s ease;
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
       }
 
-      .feedback-form {
-        background-color: white;
-        border-radius: 12px;
-        padding: 40px;
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
-        max-width: 900px;
-        margin: 0 auto;
-        text-align: center;
-        transition: transform 0.3s ease-in-out;
+      .dashboard-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
       }
 
-      .feedback-form h2 {
-        margin-bottom: 30px;
-        font-size: 28px;
-        color: var(--primary-gradient);
-        font-weight: 600;
-        letter-spacing: 1px;
-      }
-
-      .event-info {
-        margin-bottom: 25px;
-        font-size: 16px;
-        color: #555;
-      }
-
-      .event-info p {
-        margin: 15px 0;
-      }
-
-      /* Rating System */
-      .rating {
-        display: flex;
-        justify-content: center;
-        margin: 25px 0;
-        gap: 18px;
-      }
-
-      .star {
-        font-size: 50px;
-        cursor: pointer;
-        color: #ddd;
-        transition: color 0.3s ease;
-      }
-
-      .star:hover {
-        color: var(--highlight-color);
-      }
-
-      .star.selected {
-        color: var(--highlight-color);
-      }
-
-      /* Comment Section */
-      .form-group {
-        margin: 25px 0;
-      }
-
-      label {
-        font-size: 18px;
-        color: var(--primary-gradient);
-        font-weight: 600;
-      }
-
-      textarea {
-        width: 100%;
-        height: 120px;
-        padding: 15px;
-        font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        background-color: var(--input-bg);
-        resize: none;
-        transition: border-color 0.3s ease, background-color 0.3s ease;
-      }
-
-      textarea:focus {
-        border-color: var(--primary-gradient);
-        background-color: var(--input-focus-bg);
-        outline: none;
-      }
-
-      /* Submit Button */
-      .btn-submit {
-        background-color: var(--button-bg);
-        color: white;
-        padding: 15px 30px;
+      .card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
         border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 18px;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .card-header {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.25rem 1.5rem;
+        background-color: var(--card-bg);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .card-header h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+      }
+
+      .card-header-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(84, 105, 212, 0.1);
+        color: var(--primary);
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+      }
+
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      /* Event Info */
+      .event-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.25rem;
+      }
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .info-label {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin-bottom: 0.25rem;
+      }
+
+      .info-value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+
+      .rating-badge {
+        display: inline-flex;
+        align-items: center;
+        background-color: rgba(45, 206, 137, 0.1);
+        color: var(--success);
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+      }
+
+      /* Tables */
+      .table-container {
+        overflow-x: auto;
+      }
+
+      table {
         width: 100%;
-        transition: background-color 0.3s ease, transform 0.2s ease;
+        border-collapse: separate;
+        border-spacing: 0;
       }
 
-      .btn-submit:hover {
-        background-color: var(--button-hover);
-        transform: scale(1.05);
+      thead th {
+        background-color: var(--light);
+        color: var(--text-secondary);
+        font-weight: 500;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border-color);
       }
 
-      /* Responsive Styles */
-      @media (max-width: 768px) {
-        .feedback-form {
-          padding: 20px;
-        }
+      tbody td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-primary);
+        font-size: 0.9375rem;
+      }
 
-        .star {
-          font-size: 40px;
-        }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
 
-        .btn-submit {
-          padding: 12px 25px;
+      tbody tr:hover {
+        background-color: rgba(84, 105, 212, 0.05);
+      }
+
+      /* Responsive */
+      @media (min-width: 768px) {
+        .dashboard-container {
+          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        }
+      }
+
+      /* Loading Skeleton */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          #f0f0f0 25%,
+          #f8f8f8 50%,
+          #f0f0f0 75%
+        );
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+        border-radius: var(--radius-sm);
+        height: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
         }
       }
     </style>
@@ -194,18 +255,22 @@
 
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-      <div class="container d-flex justify-content-between align-items-center">
-        <a class="navbar-brand" href="#">EventSync</a>
-        <div class="d-flex align-items-center">
-          <button
-            class="btn btn-warning d-flex align-items-center gap-2"
-            style="font-weight: 600; font-size: 16px"
-            onclick="history.back()"
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div
+        class="container d-flex justify-content-between align-items-center"
+        style="color: white"
+      >
+        <a class="navbar-brand" href="#" style="color: white">
+          <i class="bi bi-calendar-event me-2" style="color: white">
+            EventSync</i
           >
-            <i class="bi bi-arrow-return-left"></i> Go Back
-          </button>
-        </div>
+        </a>
+        <button
+          class="back-btn d-flex align-items-center gap-2"
+          onclick="history.back()"
+        >
+          <i class="bi bi-arrow-left" style="color: white">Go Back</i>
+        </button>
       </div>
     </nav>
 
@@ -223,6 +288,81 @@
           return;
         }
 
+        // Initialize dashboard structure
+        const dashboardHTML = `
+          <h1 class="mb-4 fw-bold" style="color: var(--text-primary); font-size: 1.75rem;">Event Analysis Dashboard</h1>
+          
+          <div class="card mb-4">
+            <div class="card-header">
+              <div class="card-header-icon">
+                <i class="bi bi-info-circle"></i>
+              </div>
+              <h2>Event Overview</h2>
+            </div>
+            <div class="card-body" id="event-overview">
+              <div class="skeleton w-100"></div>
+              <div class="skeleton w-75"></div>
+            </div>
+          </div>
+          
+          <div class="dashboard-container">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-icon">
+                  <i class="bi bi-person"></i>
+                </div>
+                <h2>Organizer Details</h2>
+              </div>
+              <div class="card-body" id="organizer-details">
+                <div class="skeleton w-100"></div>
+                <div class="skeleton w-75"></div>
+                <div class="skeleton w-50"></div>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-icon">
+                  <i class="bi bi-ticket-perforated"></i>
+                </div>
+                <h2>Ticket Analytics</h2>
+              </div>
+              <div class="card-body" id="ticket-analytics">
+                <div class="skeleton w-100"></div>
+                <div class="skeleton w-75"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card mt-4">
+            <div class="card-header">
+              <div class="card-header-icon">
+                <i class="bi bi-cart"></i>
+              </div>
+              <h2>Bookings</h2>
+            </div>
+            <div class="card-body" id="bookings-details">
+              <div class="skeleton w-100"></div>
+              <div class="skeleton w-75"></div>
+            </div>
+          </div>
+          
+          <div class="card mt-4">
+            <div class="card-header">
+              <div class="card-header-icon">
+                <i class="bi bi-star"></i>
+              </div>
+              <h2>Feedback & Ratings</h2>
+            </div>
+            <div class="card-body" id="feedback-details">
+              <div class="skeleton w-100"></div>
+              <div class="skeleton w-75"></div>
+            </div>
+          </div>
+        `;
+
+        document.querySelector(".main-content").innerHTML = dashboardHTML;
+
         try {
           // Step 1: Fetch Event
           const response = await fetch(`http://localhost:3003/get/${eventID}`);
@@ -231,47 +371,66 @@
           }
           const event = await response.json();
 
-          // Step 2: Show Event Details (including average rating placeholder)
+          // Step 2: Update Event Overview
           const eventDetailsHTML = `
-            <div class="feedback-form">
-              <h2>Event Details</h2>
-              <div class="event-info">
-                <p><strong>Event Name:</strong> ${event.name}</p>
-                <p><strong>Venue:</strong> ${event.venue}</p>
-                <p><strong>Date:</strong> ${new Date(
+            <div class="event-info-grid">
+              <div class="info-item">
+                <span class="info-label">Event Name</span>
+                <span class="info-value">${event.name}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Venue</span>
+                <span class="info-value">${event.venue}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Date</span>
+                <span class="info-value">${new Date(
                   event.date
-                ).toLocaleDateString()}</p>
-                <p><strong>Tickets Available:</strong> ${
-                  event.numberOfTickets
-                }</p>
-                <p><strong>Price Per Ticket:</strong> Rs. ${
-                  event.pricePerTicket
-                }</p>
-                <p><strong>Average Rating:</strong> <span id="average-rating">Loading...</span></p>
+                ).toLocaleDateString("en-US", {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}</span>
               </div>
-            </div>
-            <div id="organizer-info" class="feedback-form" style="margin-top: 30px;">
-              <h2>Organizer Details</h2>
-              <div class="event-info" id="organizer-details">
-                Loading organizer details...
-              </div>
-            </div>
-            <div id="bookings-info" class="feedback-form" style="margin-top: 30px;">
-              <h2>Bookings Details</h2>
-              <div class="event-info" id="bookings-details">
-                Loading bookings...
-              </div>
-            </div>
-            <div id="feedback-info" class="feedback-form" style="margin-top: 30px;">
-              <h2>Feedback</h2>
-              <div class="event-info" id="feedback-details">
-                Loading feedback...
+              <div class="info-item">
+                <span class="info-label">Average Rating</span>
+                <span class="info-value" id="average-rating">
+                  <div class="skeleton w-50"></div>
+                </span>
               </div>
             </div>
           `;
-          document.querySelector(".main-content").innerHTML = eventDetailsHTML;
+          document.getElementById("event-overview").innerHTML =
+            eventDetailsHTML;
 
-          // Step 3: Fetch Organizer Data
+          // Step 3: Fetch Ticket Analytics
+          const ticketAnalyticsHTML = `
+            <div class="event-info-grid">
+              <div class="info-item">
+                <span class="info-label">Total Tickets</span>
+                <span class="info-value">${event.numberOfTickets}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Price Per Ticket</span>
+                <span class="info-value">RS ${event.pricePerTicket}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Potential Revenue</span>
+                <span class="info-value">RS ${
+                  event.numberOfTickets * event.pricePerTicket
+                }</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Tickets Sold</span>
+                <span class="info-value" id="tickets-sold">Loading...</span>
+              </div>
+            </div>
+          `;
+          document.getElementById("ticket-analytics").innerHTML =
+            ticketAnalyticsHTML;
+
+          // Step 4: Fetch Organizer Data
           const organizerResponse = await fetch(
             `http://localhost:3006/getbyusername/${event.eventOrg}`
           );
@@ -280,97 +439,203 @@
           }
           const organizer = await organizerResponse.json();
           const organizerDetailsHTML = `
-            <p><strong>Name:</strong> ${organizer.name}</p>
-            <p><strong>Email:</strong> ${organizer.email}</p>
-            <p><strong>Username:</strong> ${organizer.username}</p>
-            <p><strong>Phone:</strong> ${organizer.phone}</p>
-            <p><strong>Status:</strong> ${organizer.status}</p>
+            <div class="event-info-grid">
+              <div class="info-item">
+                <span class="info-label">Name</span>
+                <span class="info-value">${organizer.name}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Username</span>
+                <span class="info-value">${organizer.username}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Email</span>
+                <span class="info-value">${organizer.email}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Phone</span>
+                <span class="info-value">${organizer.phone}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Status</span>
+                <span class="info-value">
+                  <span class="badge bg-${
+                    organizer.status === "active" ? "success" : "warning"
+                  }" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                    ${organizer.status}
+                  </span>
+                </span>
+              </div>
+            </div>
           `;
           document.getElementById("organizer-details").innerHTML =
             organizerDetailsHTML;
 
-          // Step 4: Fetch Bookings Data
+          // Step 5: Fetch Bookings Data
           const bookingsResponse = await fetch(
             `http://localhost:3004/get-bookings/${eventID}`
           );
+
+          let totalTicketsSold = 0;
+          let totalRevenue = 0;
+
           if (!bookingsResponse.ok) {
             document.getElementById(
               "bookings-details"
-            ).innerHTML = `<p>No bookings found for this event.</p>`;
+            ).innerHTML = `<p class="text-center text-muted">No bookings found for this event.</p>`;
+            document.getElementById("tickets-sold").innerHTML = "0";
           } else {
             const { bookings } = await bookingsResponse.json();
             if (bookings.length === 0) {
               document.getElementById(
                 "bookings-details"
-              ).innerHTML = `<p>No bookings found for this event.</p>`;
+              ).innerHTML = `<p class="text-center text-muted">No bookings found for this event.</p>`;
+              document.getElementById("tickets-sold").innerHTML = "0";
             } else {
-              let bookingsHTML = `<table border="1" style="width:100%;text-align:left;border-collapse:collapse;">
-                <thead>
-                  <tr>
-                    <th>Username</th>
-                    <th>Tickets Purchased</th>
-                    <th>Total Payment (Rs.)</th>
-                  </tr>
-                </thead>
-                <tbody>
+              bookings.forEach((booking) => {
+                totalTicketsSold += booking.ticketsPurchased;
+                totalRevenue += booking.totalPayment;
+              });
+
+              document.getElementById(
+                "tickets-sold"
+              ).innerHTML = `${totalTicketsSold} <small class="text-muted">(${Math.round(
+                (totalTicketsSold / event.numberOfTickets) * 100
+              )}%)</small>`;
+
+              let bookingsHTML = `
+                <div class="mb-3 d-flex gap-4">
+                  <div>
+                    <span class="info-label">Total Bookings</span>
+                    <div class="info-value">${bookings.length}</div>
+                  </div>
+                  <div>
+                    <span class="info-label">Revenue Generated</span>
+                    <div class="info-value">RS ${totalRevenue}</div>
+                  </div>
+                </div>
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Username</th>
+                        <th>Tickets</th>
+                        <th>Payment</th>
+                      </tr>
+                    </thead>
+                    <tbody>
               `;
+
               bookings.forEach((booking) => {
                 bookingsHTML += `
                   <tr>
-                    <td>${booking.username}</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-person-circle me-2" style="color: var(--primary);"></i>
+                        ${booking.username}
+                      </div>
+                    </td>
                     <td>${booking.ticketsPurchased}</td>
-                    <td>${booking.totalPayment}</td>
+                    <td>RS ${booking.totalPayment}</td>
                   </tr>
                 `;
               });
-              bookingsHTML += `</tbody></table>`;
+
+              bookingsHTML += `</tbody></table></div>`;
               document.getElementById("bookings-details").innerHTML =
                 bookingsHTML;
             }
           }
 
-          // Step 5: Fetch Feedback Data
+          // Step 6: Fetch Feedback Data
           const feedbackResponse = await fetch(
             `http://localhost:3009/get-feedback/${eventID}`
           );
+
           if (!feedbackResponse.ok) {
             document.getElementById(
               "feedback-details"
-            ).innerHTML = `<p>No feedback found for this event.</p>`;
+            ).innerHTML = `<p class="text-center text-muted">No feedback found for this event.</p>`;
+            document.getElementById("average-rating").innerHTML = "N/A";
           } else {
             const feedbacks = await feedbackResponse.json();
             if (feedbacks.length === 0) {
               document.getElementById(
                 "feedback-details"
-              ).innerHTML = `<p>No feedback found for this event.</p>`;
+              ).innerHTML = `<p class="text-center text-muted">No feedback found for this event.</p>`;
+              document.getElementById("average-rating").innerHTML = "N/A";
             } else {
-              let feedbackHTML = `<table border="1" style="width:100%;text-align:left;border-collapse:collapse;">
-                <thead>
-                  <tr>
-                    <th>Username</th>
-                    <th>Rating</th>
-                    <th>Comment</th>
-                  </tr>
-                </thead>
-                <tbody>
-              `;
               let totalRating = 0;
               feedbacks.forEach((feedback) => {
+                totalRating += feedback.rating;
+              });
+
+              const averageRating = (totalRating / feedbacks.length).toFixed(1);
+              document.getElementById(
+                "average-rating"
+              ).innerHTML = `<span class="rating-badge">
+                  <i class="bi bi-star-fill me-1" style="font-size: 0.75rem;"></i>
+                  ${averageRating}
+                </span>`;
+
+              let feedbackHTML = `
+                <div class="mb-3 d-flex gap-4">
+                  <div>
+                    <span class="info-label">Total Reviews</span>
+                    <div class="info-value">${feedbacks.length}</div>
+                  </div>
+                  <div>
+                    <span class="info-label">Average Rating</span>
+                    <div class="info-value">
+                      <span class="rating-badge">
+                        <i class="bi bi-star-fill me-1" style="font-size: 0.75rem;"></i>
+                        ${averageRating}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Username</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+              `;
+
+              feedbacks.forEach((feedback) => {
+                // Generate stars for rating
+                let stars = "";
+                for (let i = 1; i <= 5; i++) {
+                  if (i <= feedback.rating) {
+                    stars +=
+                      '<i class="bi bi-star-fill" style="color: var(--warning);"></i> ';
+                  } else {
+                    stars +=
+                      '<i class="bi bi-star" style="color: var(--text-muted);"></i> ';
+                  }
+                }
+
                 feedbackHTML += `
                   <tr>
-                    <td>${feedback.username}</td>
-                    <td>${feedback.rating}</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-person-circle me-2" style="color: var(--primary);"></i>
+                        ${feedback.username}
+                      </div>
+                    </td>
+                    <td>${stars}</td>
                     <td>${feedback.comment || "No comment"}</td>
                   </tr>
                 `;
-                totalRating += feedback.rating;
               });
-              feedbackHTML += `</tbody></table>`;
+
+              feedbackHTML += `</tbody></table></div>`;
               document.getElementById("feedback-details").innerHTML =
                 feedbackHTML;
-              document.getElementById("average-rating").innerHTML = (
-                totalRating / feedbacks.length
-              ).toFixed(2);
             }
           }
         } catch (error) {

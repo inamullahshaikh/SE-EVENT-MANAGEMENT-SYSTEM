@@ -4,144 +4,304 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up</title>
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link
       rel="icon"
       href="images/favicon.ico"
       type="image/x-icon"
       class="circular-favicon"
     />
-
     <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
+    />
+    <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+      rel="stylesheet"
     />
     <style>
-      .circular-favicon {
-        border-radius: 50%;
+      :root {
+        --primary-color: #6366f1;
+        --primary-hover: #4f46e5;
+        --bg-gradient-start: #4f46e5;
+        --bg-gradient-end: #6366f1;
       }
-      .wrapper {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
       }
 
       body {
-        background: linear-gradient(to bottom, #6a11cb, #2575fc);
+        background: linear-gradient(
+          135deg,
+          var(--bg-gradient-start),
+          var(--bg-gradient-end)
+        );
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        min-height: 100vh;
-        font-family: "Poppins", sans-serif;
-        margin: 0;
-      }
-
-      .container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        min-height: 100vh;
+        padding: 2rem 1rem;
       }
 
       .card {
-        width: 400px;
-        padding: 2rem;
-        border-radius: 12px;
-        background: #ffffff;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease;
+        max-width: 450px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        border: none;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transform: rotate(45deg);
+        pointer-events: none;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        position: relative;
+        display: inline-block;
+      }
+
+      h2::after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background: var(--primary-color);
+        border-radius: 10px;
+      }
+
+      .form-floating {
+        margin-bottom: 1.25rem;
+      }
+
+      .form-floating > .form-control {
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        box-shadow: none;
+        transition: all 0.3s ease;
+        padding: 1.2rem 1rem 0.5rem;
+        height: calc(3.5rem + 2px);
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .form-floating > label {
+        padding: 1rem;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+      }
+
+      .password-toggle {
+        position: absolute;
+        top: 50%;
+        right: 12px;
+        transform: translateY(-50%);
+        color: #64748b;
+        cursor: pointer;
+        z-index: 5;
+        transition: color 0.2s ease;
+      }
+
+      .password-toggle:hover {
+        color: var(--primary-color);
+      }
+
+      .btn-primary {
+        background: var(--primary-color);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-primary::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.5);
+      }
+
+      .btn-primary:hover::before {
+        left: 100%;
+      }
+
+      .input-feedback {
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        margin-left: 0.5rem;
+        transition: all 0.2s ease;
+      }
+
+      .field-error {
+        color: #ef4444;
+      }
+
+      .field-success {
+        color: #10b981;
+      }
+
+      .form-control.is-invalid {
+        border-color: #ef4444;
+        background-image: none;
+      }
+
+      .form-control.is-valid {
+        border-color: #10b981;
+        background-image: none;
+      }
+
+      .links {
+        margin-top: 1.5rem;
+        text-align: center;
+      }
+
+      .links a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+
+      .links a::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .links a:hover {
+        color: var(--primary-hover);
+      }
+
+      .links a:hover::after {
+        width: 100%;
+      }
+
+      .divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        color: #64748b;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #e2e8f0;
+      }
+
+      .divider span {
+        padding: 0 1rem;
+        font-size: 0.875rem;
       }
 
       footer {
-        width: 100%;
+        margin-top: 2rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.875rem;
         text-align: center;
-        padding: 10px;
-        color: #ffffff;
-        font-size: 14px;
-        background: transparent;
       }
-      .card:hover {
-        transform: scale(1.02);
-      }
-      .form-control {
-        border-radius: 8px;
-        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-      }
-      .btn-primary {
-        background-color: #2575fc;
-        border: none;
-        border-radius: 8px;
-        padding: 12px;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(37, 117, 252, 0.5);
-        transition: all 0.3s ease;
-      }
-      .btn-primary:hover {
-        background-color: #1a5cc8;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba(37, 117, 252, 0.7);
-      }
-      .links a {
-        text-decoration: none;
-        font-weight: 500;
-        color: #2575fc;
-        transition: color 0.3s ease;
-      }
-      .error {
-        color: #dc3545;
-        font-size: 14px;
-        display: block;
-        margin-top: 5px;
-      }
-      .links a:hover {
-        color: #1a5cc8;
-      }
-      .input-group {
+
+      .alert {
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 1.5rem;
         position: relative;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
-      .input-feedback {
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
+
+      .alert-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border-left: 4px solid #10b981;
       }
-      .is-invalid {
-        border-color: #dc3545 !important;
+
+      .alert-danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border-left: 4px solid #ef4444;
       }
-      .is-valid {
-        border-color: #198754 !important;
-      }
-      .field-error {
-        color: #dc3545;
-      }
-      .field-success {
-        color: #198754;
-      }
-      .password-toggle {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        cursor: pointer;
-        color: #6c757d;
-      }
-      .form-text {
-        color: #6c757d;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
+
+      @media (max-width: 576px) {
+        .card {
+          padding: 2rem 1.5rem;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="card text-center shadow-lg">
-      <h2 class="mb-4">Sign Up</h2>
-      <form id="signupForm" novalidate>
-        <div class="mb-3">
-          <div class="input-group">
+    <div class="container">
+      <div class="card animate__animated animate__fadeIn">
+        <h2 class="text-center mb-4">Create Account</h2>
+
+        <form id="signupForm" novalidate>
+          <div class="form-floating mb-3">
             <input
               type="text"
               class="form-control"
@@ -149,12 +309,11 @@
               placeholder="Full Name"
               required
             />
+            <label for="name">Full Name</label>
+            <div id="nameError" class="input-feedback field-error"></div>
           </div>
-          <div id="nameError" class="input-feedback field-error"></div>
-        </div>
 
-        <div class="mb-3">
-          <div class="input-group">
+          <div class="form-floating mb-3">
             <input
               type="email"
               class="form-control"
@@ -162,12 +321,11 @@
               placeholder="Email"
               required
             />
+            <label for="email">Email Address</label>
+            <div id="emailError" class="input-feedback field-error"></div>
           </div>
-          <div id="emailError" class="input-feedback field-error"></div>
-        </div>
 
-        <div class="mb-3">
-          <div class="input-group">
+          <div class="form-floating mb-3">
             <input
               type="text"
               class="form-control"
@@ -175,12 +333,11 @@
               placeholder="Username"
               required
             />
+            <label for="username">Username</label>
+            <div id="usernameError" class="input-feedback field-error"></div>
           </div>
-          <div id="usernameError" class="input-feedback field-error"></div>
-        </div>
 
-        <div class="mb-3">
-          <div class="input-group">
+          <div class="form-floating mb-3 position-relative">
             <input
               type="password"
               class="form-control"
@@ -188,15 +345,14 @@
               placeholder="Password"
               required
             />
+            <label for="password">Password</label>
             <span class="password-toggle" id="togglePassword">
               <i class="bi bi-eye"></i>
             </span>
+            <div id="passwordError" class="input-feedback field-error"></div>
           </div>
-          <div id="passwordError" class="input-feedback field-error"></div>
-        </div>
 
-        <div class="mb-3">
-          <div class="input-group">
+          <div class="form-floating mb-4">
             <input
               type="text"
               class="form-control"
@@ -204,43 +360,57 @@
               placeholder="Phone Number"
               required
             />
+            <label for="phoneNumber">Phone Number</label>
+            <div id="phoneError" class="input-feedback field-error"></div>
           </div>
-          <div id="phoneError" class="input-feedback field-error"></div>
+
+          <button type="submit" class="btn btn-primary w-100 py-3">
+            Create Account
+          </button>
+        </form>
+
+        <div class="divider">
+          <span>or</span>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
-      </form>
-      <div class="links mt-3">
-        <a href="login.html">Already have an account? Login</a>
-      </div>
-      <div class="links mt-3">
-        <a href="evorg-signup.html">Sign up as an Event Organizer</a>
+        <div class="links">
+          <a href="login.html">Already have an account? Sign in</a>
+        </div>
+
+        <div class="links mt-3">
+          <a href="evorg-signup.html">Sign up as an Event Organizer</a>
+        </div>
       </div>
     </div>
-    <footer>&copy; 2025 YourWebsite. All rights reserved.</footer>
 
+    <footer>&copy; 2025 EventHub. All rights reserved.</footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
       // Toggle password visibility
-      document.getElementById("togglePassword").addEventListener("click", function() {
-        const passwordInput = document.getElementById("password");
-        const icon = this.querySelector("i");
-        
-        if (passwordInput.type === "password") {
-          passwordInput.type = "text";
-          icon.classList.remove("bi-eye");
-          icon.classList.add("bi-eye-slash");
-        } else {
-          passwordInput.type = "password";
-          icon.classList.remove("bi-eye-slash");
-          icon.classList.add("bi-eye");
-        }
-      });
+      document
+        .getElementById("togglePassword")
+        .addEventListener("click", function () {
+          const passwordInput = document.getElementById("password");
+          const icon = this.querySelector("i");
+
+          if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+          } else {
+            passwordInput.type = "password";
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+          }
+        });
 
       // Real-time validation functions
       function validateName(name) {
         const regex = /^[a-zA-Z\s]{3,50}$/;
         if (!name.trim()) return "Name is required";
-        if (!regex.test(name)) return "Name must be 3-50 characters long and contain only letters and spaces";
+        if (!regex.test(name))
+          return "Name must be 3-50 characters long and contain only letters and spaces";
         return "";
       }
 
@@ -254,41 +424,53 @@
       function validateUsername(username) {
         const regex = /^[a-zA-Z0-9]{3,15}$/;
         if (!username.trim()) return "Username is required";
-        if (!regex.test(username)) return "Username must be 3-15 characters long and contain only letters and numbers";
+        if (!regex.test(username))
+          return "Username must be 3-15 characters long and contain only letters and numbers";
         return "";
       }
 
       function validatePassword(password) {
         const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
         if (!password) return "Password is required";
-        if (!regex.test(password)) return "Password must be at least 8 characters with at least one letter and one number";
+        if (!regex.test(password))
+          return "Password must be at least 8 characters with at least one letter and one number";
         return "";
       }
 
       function validatePhone(phone) {
-  const regex = /^03\d{9}$/;
-  if (!phone.trim()) return "Phone number is required";
-  if (!regex.test(phone)) return "Phone number must be 11 digits starting with 03";
-  return "";
-}
+        const regex = /^03\d{9}$/;
+        if (!phone.trim()) return "Phone number is required";
+        if (!regex.test(phone))
+          return "Phone number must be 11 digits starting with 03";
+        return "";
+      }
+
       // Apply validation to fields in real-time
       const fields = [
         { id: "name", validator: validateName, errorId: "nameError" },
         { id: "email", validator: validateEmail, errorId: "emailError" },
-        { id: "username", validator: validateUsername, errorId: "usernameError" },
-        { id: "password", validator: validatePassword, errorId: "passwordError" },
-        { id: "phoneNumber", validator: validatePhone, errorId: "phoneError" }
+        {
+          id: "username",
+          validator: validateUsername,
+          errorId: "usernameError",
+        },
+        {
+          id: "password",
+          validator: validatePassword,
+          errorId: "passwordError",
+        },
+        { id: "phoneNumber", validator: validatePhone, errorId: "phoneError" },
       ];
 
       // Add real-time validation to all fields
-      fields.forEach(field => {
+      fields.forEach((field) => {
         const element = document.getElementById(field.id);
         const errorElement = document.getElementById(field.errorId);
-        
-        element.addEventListener("input", function() {
+
+        element.addEventListener("input", function () {
           const error = field.validator(this.value);
           errorElement.textContent = error;
-          
+
           if (error) {
             this.classList.add("is-invalid");
             this.classList.remove("is-valid");
@@ -299,10 +481,10 @@
         });
 
         // Also validate on blur for better UX
-        element.addEventListener("blur", function() {
+        element.addEventListener("blur", function () {
           const error = field.validator(this.value);
           errorElement.textContent = error;
-          
+
           if (error) {
             this.classList.add("is-invalid");
             this.classList.remove("is-valid");
@@ -314,92 +496,138 @@
       });
 
       // Form submission
-      document.getElementById("signupForm").addEventListener("submit", async (event) => {
-        event.preventDefault();
+      document
+        .getElementById("signupForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
 
-        // Get form values
-        const nameValue = document.getElementById("name").value;
-        const emailValue = document.getElementById("email").value;
-        const usernameValue = document.getElementById("username").value;
-        const passwordValue = document.getElementById("password").value;
-        const phoneValue = document.getElementById("phoneNumber").value;
+          // Get form values
+          const nameValue = document.getElementById("name").value;
+          const emailValue = document.getElementById("email").value;
+          const usernameValue = document.getElementById("username").value;
+          const passwordValue = document.getElementById("password").value;
+          const phoneValue = document.getElementById("phoneNumber").value;
 
-        // Validate all fields
-        let isValid = true;
-        fields.forEach(field => {
-          const value = document.getElementById(field.id).value;
-          const error = field.validator(value);
-          const errorElement = document.getElementById(field.errorId);
-          errorElement.textContent = error;
-          
-          if (error) {
-            document.getElementById(field.id).classList.add("is-invalid");
-            document.getElementById(field.id).classList.remove("is-valid");
-            isValid = false;
-          } else {
-            document.getElementById(field.id).classList.remove("is-invalid");
-            document.getElementById(field.id).classList.add("is-valid");
-          }
-        });
+          // Validate all fields
+          let isValid = true;
+          fields.forEach((field) => {
+            const value = document.getElementById(field.id).value;
+            const error = field.validator(value);
+            const errorElement = document.getElementById(field.errorId);
+            errorElement.textContent = error;
 
-        if (!isValid) {
-          return;
-        }
-
-        // If all validations pass, send data to server
-        try {
-          const response = await fetch("http://localhost:3001/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: nameValue,
-              email: emailValue,
-              username: usernameValue,
-              password: passwordValue,
-              phone: phoneValue,
-            }),
+            if (error) {
+              document.getElementById(field.id).classList.add("is-invalid");
+              document.getElementById(field.id).classList.remove("is-valid");
+              isValid = false;
+            } else {
+              document.getElementById(field.id).classList.remove("is-invalid");
+              document.getElementById(field.id).classList.add("is-valid");
+            }
           });
 
-          const data = await response.json();
-          
-          if (response.ok) {
-            // Create success notification
+          if (!isValid) {
+            return;
+          }
+
+          // Show loading state on button
+          const submitButton = document.querySelector("button[type='submit']");
+          const originalButtonText = submitButton.innerHTML;
+          submitButton.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Processing...';
+          submitButton.disabled = true;
+
+          // If all validations pass, send data to server
+          try {
+            const response = await fetch("http://localhost:3001/register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: nameValue,
+                email: emailValue,
+                username: usernameValue,
+                password: passwordValue,
+                phone: phoneValue,
+              }),
+            });
+
+            const data = await response.json();
+
+            // Remove any existing alerts
+            const existingAlerts = document.querySelectorAll(".alert");
+            existingAlerts.forEach((alert) => alert.remove());
+
+            if (response.ok) {
+              // Create success notification
+              const notification = document.createElement("div");
+              notification.className =
+                "alert alert-success animate__animated animate__fadeIn";
+              notification.innerHTML =
+                '<i class="bi bi-check-circle-fill me-2"></i> Registration successful! Redirecting to login...';
+              document
+                .querySelector("form")
+                .insertAdjacentElement("afterend", notification);
+
+              // Reset form
+              document.getElementById("signupForm").reset();
+
+              // Reset validation classes
+              fields.forEach((field) => {
+                document
+                  .getElementById(field.id)
+                  .classList.remove("is-valid", "is-invalid");
+              });
+
+              // Redirect after a short delay
+              setTimeout(() => {
+                window.location.href = "login.html";
+              }, 2000);
+            } else {
+              // Handle server error response
+              const notification = document.createElement("div");
+              notification.className =
+                "alert alert-danger animate__animated animate__fadeIn";
+              notification.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i> ${
+                data.message || "An unknown error occurred"
+              }`;
+              document
+                .querySelector("form")
+                .insertAdjacentElement("afterend", notification);
+
+              // Remove the notification after 5 seconds
+              setTimeout(() => {
+                notification.classList.remove("animate__fadeIn");
+                notification.classList.add("animate__fadeOut");
+                setTimeout(() => {
+                  notification.remove();
+                }, 500);
+              }, 5000);
+            }
+          } catch (error) {
+            // Handle connection error
             const notification = document.createElement("div");
-            notification.className = "alert alert-success mt-3";
-            notification.textContent = "✅ Registration successful! Redirecting to login...";
-            document.querySelector(".card").appendChild(notification);
-            
-            // Redirect after a short delay
-            setTimeout(() => {
-              window.location.href = "login.html";
-            }, 2000);
-          } else {
-            // Handle server error response
-            const notification = document.createElement("div");
-            notification.className = "alert alert-danger mt-3";
-            notification.textContent = `❌ ${data.message || "An unknown error occurred"}`;
-            document.querySelector(".card").appendChild(notification);
-            
+            notification.className =
+              "alert alert-danger animate__animated animate__fadeIn";
+            notification.innerHTML =
+              '<i class="bi bi-wifi-off me-2"></i> Error connecting to server. Please try again later.';
+            document
+              .querySelector("form")
+              .insertAdjacentElement("afterend", notification);
+
             // Remove the notification after 5 seconds
             setTimeout(() => {
-              notification.remove();
+              notification.classList.remove("animate__fadeIn");
+              notification.classList.add("animate__fadeOut");
+              setTimeout(() => {
+                notification.remove();
+              }, 500);
             }, 5000);
+          } finally {
+            // Restore button state
+            submitButton.innerHTML = originalButtonText;
+            submitButton.disabled = false;
           }
-        } catch (error) {
-          // Handle connection error
-          const notification = document.createElement("div");
-          notification.className = "alert alert-danger mt-3";
-          notification.textContent = "❌ Error connecting to server. Please try again later.";
-          document.querySelector(".card").appendChild(notification);
-          
-          // Remove the notification after 5 seconds
-          setTimeout(() => {
-            notification.remove();
-          }, 5000);
-        }
-      });
+        });
     </script>
-
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
