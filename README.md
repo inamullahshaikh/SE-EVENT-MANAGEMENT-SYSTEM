@@ -2,6 +2,9 @@
 
 # **Event Management System Web Application**
 
+## **REPORT (Doc Link)**
+https://docs.google.com/document/d/1BF_ix8mH52zB6ckdrTVtjle4hJz2lizKYOYXFxRlWqw/edit?pli=1&tab=t.0
+
 ## **TIMELINE**
 
 ### 1. **Use Cases Implemented**
