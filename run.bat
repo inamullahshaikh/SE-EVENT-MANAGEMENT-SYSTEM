@@ -16,23 +16,23 @@ for %%p in (%ports%) do (
 )
 echo Starting services...
 cd /d "%~dp0\src\user-service"
-start /B node main.js
+start /B node server.js
 cd /d "%~dp0\src\attendee-service"
-start /B node main.js
+start /B node server.js
 cd /d "%~dp0\src\event_organizer-service"
-start /B node main.js
+start /B node server.js
 cd /d "%~dp0\src\notification-service"
-start /B node main.js
+start /B node server.js
 cd /d "%~dp0\src\event-service"
-start /B node main.js
+start /B node server.js
 cd /d "%~dp0\src\booking-service"
-start /B node main.js
+start /B node server.js
 cd /d "%~dp0\src\payment-service"
-start /B node main.js
+start /B node server.js
 cd /d "%~dp0\src\queries-service"
-start /B node main.js
+start /B node server.js
 cd /d "%~dp0\src\feedback-service"
-start /B node main.js
+start /B node server.js
 cd /d "%~dp0\src\frontend"
 start /B python -m http.server 5600
 start chrome "http://localhost:5600/index.html"

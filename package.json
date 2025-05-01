@@ -1,0 +1,24 @@
+{
+  "name": "se-event-management-system",
+  "version": "1.0.0",
+  "description": "- As an Event Organizer, I want to create an event so that I can manage attendee registrations.\r - As an Event Organizer, I want to register attendees so that they can participate in the event.\r - As an Event Organizer, I want to manage events so that I can ensure smooth execution and attendee engagement.\r - As an Event Organizer, I want to manage attendees so that I can track registrations and ensure event capacity is not exceeded.\r - As an Event Organizer, I want to generate event analysis so that I can evaluate event success and plan future improvements.\r - As an Event Organizer, I need to customize event details to enhance attendee experience.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inamullahshaikh/SE-EVENT-MANAGEMENT-SYSTEM.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/inamullahshaikh/SE-EVENT-MANAGEMENT-SYSTEM/issues"
+  },
+  "homepage": "https://github.com/inamullahshaikh/SE-EVENT-MANAGEMENT-SYSTEM#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.1.0"
+  }
+}
